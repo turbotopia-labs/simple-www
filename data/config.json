@@ -4,27 +4,33 @@
   "modules": {
     "news": {
       "label": "News",
-      "enabled": true
+      "enabled": true,
+      "emptyState": "No news has been published yet."
     },
     "projects": {
       "label": "Projects",
-      "enabled": true
+      "enabled": true,
+      "emptyState": "No projects have been added yet."
     },
     "blog": {
       "label": "Blog",
-      "enabled": true
+      "enabled": true,
+      "emptyState": "No blog posts have been published yet."
     },
     "downloads": {
       "label": "Downloads",
-      "enabled": true
+      "enabled": true,
+      "emptyState": "No downloads are available yet."
     },
     "store": {
       "label": "Store",
-      "enabled": false
+      "enabled": false,
+      "emptyState": "No store items are listed yet."
     },
     "admin": {
       "label": "Admin",
-      "enabled": false
+      "enabled": false,
+      "emptyState": "No admin tools are enabled."
     }
   }
 }

@@ -37,57 +37,133 @@ function readJson(filePath, fallback) {
   }
 }
 
-function parseMarkdownFile(filePath) {
-  const raw = fs.readFileSync(filePath, "utf8");
+function slugify(value, fallback = "item") {
+  const slug = String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return slug || fallback;
+}
+
+function parseFrontMatterValue(value) {
+  const trimmed = value.trim();
+  if (trimmed === "true") return true;
+  if (trimmed === "false") return false;
+
+  if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+    return trimmed
+      .slice(1, -1)
+      .split(",")
+      .map((item) => item.trim().replace(/^["']|["']$/g, ""))
+      .filter(Boolean);
+  }
+
+  return trimmed.replace(/^["']|["']$/g, "");
+}
+
+function parseFrontMatter(raw) {
   const frontMatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
   const meta = {};
   let body = raw;
 
-  if (frontMatter) {
-    body = raw.slice(frontMatter[0].length);
-    frontMatter[1].split(/\r?\n/).forEach((line) => {
-      const splitAt = line.indexOf(":");
-      if (splitAt === -1) return;
-      const key = line.slice(0, splitAt).trim();
-      const value = line.slice(splitAt + 1).trim();
-      if (key) meta[key] = value;
-    });
+  if (!frontMatter) {
+    return { meta, body };
   }
 
-  const slug = path.basename(filePath, ".md");
+  body = raw.slice(frontMatter[0].length);
+  frontMatter[1].split(/\r?\n/).forEach((line) => {
+    const splitAt = line.indexOf(":");
+    if (splitAt === -1) return;
+    const key = line.slice(0, splitAt).trim();
+    const value = line.slice(splitAt + 1).trim();
+    if (key) meta[key] = parseFrontMatterValue(value);
+  });
+
+  return { meta, body };
+}
+
+function normalizeTags(tags) {
+  if (Array.isArray(tags)) {
+    return tags.map((tag) => String(tag).trim()).filter(Boolean);
+  }
+
+  if (typeof tags === "string") {
+    return tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
+function parseMarkdownFile(filePath) {
+  const raw = fs.readFileSync(filePath, "utf8");
+  const { meta, body } = parseFrontMatter(raw);
+  const fileSlug = path.basename(filePath, ".md");
+  const slug = slugify(meta.slug || fileSlug, fileSlug);
+
   return {
     slug,
-    title: meta.title || slug.replace(/[-_]/g, " "),
-    date: meta.date || "",
-    category: meta.category || "general",
-    summary: meta.summary || "",
+    source: path.relative(contentDir, filePath).replace(/\\/g, "/"),
+    title: String(meta.title || slug.replace(/[-_]/g, " ")),
+    date: String(meta.date || ""),
+    category: String(meta.category || "general"),
+    summary: String(meta.summary || ""),
+    draft: meta.draft === true,
+    tags: normalizeTags(meta.tags),
     body,
   };
 }
 
-function listModuleContent(moduleId) {
+function listModuleContent(moduleId, warnings) {
   const modulePath = path.join(contentDir, moduleId);
   if (!modulePath.startsWith(contentDir) || !fs.existsSync(modulePath)) return [];
 
-  return fs
+  const seenSlugs = new Map();
+  const items = fs
     .readdirSync(modulePath)
     .filter((fileName) => fileName.endsWith(".md"))
     .map((fileName) => parseMarkdownFile(path.join(modulePath, fileName)))
+    .filter((item) => !item.draft)
     .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+
+  items.forEach((item) => {
+    if (!seenSlugs.has(item.slug)) {
+      seenSlugs.set(item.slug, item.source);
+      return;
+    }
+
+    warnings.push({
+      type: "duplicate-slug",
+      module: moduleId,
+      slug: item.slug,
+      sources: [seenSlugs.get(item.slug), item.source],
+    });
+  });
+
+  return items;
 }
 
 function sitePayload() {
   const config = readJson(path.join(dataDir, "config.json"), {});
   const modules = config.modules || {};
   const content = {};
+  const warnings = [];
 
   Object.keys(modules).forEach((moduleId) => {
     if (modules[moduleId] && modules[moduleId].enabled) {
-      content[moduleId] = listModuleContent(moduleId);
+      content[moduleId] = listModuleContent(moduleId, warnings);
     }
   });
 
-  return { config, content };
+  warnings.forEach((warning) => {
+    console.warn(`[${warning.type}] ${warning.module}/${warning.slug}: ${warning.sources.join(", ")}`);
+  });
+
+  return { config, content, warnings };
 }
 
 function safePublicPath(urlPath) {

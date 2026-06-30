@@ -8,6 +8,7 @@ let state = {
   activeModule: "",
   modules: {},
   content: {},
+  warnings: [],
 };
 
 function escapeHtml(value) {
@@ -100,7 +101,7 @@ function renderModule(moduleId) {
     app.innerHTML = `
       <section class="card">
         <h2>${escapeHtml(module.label)}</h2>
-        <p class="empty">No content yet.</p>
+        <p class="empty">${escapeHtml(module.emptyState || "No content yet.")}</p>
       </section>
     `;
     return;
@@ -112,6 +113,7 @@ function renderModule(moduleId) {
         <h2>${escapeHtml(item.title)}</h2>
         <div class="meta">${escapeHtml([item.date, item.category].filter(Boolean).join(" / "))}</div>
         ${item.summary ? `<p>${escapeHtml(item.summary)}</p>` : ""}
+        ${item.tags && item.tags.length ? `<div class="tags">${item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
         <div class="content">${markdownToHtml(item.body)}</div>
       </article>
     `)
@@ -142,8 +144,13 @@ async function boot() {
 
   state.modules = config.modules || {};
   state.content = payload.content || {};
+  state.warnings = payload.warnings || [];
   title.textContent = config.siteTitle || "simple-www";
   description.textContent = config.siteDescription || "";
+
+  state.warnings.forEach((warning) => {
+    console.warn(`[simple-www:${warning.type}]`, warning);
+  });
 
   const firstModule = enabledModuleIds()[0];
   if (firstModule) {

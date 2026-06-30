@@ -14,12 +14,12 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v0.2.0 - Content Model
 
-- Define a stable content contract for Markdown files.
-- Add slug handling and duplicate slug warnings.
-- Add draft support with `draft: true`.
-- Add optional `tags` front matter.
-- Add per-module empty states.
-- Document content naming rules and folder layout.
+- Done: Define a stable content contract for Markdown files.
+- Done: Add slug handling and duplicate slug warnings.
+- Done: Add draft support with `draft: true`.
+- Done: Add optional `tags` front matter.
+- Done: Add per-module empty states.
+- Done: Document content naming rules and folder layout.
 
 ## v0.3.0 - Config
 

@@ -30,6 +30,8 @@ title: First post
 date: 2026-06-30
 category: general
 summary: Short description
+tags: [notes, release]
+draft: false
 ---
 
 Body content here.
@@ -42,6 +44,7 @@ Site settings and module toggles live in `data/config.json`.
 ## Documentation
 
 - `docs/CONTENT-GUIDE.md`
+- `docs/CONTENT-CONTRACT.md`
 - `docs/CATEGORIES.md`
 - `docs/ROADMAP.md`
 - `docs/MODULES.md`

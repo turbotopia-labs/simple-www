@@ -3,6 +3,7 @@ title: Welcome
 date: 2026-06-30
 category: general
 summary: The first simple-www news item.
+tags: [starter, markdown]
 ---
 
 simple-www is ready for Markdown-backed content.

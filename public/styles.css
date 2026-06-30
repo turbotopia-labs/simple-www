@@ -144,6 +144,22 @@ h3 {
   overflow-wrap: anywhere;
 }
 
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 10px;
+}
+
+.tags span {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--accent);
+  padding: 2px 6px;
+  color: var(--text);
+  font-size: 12px;
+}
+
 .content ul {
   padding-left: 20px;
 }
