@@ -5,6 +5,7 @@ site:
   author: ""
   timezone: Europe/Oslo
   baseUrl: http://127.0.0.1:6625
+  layout: cards
 modules:
   news:
     label: News

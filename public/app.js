@@ -4,12 +4,14 @@ const title = document.querySelector("#site-title");
 const description = document.querySelector("#site-description");
 const themeToggle = document.querySelector("#theme-toggle");
 const footerLabel = document.querySelector("#site-footer-label");
+const layoutButtons = document.querySelectorAll("[data-layout]");
 
 let state = {
   activeModule: "",
   modules: {},
   content: {},
   warnings: [],
+  layout: "cards",
 };
 
 function escapeHtml(value) {
@@ -101,6 +103,7 @@ function renderModule(moduleId) {
   renderNav();
 
   if (!items.length) {
+    app.dataset.layout = "list";
     app.innerHTML = `
       <section class="card">
         <h2>${escapeHtml(module.label)}</h2>
@@ -110,6 +113,7 @@ function renderModule(moduleId) {
     return;
   }
 
+  app.dataset.layout = state.layout;
   app.innerHTML = items
     .map((item) => `
       <article class="card">
@@ -121,6 +125,16 @@ function renderModule(moduleId) {
       </article>
     `)
     .join("");
+}
+
+function setLayout(layout) {
+  state.layout = ["list", "cards", "compact"].includes(layout) ? layout : "cards";
+  app.dataset.layout = state.layout;
+  localStorage.setItem("simple-www-layout", state.layout);
+
+  layoutButtons.forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.layout === state.layout));
+  });
 }
 
 function setTheme(theme) {
@@ -140,6 +154,12 @@ themeToggle.addEventListener("click", () => {
   setTheme(current === "dark" ? "light" : "dark");
 });
 
+layoutButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    setLayout(button.dataset.layout);
+  });
+});
+
 async function boot() {
   const response = await fetch("/api/site");
   const payload = await response.json();
@@ -154,6 +174,7 @@ async function boot() {
   document.title = `${title.textContent} v.${payload.version || ""}`;
   document.documentElement.lang = site.language || "en";
   footerLabel.textContent = `${title.textContent} v.${payload.version || ""}`;
+  setLayout(localStorage.getItem("simple-www-layout") || site.layout || "cards");
 
   state.warnings.forEach((warning) => {
     console.warn(`[simple-www:${warning.type}]`, warning);

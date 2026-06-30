@@ -21,7 +21,8 @@ JSON remains the default format. YAML support is intentionally small and support
   "language": "en",
   "author": "",
   "timezone": "UTC",
-  "baseUrl": "http://127.0.0.1:6625"
+  "baseUrl": "http://127.0.0.1:6625",
+  "layout": "cards"
 }
 ```
 
@@ -33,6 +34,7 @@ Defaults:
 - `author`: empty string
 - `timezone`: `UTC`
 - `baseUrl`: `http://127.0.0.1:6625`
+- `layout`: `cards`
 
 Legacy `siteTitle` and `siteDescription` still work when `site.title` and `site.description` are not set.
 
@@ -90,6 +92,7 @@ Validation checks:
 
 - `site` must be an object.
 - Site metadata values must be strings.
+- `site.layout` must be `list`, `cards`, or `compact`.
 - `modules` must be an object.
 - Each module must be an object.
 - `enabled` must be true or false.

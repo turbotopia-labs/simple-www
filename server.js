@@ -68,11 +68,13 @@ const defaultConfig = {
     author: "",
     timezone: "UTC",
     baseUrl: "http://127.0.0.1:6625",
+    layout: "cards",
   },
   modules: defaultModules,
 };
 
 const validSorts = new Set(["date-desc", "date-asc", "title-asc", "title-desc", "slug-asc", "slug-desc"]);
+const validLayouts = new Set(["list", "cards", "compact"]);
 
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
@@ -192,11 +194,15 @@ function validateRawConfig(raw, source) {
     errors.push(`${source}: site must be an object.`);
   }
 
-  ["title", "description", "language", "author", "timezone", "baseUrl"].forEach((field) => {
+  ["title", "description", "language", "author", "timezone", "baseUrl", "layout"].forEach((field) => {
     if (raw.site && raw.site[field] !== undefined && typeof raw.site[field] !== "string") {
       errors.push(`${source}: site.${field} must be a string.`);
     }
   });
+
+  if (raw.site?.layout !== undefined && !validLayouts.has(raw.site.layout)) {
+    errors.push(`${source}: site.layout must be one of ${Array.from(validLayouts).join(", ")}.`);
+  }
 
   if (raw.modules !== undefined && (typeof raw.modules !== "object" || Array.isArray(raw.modules))) {
     errors.push(`${source}: modules must be an object.`);

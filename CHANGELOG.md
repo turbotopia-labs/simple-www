@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 - 2026-07-01
+
+- Refined the minimal pre-2010 card-based theme.
+- Kept light/dark mode persistent and added persistent layout selection.
+- Added list, cards, and compact layout modes.
+- Improved small-screen navigation and header controls.
+- Added print-friendly styles.
+- Documented theme variables and safe customization points.
+
 ## 0.3.0 - 2026-07-01
 
 - Added YAML config support while keeping JSON as the default.

@@ -31,12 +31,12 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v0.4.0 - Theme and Layout
 
-- Refine the minimal pre-2010 card-based design.
-- Keep light and dark mode persistent.
-- Add simple layout options: list, cards, and compact cards.
-- Improve small-screen navigation.
-- Add print-friendly styles.
-- Document theme variables and safe customization points.
+- Done: Refine the minimal pre-2010 card-based design.
+- Done: Keep light and dark mode persistent.
+- Done: Add simple layout options: list, cards, and compact cards.
+- Done: Improve small-screen navigation.
+- Done: Add print-friendly styles.
+- Done: Document theme variables and safe customization points.
 
 ## v0.5.0 - Module Features
 

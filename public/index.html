@@ -12,7 +12,14 @@
         <h1 id="site-title">simple-www</h1>
         <p id="site-description">A simple Markdown website.</p>
       </div>
-      <button id="theme-toggle" class="icon-button" type="button" title="Toggle light or dark mode">&#9790;</button>
+      <div class="header-tools">
+        <div class="segmented-control" aria-label="Layout">
+          <button type="button" data-layout="list" title="List layout">List</button>
+          <button type="button" data-layout="cards" title="Card layout">Cards</button>
+          <button type="button" data-layout="compact" title="Compact layout">Compact</button>
+        </div>
+        <button id="theme-toggle" class="icon-button" type="button" title="Toggle light or dark mode">&#9790;</button>
+      </div>
     </header>
 
     <nav id="module-nav" class="module-nav" aria-label="Modules"></nav>
