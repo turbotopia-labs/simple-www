@@ -16,6 +16,7 @@ let state = {
   filterType: "all",
   filterValue: "",
   search: "",
+  adminMessage: "",
 };
 let searchTimer;
 
@@ -145,6 +146,130 @@ function actionLink(href, label) {
   return `<p class="action-link"><a href="${escapeHtml(href)}">${escapeHtml(label)}</a></p>`;
 }
 
+function editableModuleIds() {
+  return enabledModuleIds().filter((moduleId) => moduleId !== "admin");
+}
+
+function emptyAdminFields(moduleId = editableModuleIds()[0] || "news") {
+  return {
+    module: moduleId,
+    slug: "",
+    title: "",
+    date: "",
+    category: "general",
+    summary: "",
+    tags: "",
+    draft: false,
+    status: "",
+    link: "",
+    repository: "",
+    file: "",
+    version: "",
+    sku: "",
+    price: "",
+    body: "",
+  };
+}
+
+function adminForm(values = emptyAdminFields()) {
+  const moduleOptions = editableModuleIds()
+    .map((moduleId) => `<option value="${escapeHtml(moduleId)}"${moduleId === values.module ? " selected" : ""}>${escapeHtml(state.modules[moduleId].label)}</option>`)
+    .join("");
+
+  return `
+    <section class="card">
+      <h2>Content editor</h2>
+      <form id="admin-form" class="admin-form">
+        <label>Module<select name="module">${moduleOptions}</select></label>
+        <label>Slug<input name="slug" value="${escapeHtml(values.slug)}" required></label>
+        <label>Title<input name="title" value="${escapeHtml(values.title)}" required></label>
+        <label>Date<input name="date" value="${escapeHtml(values.date)}" placeholder="YYYY-MM-DD"></label>
+        <label>Category<input name="category" value="${escapeHtml(values.category)}"></label>
+        <label>Summary<input name="summary" value="${escapeHtml(values.summary)}"></label>
+        <label>Tags<input name="tags" value="${escapeHtml(values.tags)}" placeholder="one, two"></label>
+        <label class="checkbox-label"><input name="draft" type="checkbox"${values.draft ? " checked" : ""}> Draft</label>
+        <label>Status<input name="status" value="${escapeHtml(values.status)}"></label>
+        <label>Link<input name="link" value="${escapeHtml(values.link)}"></label>
+        <label>Repository<input name="repository" value="${escapeHtml(values.repository)}"></label>
+        <label>File<input name="file" value="${escapeHtml(values.file)}"></label>
+        <label>Version<input name="version" value="${escapeHtml(values.version)}"></label>
+        <label>SKU<input name="sku" value="${escapeHtml(values.sku)}"></label>
+        <label>Price<input name="price" value="${escapeHtml(values.price)}"></label>
+        <label class="full-row">Body<textarea name="body" rows="10">${escapeHtml(values.body)}</textarea></label>
+        <div class="form-actions">
+          <button type="button" data-admin-action="new">New</button>
+          <button type="submit" data-admin-action="create">Create</button>
+          <button type="submit" data-admin-action="edit">Save</button>
+          <button type="button" data-admin-action="delete">Delete</button>
+        </div>
+      </form>
+      ${state.adminMessage ? `<p class="admin-message">${escapeHtml(state.adminMessage)}</p>` : ""}
+    </section>
+  `;
+}
+
+function formValues(form) {
+  return {
+    module: form.elements.module.value,
+    slug: form.elements.slug.value.trim(),
+    fields: {
+      title: form.elements.title.value.trim(),
+      date: form.elements.date.value.trim(),
+      category: form.elements.category.value.trim(),
+      summary: form.elements.summary.value.trim(),
+      tags: form.elements.tags.value.split(",").map((tag) => tag.trim()).filter(Boolean),
+      draft: form.elements.draft.checked,
+      status: form.elements.status.value.trim(),
+      link: form.elements.link.value.trim(),
+      repository: form.elements.repository.value.trim(),
+      file: form.elements.file.value.trim(),
+      version: form.elements.version.value.trim(),
+      sku: form.elements.sku.value.trim(),
+      price: form.elements.price.value.trim(),
+    },
+    body: form.elements.body.value,
+  };
+}
+
+function valuesFromItem(moduleId, item) {
+  return {
+    module: moduleId,
+    slug: item.slug,
+    title: item.title,
+    date: item.date,
+    category: item.category,
+    summary: item.summary,
+    tags: (item.tags || []).join(", "),
+    draft: item.draft,
+    status: item.status,
+    link: item.link,
+    repository: item.repository,
+    file: item.file,
+    version: item.version,
+    sku: item.sku,
+    price: item.price,
+    body: item.body,
+  };
+}
+
+function adminContentList() {
+  return editableModuleIds()
+    .map((moduleId) => {
+      const items = state.content[moduleId] || [];
+      return `
+        <section class="card">
+          <h2>${escapeHtml(state.modules[moduleId].label)}</h2>
+          ${
+            items.length
+              ? `<ul class="admin-list">${items.map((item) => `<li><button type="button" data-admin-load="${escapeHtml(moduleId)}:${escapeHtml(item.slug)}">${escapeHtml(item.title)}</button></li>`).join("")}</ul>`
+              : `<p class="empty">No published content.</p>`
+          }
+        </section>
+      `;
+    })
+    .join("");
+}
+
 function renderModuleTools(moduleId, items) {
   const categories = [...new Set(items.map((item) => item.category).filter(Boolean))];
   const tags = [...new Set(items.flatMap((item) => item.tags || []).filter(Boolean))];
@@ -221,6 +346,7 @@ function renderAdmin() {
   app.dataset.layout = "list";
   const diagnostics = state.diagnostics || {};
   const modules = diagnostics.modules || {};
+  const editing = diagnostics.adminEditing === true;
 
   app.innerHTML = `
     <section class="card">
@@ -232,8 +358,14 @@ function renderAdmin() {
         { label: "Enabled", value: String(diagnostics.enabledModuleCount || 0) },
         { label: "Content", value: String(diagnostics.contentItemCount || 0) },
         { label: "Warnings", value: String(state.warnings.length) },
+        { label: "Editing", value: editing ? "enabled" : "disabled" },
       ])}
     </section>
+    ${
+      editing
+        ? `${adminForm(state.adminDraft || emptyAdminFields())}${adminContentList()}`
+        : `<section class="card"><h2>Editing disabled</h2><p class="empty">Set site.adminEditing to true in config to enable local create, edit, and delete.</p></section>`
+    }
     ${Object.keys(modules)
       .map((moduleId) => `
         <section class="card">
@@ -310,6 +442,33 @@ nav.addEventListener("click", (event) => {
 });
 
 app.addEventListener("click", (event) => {
+  const adminLoad = event.target.closest("[data-admin-load]");
+  if (adminLoad) {
+    const [moduleId, slug] = adminLoad.dataset.adminLoad.split(":");
+    const item = (state.content[moduleId] || []).find((entry) => entry.slug === slug);
+    if (item) {
+      state.adminDraft = valuesFromItem(moduleId, item);
+      state.adminMessage = "";
+      renderAdmin();
+    }
+    return;
+  }
+
+  const adminAction = event.target.closest("[data-admin-action]");
+  if (adminAction && adminAction.dataset.adminAction === "new") {
+    state.adminDraft = emptyAdminFields();
+    state.adminMessage = "";
+    renderAdmin();
+    return;
+  }
+
+  if (adminAction && adminAction.dataset.adminAction === "delete") {
+    const form = document.querySelector("#admin-form");
+    if (!form) return;
+    adminSubmit("DELETE", formValues(form));
+    return;
+  }
+
   const button = event.target.closest("button[data-filter-type]");
   if (!button) return;
   state.filterType = button.dataset.filterType;
@@ -317,6 +476,41 @@ app.addEventListener("click", (event) => {
   setRouteHash(state.activeModule, state.filterType, state.filterValue);
   renderModule(state.activeModule);
 });
+
+app.addEventListener("submit", (event) => {
+  const form = event.target.closest("#admin-form");
+  if (!form) return;
+  event.preventDefault();
+  const submitter = event.submitter?.dataset.adminAction;
+  adminSubmit(submitter === "edit" ? "PUT" : "POST", formValues(form));
+});
+
+async function adminSubmit(method, payload) {
+  try {
+    const response = await fetch("/api/admin/content", {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+
+    if (!response.ok) {
+      state.adminMessage = result.errors ? result.errors.join(" ") : result.error || "Admin request failed.";
+      renderAdmin();
+      return;
+    }
+
+    if (result.payload) {
+      applyPayload(result.payload);
+    }
+    state.adminDraft = method === "DELETE" ? emptyAdminFields(payload.module) : valuesFromItem(payload.module, result.item || payload);
+    state.adminMessage = method === "DELETE" ? "Deleted. Backup was created." : "Saved.";
+    renderAdmin();
+  } catch (error) {
+    state.adminMessage = error.message;
+    renderAdmin();
+  }
+}
 
 app.addEventListener("input", (event) => {
   const input = event.target.closest("#module-search");
@@ -348,9 +542,7 @@ window.addEventListener("hashchange", () => {
   applyRoute(routeFromHash());
 });
 
-async function boot() {
-  const response = await fetch(window.SIMPLE_WWW_DATA_PATH || "/api/site");
-  const payload = await response.json();
+function applyPayload(payload) {
   const config = payload.config || {};
   const site = config.site || {};
 
@@ -368,6 +560,12 @@ async function boot() {
   state.warnings.forEach((warning) => {
     console.warn(`[simple-www:${warning.type}]`, warning);
   });
+}
+
+async function boot() {
+  const response = await fetch(window.SIMPLE_WWW_DATA_PATH || "/api/site");
+  const payload = await response.json();
+  applyPayload(payload);
 
   const firstModule = enabledModuleIds()[0];
   if (applyRoute(routeFromHash())) {

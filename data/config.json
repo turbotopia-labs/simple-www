@@ -6,7 +6,8 @@
     "author": "",
     "timezone": "Europe/Oslo",
     "baseUrl": "http://127.0.0.1:6625",
-    "layout": "cards"
+    "layout": "cards",
+    "adminEditing": false
   },
   "modules": {
     "news": {
@@ -51,7 +52,7 @@
     },
     "admin": {
       "label": "Admin",
-      "enabled": true,
+      "enabled": false,
       "emptyState": "No admin tools are enabled.",
       "order": 60,
       "sort": "title-asc",

@@ -21,6 +21,7 @@ The server provides:
 - `/feeds/blog.xml`
 - `/feed.json`
 - static frontend files
+- local admin editing when explicitly enabled
 
 Docker uses server mode:
 
@@ -52,6 +53,8 @@ The export includes:
 - `dist/robots.txt`
 
 Upload the contents of `dist/` to any static host.
+
+Static export mode is read-only. Admin editing is not available from exported files.
 
 ## Base URL
 

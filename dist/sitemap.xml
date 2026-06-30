@@ -39,10 +39,4 @@
   <url>
     <loc>http://127.0.0.1:6625/#/store/readme</loc>
   </url>
-  <url>
-    <loc>http://127.0.0.1:6625/#/admin</loc>
-  </url>
-  <url>
-    <loc>http://127.0.0.1:6625/#/admin/readme</loc>
-  </url>
 </urlset>

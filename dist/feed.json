@@ -65,17 +65,6 @@
       ]
     },
     {
-      "id": "http://127.0.0.1:6625/#/admin/readme",
-      "url": "http://127.0.0.1:6625/#/admin/readme",
-      "title": "Admin",
-      "summary": "Disabled by default.",
-      "content_text": "\nThe admin module is reserved for future editing tools.\n",
-      "date_published": "2026-06-30T00:00:00Z",
-      "tags": [
-        "system"
-      ]
-    },
-    {
       "id": "http://127.0.0.1:6625/#/news/older-update",
       "url": "http://127.0.0.1:6625/#/news/older-update",
       "title": "Older update",

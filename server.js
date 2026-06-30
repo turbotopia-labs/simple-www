@@ -69,12 +69,29 @@ const defaultConfig = {
     timezone: "UTC",
     baseUrl: "http://127.0.0.1:6625",
     layout: "cards",
+    adminEditing: false,
   },
   modules: defaultModules,
 };
 
 const validSorts = new Set(["date-desc", "date-asc", "title-asc", "title-desc", "slug-asc", "slug-desc"]);
 const validLayouts = new Set(["list", "cards", "compact"]);
+const editableFields = [
+  "title",
+  "date",
+  "category",
+  "summary",
+  "slug",
+  "draft",
+  "tags",
+  "status",
+  "link",
+  "repository",
+  "file",
+  "version",
+  "sku",
+  "price",
+];
 
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
@@ -277,6 +294,10 @@ function validateRawConfig(raw, source) {
     }
   });
 
+  if (raw.site?.adminEditing !== undefined && typeof raw.site.adminEditing !== "boolean") {
+    errors.push(`${source}: site.adminEditing must be true or false.`);
+  }
+
   if (raw.site?.layout !== undefined && !validLayouts.has(raw.site.layout)) {
     errors.push(`${source}: site.layout must be one of ${Array.from(validLayouts).join(", ")}.`);
   }
@@ -455,6 +476,165 @@ function parseMarkdownFile(filePath) {
   };
 }
 
+function readRequestJson(req) {
+  return new Promise((resolve, reject) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+      body += chunk;
+      if (body.length > 1024 * 1024) {
+        reject(new Error("Request body is too large."));
+        req.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      try {
+        resolve(body ? JSON.parse(body) : {});
+      } catch {
+        reject(new Error("Request body must be valid JSON."));
+      }
+    });
+
+    req.on("error", reject);
+  });
+}
+
+function adminEditingEnabled() {
+  return loadedConfig.config.site.adminEditing === true;
+}
+
+function contentPathFor(moduleId, slug) {
+  const modulePath = path.join(contentDir, moduleId);
+  const filePath = path.join(modulePath, `${slug}.md`);
+  if (!filePath.startsWith(contentDir)) {
+    throw new Error("Invalid content path.");
+  }
+
+  return filePath;
+}
+
+function validateAdminContentInput(input, mode) {
+  const errors = [];
+  const moduleId = String(input.module || "").trim();
+  const rawSlug = String(input.slug || input.fields?.slug || "").trim();
+  const slug = slugify(rawSlug);
+  const fields = input.fields && typeof input.fields === "object" && !Array.isArray(input.fields) ? input.fields : {};
+  const body = String(input.body || "");
+
+  if (!/^[a-z0-9_-]+$/.test(moduleId)) errors.push("module must use lowercase letters, numbers, hyphens, or underscores.");
+  if (!loadedConfig.config.modules[moduleId]) errors.push(`module does not exist: ${moduleId}`);
+  if (!rawSlug) errors.push("slug is required.");
+  if (rawSlug && slug !== rawSlug.toLowerCase()) errors.push(`slug must be normalized as: ${slug}`);
+  if (mode !== "delete") {
+    if (!fields.title || typeof fields.title !== "string") errors.push("title is required.");
+    if (fields.date && !/^\d{4}-\d{2}-\d{2}$/.test(String(fields.date))) errors.push("date must use YYYY-MM-DD.");
+    if (fields.draft !== undefined && typeof fields.draft !== "boolean") errors.push("draft must be true or false.");
+    if (fields.tags !== undefined && !Array.isArray(fields.tags) && typeof fields.tags !== "string") {
+      errors.push("tags must be an array or comma-separated string.");
+    }
+
+    Object.keys(fields).forEach((field) => {
+      if (!editableFields.includes(field)) errors.push(`unsupported field: ${field}`);
+      if (typeof fields[field] === "string" && /[\r\n]/.test(fields[field])) {
+        errors.push(`${field} cannot contain new lines.`);
+      }
+    });
+  }
+
+  const filePath = moduleId && slug ? contentPathFor(moduleId, slug) : "";
+  if (filePath) {
+    const exists = fs.existsSync(filePath);
+    if (mode === "create" && exists) errors.push("content file already exists.");
+    if ((mode === "edit" || mode === "delete") && !exists) errors.push("content file does not exist.");
+  }
+
+  return { body, errors, fields, filePath, moduleId, slug };
+}
+
+function frontMatterValue(value) {
+  if (Array.isArray(value)) return `[${value.map((item) => String(item).trim()).filter(Boolean).join(", ")}]`;
+  if (typeof value === "boolean") return String(value);
+  return String(value || "");
+}
+
+function serializeMarkdown(fields, body, slug) {
+  const normalizedFields = { ...fields, slug };
+  const lines = editableFields
+    .filter((field) => normalizedFields[field] !== undefined && normalizedFields[field] !== "")
+    .map((field) => `${field}: ${frontMatterValue(normalizedFields[field])}`);
+
+  return `---\n${lines.join("\n")}\n---\n\n${String(body || "").trim()}\n`;
+}
+
+function backupContentFile(filePath, moduleId, slug) {
+  if (!fs.existsSync(filePath)) return;
+
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const backupPath = path.join(contentDir, ".backups", moduleId, `${slug}.${stamp}.md`);
+  fs.mkdirSync(path.dirname(backupPath), { recursive: true });
+  fs.copyFileSync(filePath, backupPath);
+}
+
+async function handleAdminContent(req, res, url) {
+  if (!adminEditingEnabled()) {
+    sendJson(res, 403, { error: "Admin editing is disabled. Set site.adminEditing to true in config." });
+    return;
+  }
+
+  if (!["GET", "POST", "PUT", "DELETE"].includes(req.method)) {
+    sendJson(res, 405, { error: "Method not allowed." });
+    return;
+  }
+
+  if (req.method === "GET") {
+    const moduleId = String(url.searchParams.get("module") || "");
+    const slug = String(url.searchParams.get("slug") || "");
+    if (!/^[a-z0-9_-]+$/.test(moduleId) || slugify(slug) !== slug || !loadedConfig.config.modules[moduleId]) {
+      sendJson(res, 400, { error: "Invalid module or slug." });
+      return;
+    }
+
+    const filePath = contentPathFor(moduleId, slug);
+    if (!fs.existsSync(filePath)) {
+      sendJson(res, 404, { error: "Content file not found." });
+      return;
+    }
+
+    sendJson(res, 200, parseMarkdownFile(filePath));
+    return;
+  }
+
+  try {
+    const input = await readRequestJson(req);
+    const mode = req.method === "POST" ? "create" : req.method === "PUT" ? "edit" : "delete";
+    const checked = validateAdminContentInput(input, mode);
+
+    if (checked.errors.length) {
+      sendJson(res, 400, { errors: checked.errors });
+      return;
+    }
+
+    if (req.method === "DELETE") {
+      backupContentFile(checked.filePath, checked.moduleId, checked.slug);
+      fs.unlinkSync(checked.filePath);
+      sendJson(res, 200, { ok: true, payload: sitePayload() });
+      return;
+    }
+
+    if (req.method === "PUT") {
+      backupContentFile(checked.filePath, checked.moduleId, checked.slug);
+    } else {
+      fs.mkdirSync(path.dirname(checked.filePath), { recursive: true });
+    }
+
+    fs.writeFileSync(checked.filePath, serializeMarkdown(checked.fields, checked.body, checked.slug));
+    sendJson(res, 200, { ok: true, item: parseMarkdownFile(checked.filePath), payload: sitePayload() });
+  } catch (error) {
+    sendJson(res, 400, { error: error.message });
+  }
+}
+
 function sortItems(items, sortMode) {
   const sorted = [...items];
 
@@ -518,6 +698,7 @@ function sitePayload() {
     moduleCount: Object.keys(modules).length,
     enabledModuleCount: Object.values(modules).filter((module) => module.enabled).length,
     contentItemCount: Object.values(content).reduce((total, items) => total + items.length, 0),
+    adminEditing: adminEditingEnabled(),
     modules: Object.fromEntries(
       Object.keys(modules).map((moduleId) => [
         moduleId,
@@ -556,11 +737,16 @@ try {
 }
 
 function createServer() {
-  return http.createServer((req, res) => {
+  return http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
 
     if (url.pathname === "/api/site") {
       sendJson(res, 200, sitePayload());
+      return;
+    }
+
+    if (url.pathname === "/api/admin/content") {
+      await handleAdminContent(req, res, url);
       return;
     }
 

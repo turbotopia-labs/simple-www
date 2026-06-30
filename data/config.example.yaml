@@ -6,6 +6,7 @@ site:
   timezone: Europe/Oslo
   baseUrl: http://127.0.0.1:6625
   layout: cards
+  adminEditing: false
 modules:
   news:
     label: News
@@ -44,7 +45,7 @@ modules:
     limit: null
   admin:
     label: Admin
-    enabled: true
+    enabled: false
     emptyState: No admin tools are enabled.
     order: 60
     sort: title-asc

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.8.0 - 2026-07-01
+
+- Added local admin editing behind explicit `site.adminEditing`.
+- Added create, edit, and delete API for Markdown entries.
+- Added admin front matter editor for supported fields.
+- Added content validation before saving.
+- Kept admin disabled by default.
+- Added backups before edit/delete.
+- Documented admin workflow, backups, and data-retention expectations.
+
 ## 0.7.0 - 2026-07-01
 
 - Added static export to `dist/`.

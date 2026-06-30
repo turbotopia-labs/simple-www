@@ -283,6 +283,80 @@ h3 {
   margin: 10px 0 0;
 }
 
+.admin-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+}
+
+.admin-form label {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--button);
+  color: var(--text);
+  font: 15px/1.4 Georgia, "Times New Roman", serif;
+  padding: 6px 8px;
+}
+
+.admin-form textarea {
+  resize: vertical;
+}
+
+.admin-form .full-row,
+.form-actions,
+.admin-message {
+  grid-column: 1 / -1;
+}
+
+.checkbox-label {
+  align-content: end;
+  grid-template-columns: auto 1fr;
+}
+
+.checkbox-label input {
+  width: auto;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.form-actions button,
+.admin-list button {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--button);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  padding: 5px 9px;
+}
+
+.admin-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.admin-list li {
+  margin-bottom: 5px;
+}
+
+.admin-message {
+  margin: 10px 0 0;
+}
+
 .content {
   overflow-wrap: anywhere;
 }

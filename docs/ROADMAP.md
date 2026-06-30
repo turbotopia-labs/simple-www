@@ -67,12 +67,12 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v0.8.0 - Admin Workflow
 
-- Add local admin editing workflow behind an explicit config toggle.
-- Support create, edit, and delete for Markdown entries.
-- Add front matter editor for supported fields.
-- Add content validation before saving.
-- Keep admin disabled by default.
-- Document backup and data-retention expectations.
+- Done: Add local admin editing workflow behind an explicit config toggle.
+- Done: Support create, edit, and delete for Markdown entries.
+- Done: Add front matter editor for supported fields.
+- Done: Add content validation before saving.
+- Done: Keep admin disabled by default.
+- Done: Document backup and data-retention expectations.
 
 ## v0.9.0 - Hardening
 

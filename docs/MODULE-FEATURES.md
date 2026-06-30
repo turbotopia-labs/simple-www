@@ -67,6 +67,8 @@ Use `link` for an external product page, checkout page, or contact page.
 
 The admin module is read-only in `v0.5.0`.
 
+From `v0.8.0`, admin can also edit local Markdown content when both `modules.admin.enabled` and `site.adminEditing` are set to `true`.
+
 It shows:
 
 - loaded config source
@@ -76,3 +78,5 @@ It shows:
 - published content item count
 - warning count
 - per-module enabled state, item count, order, sort, and limit
+
+See `docs/ADMIN-WORKFLOW.md` for editing, backups, and data-retention details.

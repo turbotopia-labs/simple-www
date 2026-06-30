@@ -7,7 +7,8 @@
       "author": "",
       "timezone": "Europe/Oslo",
       "baseUrl": "http://127.0.0.1:6625",
-      "layout": "cards"
+      "layout": "cards",
+      "adminEditing": false
     },
     "modules": {
       "news": {
@@ -52,7 +53,7 @@
       },
       "admin": {
         "label": "Admin",
-        "enabled": true,
+        "enabled": false,
         "emptyState": "No admin tools are enabled.",
         "order": 60,
         "sort": "title-asc",
@@ -213,35 +214,14 @@
         "price": "10.00",
         "body": "\nUse the store module for product listings and external product links.\n"
       }
-    ],
-    "admin": [
-      {
-        "slug": "readme",
-        "source": "admin/readme.md",
-        "title": "Admin",
-        "date": "2026-06-30",
-        "category": "system",
-        "summary": "Disabled by default.",
-        "draft": false,
-        "tags": [
-          "system"
-        ],
-        "status": "",
-        "link": "",
-        "repository": "",
-        "file": "",
-        "version": "",
-        "sku": "",
-        "price": "",
-        "body": "\nThe admin module is reserved for future editing tools.\n"
-      }
     ]
   },
   "diagnostics": {
     "configSource": "C:\\Users\\thoma\\Documents\\alfred.vaultsworth\\tubotopia-labs_git\\simple-www\\data\\config.json",
     "moduleCount": 6,
-    "enabledModuleCount": 6,
-    "contentItemCount": 8,
+    "enabledModuleCount": 5,
+    "contentItemCount": 7,
+    "adminEditing": false,
     "modules": {
       "news": {
         "enabled": true,
@@ -279,8 +259,8 @@
         "limit": null
       },
       "admin": {
-        "enabled": true,
-        "itemCount": 1,
+        "enabled": false,
+        "itemCount": 0,
         "order": 60,
         "sort": "title-asc",
         "limit": null
@@ -288,5 +268,5 @@
     }
   },
   "warnings": [],
-  "version": "0.7.0"
+  "version": "0.8.0"
 }
