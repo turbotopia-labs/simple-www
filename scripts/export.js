@@ -77,6 +77,27 @@ Sitemap: ${baseUrl}/sitemap.xml
 `;
 }
 
+function notFoundHtml(payload) {
+  return `<!doctype html>
+<html lang="${payload.config.site.language}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>404 Not found</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="layout" data-layout="list">
+      <section class="card">
+        <h1>404 Not found</h1>
+        <p>The requested page or file does not exist.</p>
+        <p><a href="index.html">Back to site</a></p>
+      </section>
+    </main>
+  </body>
+</html>`;
+}
+
 function exportSite() {
   const payload = sitePayload();
 
@@ -94,6 +115,7 @@ function exportSite() {
   writeFile(path.join(rssDir, "blog.xml"), rssFeed("blog"));
   writeFile(path.join(distDir, "sitemap.xml"), sitemapXml(payload));
   writeFile(path.join(distDir, "robots.txt"), robotsTxt(payload));
+  writeFile(path.join(distDir, "404.html"), notFoundHtml(payload));
 
   console.log(`Exported ${payload.version} to ${distDir}`);
   console.log(`Config: ${loadedConfig.source}`);

@@ -76,12 +76,12 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v0.9.0 - Hardening
 
-- Add structured error pages.
-- Add health endpoint.
-- Add content/config validation command.
-- Add basic accessibility pass for keyboard navigation and contrast.
-- Add browser smoke checks for home, modules, theme toggle, and API.
-- Freeze the public content/config contract for v1.0.0.
+- Done: Add structured error pages.
+- Done: Add health endpoint.
+- Done: Add content/config validation command.
+- Done: Add basic accessibility pass for keyboard navigation and contrast.
+- Done: Add browser smoke checks for home, modules, theme toggle, and API.
+- Done: Freeze the public content/config contract for v1.0.0.
 
 ## v1.0.0 - Stable Release
 

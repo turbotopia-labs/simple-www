@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.0 - 2026-07-01
+
+- Added structured error pages.
+- Added `/health` endpoint.
+- Added `node scripts/validate.js` content/config validation command.
+- Added basic accessibility improvements for keyboard navigation and contrast.
+- Added browser smoke checks for home, modules, theme toggle, and API.
+- Froze the public content/config contract for `v1.0.0`.
+
 ## 0.8.0 - 2026-07-01
 
 - Added local admin editing behind explicit `site.adminEditing`.

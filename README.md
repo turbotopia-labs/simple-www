@@ -26,6 +26,12 @@ node scripts/export.js
 
 Static files are written to `dist/`.
 
+## Validate
+
+```powershell
+node scripts/validate.js
+```
+
 ## Content
 
 Content lives in `content/<module>/*.md`.
@@ -59,6 +65,7 @@ Site settings and module toggles live in `data/config.json`. `data/config.yaml` 
 - `docs/NAVIGATION-DISCOVERY.md`
 - `docs/DEPLOYMENT.md`
 - `docs/ADMIN-WORKFLOW.md`
+- `docs/PUBLIC-CONTRACT.md`
 - `docs/CATEGORIES.md`
 - `docs/ROADMAP.md`
 - `docs/MODULES.md`

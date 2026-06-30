@@ -114,6 +114,31 @@ function sendJson(res, status, value) {
   send(res, status, JSON.stringify(value, null, 2), "application/json; charset=utf-8");
 }
 
+function errorPage(status, title, message) {
+  return `<!doctype html>
+<html lang="${escapeXml(loadedConfig?.config?.site?.language || "en")}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${escapeXml(status)} ${escapeXml(title)}</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="layout" data-layout="list">
+      <section class="card">
+        <h1>${escapeXml(status)} ${escapeXml(title)}</h1>
+        <p>${escapeXml(message)}</p>
+        <p><a href="/">Back to site</a></p>
+      </section>
+    </main>
+  </body>
+</html>`;
+}
+
+function sendError(res, status, title, message) {
+  send(res, status, errorPage(status, title, message), "text/html; charset=utf-8");
+}
+
 function escapeXml(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
@@ -576,6 +601,35 @@ function backupContentFile(filePath, moduleId, slug) {
   fs.copyFileSync(filePath, backupPath);
 }
 
+function validateSite() {
+  const payload = sitePayload();
+  const errors = [];
+  const modules = payload.config.modules || {};
+
+  Object.entries(payload.content).forEach(([moduleId, items]) => {
+    if (!modules[moduleId]) errors.push(`Unknown content module: ${moduleId}`);
+
+    items.forEach((item) => {
+      if (!item.title) errors.push(`${item.source}: title is required.`);
+      if (item.date && !/^\d{4}-\d{2}-\d{2}$/.test(item.date)) errors.push(`${item.source}: date must use YYYY-MM-DD.`);
+      if (item.slug !== slugify(item.slug)) errors.push(`${item.source}: slug is not normalized.`);
+    });
+  });
+
+  payload.warnings.forEach((warning) => {
+    if (warning.type === "duplicate-slug") {
+      errors.push(`${warning.module}/${warning.slug}: duplicate slug in ${warning.sources.join(", ")}`);
+    }
+  });
+
+  return {
+    ok: errors.length === 0,
+    errors,
+    warnings: payload.warnings,
+    version,
+  };
+}
+
 async function handleAdminContent(req, res, url) {
   if (!adminEditingEnabled()) {
     sendJson(res, 403, { error: "Admin editing is disabled. Set site.adminEditing to true in config." });
@@ -738,47 +792,63 @@ try {
 
 function createServer() {
   return http.createServer(async (req, res) => {
-    const url = new URL(req.url, `http://${req.headers.host}`);
+    try {
+      const url = new URL(req.url, `http://${req.headers.host}`);
 
-    if (url.pathname === "/api/site") {
-      sendJson(res, 200, sitePayload());
-      return;
+      if (url.pathname === "/health") {
+        const validation = validateSite();
+        sendJson(res, validation.ok ? 200 : 500, {
+          ok: validation.ok,
+          version,
+          configSource: loadedConfig.source,
+          errors: validation.errors,
+        });
+        return;
+      }
+
+      if (url.pathname === "/api/site") {
+        sendJson(res, 200, sitePayload());
+        return;
+      }
+
+      if (url.pathname === "/api/admin/content") {
+        await handleAdminContent(req, res, url);
+        return;
+      }
+
+      if (url.pathname === "/feeds/news.xml" || url.pathname === "/rss/news.xml") {
+        send(res, 200, rssFeed("news"), "application/rss+xml; charset=utf-8");
+        return;
+      }
+
+      if (url.pathname === "/feeds/blog.xml" || url.pathname === "/rss/blog.xml") {
+        send(res, 200, rssFeed("blog"), "application/rss+xml; charset=utf-8");
+        return;
+      }
+
+      const jsonFeedMatch = url.pathname.match(/^\/feeds\/([^/]+)\.json$/);
+      if (jsonFeedMatch) {
+        sendJson(res, 200, jsonFeed(jsonFeedMatch[1]));
+        return;
+      }
+
+      if (url.pathname === "/feed.json" || url.pathname === "/feeds.json") {
+        sendJson(res, 200, jsonFeed());
+        return;
+      }
+
+      const filePath = safePublicPath(url.pathname);
+      if (!filePath || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+        sendError(res, 404, "Not found", "The requested page or file does not exist.");
+        return;
+      }
+
+      const ext = path.extname(filePath).toLowerCase();
+      send(res, 200, fs.readFileSync(filePath), mimeTypes[ext] || "application/octet-stream");
+    } catch (error) {
+      console.error(error);
+      sendError(res, 500, "Server error", "The server could not complete the request.");
     }
-
-    if (url.pathname === "/api/admin/content") {
-      await handleAdminContent(req, res, url);
-      return;
-    }
-
-    if (url.pathname === "/feeds/news.xml" || url.pathname === "/rss/news.xml") {
-      send(res, 200, rssFeed("news"), "application/rss+xml; charset=utf-8");
-      return;
-    }
-
-    if (url.pathname === "/feeds/blog.xml" || url.pathname === "/rss/blog.xml") {
-      send(res, 200, rssFeed("blog"), "application/rss+xml; charset=utf-8");
-      return;
-    }
-
-    const jsonFeedMatch = url.pathname.match(/^\/feeds\/([^/]+)\.json$/);
-    if (jsonFeedMatch) {
-      sendJson(res, 200, jsonFeed(jsonFeedMatch[1]));
-      return;
-    }
-
-    if (url.pathname === "/feed.json" || url.pathname === "/feeds.json") {
-      sendJson(res, 200, jsonFeed());
-      return;
-    }
-
-    const filePath = safePublicPath(url.pathname);
-    if (!filePath || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
-      send(res, 404, "Not found");
-      return;
-    }
-
-    const ext = path.extname(filePath).toLowerCase();
-    send(res, 200, fs.readFileSync(filePath), mimeTypes[ext] || "application/octet-stream");
   });
 }
 
@@ -803,5 +873,6 @@ module.exports = {
   rssFeed,
   sitePayload,
   startServer,
+  validateSite,
   version,
 };

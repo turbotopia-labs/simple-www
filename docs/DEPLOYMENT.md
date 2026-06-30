@@ -17,6 +17,7 @@ The server provides:
 
 - `/`
 - `/api/site`
+- `/health`
 - `/feeds/news.xml`
 - `/feeds/blog.xml`
 - `/feed.json`
@@ -55,6 +56,16 @@ The export includes:
 Upload the contents of `dist/` to any static host.
 
 Static export mode is read-only. Admin editing is not available from exported files.
+
+## Validation
+
+Run validation before deployment:
+
+```powershell
+node scripts/validate.js
+```
+
+The command checks config, content metadata, and duplicate slug warnings.
 
 ## Base URL
 

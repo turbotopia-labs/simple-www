@@ -285,7 +285,7 @@ function renderModuleTools(moduleId, items) {
 
   return `
     <section class="module-tools">
-      <div class="search-row"><input type="search" id="module-search" value="${escapeHtml(state.search)}" placeholder="Search"></div>
+      <div class="search-row"><label for="module-search">Search</label><input type="search" id="module-search" value="${escapeHtml(state.search)}" placeholder="Search this module"></div>
       <div class="tool-row">${button("All", "all")}${categories.map((category) => button(category, "category", category)).join("")}</div>
       <div class="tool-row">${tags.map((tag) => button(`#${tag}`, "tag", tag)).join("")}</div>
       <div class="tool-row">${years.map((year) => button(year, "archive", year)).join("")}${months.map((month) => button(month, "archive", month)).join("")}</div>

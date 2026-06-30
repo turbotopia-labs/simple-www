@@ -1,0 +1,106 @@
+# Public Contract for v1.0.0
+
+This contract is frozen from `v0.9.0` unless a critical bug requires a documented change.
+
+## Content
+
+Markdown content lives in:
+
+```text
+content/<module>/<slug>.md
+```
+
+Supported front matter fields:
+
+- `title`
+- `date`
+- `category`
+- `summary`
+- `slug`
+- `draft`
+- `tags`
+- `status`
+- `link`
+- `repository`
+- `file`
+- `version`
+- `sku`
+- `price`
+
+See `docs/CONTENT-CONTRACT.md` for field details.
+
+## Config
+
+Config is read from:
+
+1. `CONFIG_FILE`
+2. `data/config.json`
+3. `data/config.yaml`
+4. `data/config.yml`
+5. built-in defaults
+
+Stable `site` fields:
+
+- `title`
+- `description`
+- `language`
+- `author`
+- `timezone`
+- `baseUrl`
+- `layout`
+- `adminEditing`
+
+Stable module fields:
+
+- `label`
+- `enabled`
+- `emptyState`
+- `order`
+- `sort`
+- `limit`
+
+See `docs/CONFIG.md` for defaults and validation.
+
+## HTTP Endpoints
+
+Stable server-mode endpoints:
+
+- `/`
+- `/api/site`
+- `/health`
+- `/feed.json`
+- `/feeds.json`
+- `/feeds/news.json`
+- `/feeds/blog.json`
+- `/feeds/news.xml`
+- `/feeds/blog.xml`
+- `/rss/news.xml`
+- `/rss/blog.xml`
+
+Admin editing endpoint:
+
+- `/api/admin/content`
+
+Admin editing remains disabled unless `site.adminEditing` is `true`.
+
+## Static Export
+
+Stable export output:
+
+- `dist/index.html`
+- `dist/app.js`
+- `dist/styles.css`
+- `dist/data/site.json`
+- `dist/feed.json`
+- `dist/feeds.json`
+- `dist/feeds/news.json`
+- `dist/feeds/blog.json`
+- `dist/feeds/news.xml`
+- `dist/feeds/blog.xml`
+- `dist/sitemap.xml`
+- `dist/robots.txt`
+- `dist/404.html`
+
+## Compatibility Rule
+
+Before `v1.0.0`, changes should be additive where possible. Breaking changes must update this file, `CHANGELOG.md`, and related docs.
