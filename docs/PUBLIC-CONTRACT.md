@@ -1,6 +1,6 @@
 # Public Contract for v1.0.0
 
-This contract is frozen from `v0.9.0` unless a critical bug requires a documented change.
+This contract is stable for `v1.0.0`. Changes after `v1.0.0` should be additive unless a documented breaking release is planned.
 
 ## Content
 
@@ -103,4 +103,4 @@ Stable export output:
 
 ## Compatibility Rule
 
-Before `v1.0.0`, changes should be additive where possible. Breaking changes must update this file, `CHANGELOG.md`, and related docs.
+After `v1.0.0`, changes should be additive where possible. Breaking changes must update this file, `CHANGELOG.md`, and related docs.

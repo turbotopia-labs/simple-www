@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.0 - 2026-07-01
+
+- Shipped stable Markdown content format.
+- Shipped stable JSON/YAML config format.
+- Shipped stable module toggle behavior.
+- Shipped server mode and static export mode.
+- Shipped Docker setup on port `6625`.
+- Completed user docs for install, content, config, modules, Docker, and deployment.
+- Kept runtime dependencies minimal and optional.
+- Moved future ideas to post-1.0 scope.
+- Removed the visible skip-to-content link.
+
 ## 0.9.0 - 2026-07-01
 
 - Added structured error pages.

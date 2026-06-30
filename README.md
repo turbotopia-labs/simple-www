@@ -2,6 +2,12 @@
 
 simple-www is a small static website engine with Markdown content, JSON/YAML configuration, and toggleable modules.
 
+Version: `1.0.0`
+
+## Install
+
+No package install is required for the runtime. Use Node.js 20+ or Docker.
+
 ## Run locally
 
 ```powershell
@@ -18,6 +24,8 @@ docker compose up --build
 
 The site listens on port `6625`.
 
+`content/` and `data/` are mounted by Docker so content and config are retained on the host.
+
 ## Export static files
 
 ```powershell
@@ -31,6 +39,10 @@ Static files are written to `dist/`.
 ```powershell
 node scripts/validate.js
 ```
+
+## Dependencies
+
+simple-www has no required npm dependencies. `package.json` only provides convenience scripts.
 
 ## Content
 

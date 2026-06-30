@@ -85,14 +85,14 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v1.0.0 - Stable Release
 
-- Ship stable Markdown content format.
-- Ship stable JSON/YAML config format.
-- Ship stable module toggle behavior.
-- Ship server mode and static export mode.
-- Ship Docker setup on port `6625`.
-- Ship complete user docs for install, content, config, modules, Docker, and deployment.
-- Keep dependencies minimal and optional.
-- Mark known future ideas as post-1.0 instead of expanding the release scope.
+- Done: Ship stable Markdown content format.
+- Done: Ship stable JSON/YAML config format.
+- Done: Ship stable module toggle behavior.
+- Done: Ship server mode and static export mode.
+- Done: Ship Docker setup on port `6625`.
+- Done: Ship complete user docs for install, content, config, modules, Docker, and deployment.
+- Done: Keep dependencies minimal and optional.
+- Done: Mark known future ideas as post-1.0 instead of expanding the release scope.
 
 ## Post-1.0 Ideas
 
