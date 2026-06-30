@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0 - 2026-07-01
+
+- Added static export to `dist/`.
+- Added support for server mode and exported static files.
+- Switched frontend asset references to relative URLs.
+- Added generated `sitemap.xml`.
+- Added generated `robots.txt`.
+- Added deployment documentation.
+
 ## 0.6.0 - 2026-07-01
 
 - Added client-side category filtering.

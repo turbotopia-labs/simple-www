@@ -1,0 +1,33 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "simple-www - News",
+  "home_page_url": "http://127.0.0.1:6625",
+  "feed_url": "http://127.0.0.1:6625/feeds/news.json",
+  "description": "A small Markdown-powered website.",
+  "authors": [],
+  "items": [
+    {
+      "id": "http://127.0.0.1:6625/#/news/welcome",
+      "url": "http://127.0.0.1:6625/#/news/welcome",
+      "title": "Welcome",
+      "summary": "The first simple-www news item.",
+      "content_text": "\nsimple-www is ready for Markdown-backed content.\n\n- Toggle modules in data/config.json\n- Add entries in content folders\n- Keep the design simple\n",
+      "date_published": "2026-06-30T00:00:00Z",
+      "tags": [
+        "starter",
+        "markdown"
+      ]
+    },
+    {
+      "id": "http://127.0.0.1:6625/#/news/older-update",
+      "url": "http://127.0.0.1:6625/#/news/older-update",
+      "title": "Older update",
+      "summary": "An older dated news entry.",
+      "content_text": "\nNews entries are sorted newest first.\n",
+      "date_published": "2026-06-01T00:00:00Z",
+      "tags": [
+        "news"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>simple-www - Blog</title>
+    <link>http://127.0.0.1:6625</link>
+    <description>A small Markdown-powered website.</description>
+    <language>en</language>
+    <item>
+      <title>First post</title>
+      <link>http://127.0.0.1:6625/#/blog/first-post</link>
+      <guid>http://127.0.0.1:6625/#/blog/first-post</guid>
+      <pubDate>Tue, 30 Jun 2026 00:00:00 GMT</pubDate>
+      <description>A starter blog post.</description>
+    </item>
+    <item>
+      <title>Archive example</title>
+      <link>http://127.0.0.1:6625/#/blog/archive-example</link>
+      <guid>http://127.0.0.1:6625/#/blog/archive-example</guid>
+      <pubDate>Mon, 15 Dec 2025 00:00:00 GMT</pubDate>
+      <description>A second blog post for archive and category views.</description>
+    </item>
+  </channel>
+</rss>

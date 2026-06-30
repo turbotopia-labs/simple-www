@@ -555,45 +555,67 @@ try {
   process.exit(1);
 }
 
-const server = http.createServer((req, res) => {
-  const url = new URL(req.url, `http://${req.headers.host}`);
+function createServer() {
+  return http.createServer((req, res) => {
+    const url = new URL(req.url, `http://${req.headers.host}`);
 
-  if (url.pathname === "/api/site") {
-    sendJson(res, 200, sitePayload());
-    return;
-  }
+    if (url.pathname === "/api/site") {
+      sendJson(res, 200, sitePayload());
+      return;
+    }
 
-  if (url.pathname === "/feeds/news.xml" || url.pathname === "/rss/news.xml") {
-    send(res, 200, rssFeed("news"), "application/rss+xml; charset=utf-8");
-    return;
-  }
+    if (url.pathname === "/feeds/news.xml" || url.pathname === "/rss/news.xml") {
+      send(res, 200, rssFeed("news"), "application/rss+xml; charset=utf-8");
+      return;
+    }
 
-  if (url.pathname === "/feeds/blog.xml" || url.pathname === "/rss/blog.xml") {
-    send(res, 200, rssFeed("blog"), "application/rss+xml; charset=utf-8");
-    return;
-  }
+    if (url.pathname === "/feeds/blog.xml" || url.pathname === "/rss/blog.xml") {
+      send(res, 200, rssFeed("blog"), "application/rss+xml; charset=utf-8");
+      return;
+    }
 
-  const jsonFeedMatch = url.pathname.match(/^\/feeds\/([^/]+)\.json$/);
-  if (jsonFeedMatch) {
-    sendJson(res, 200, jsonFeed(jsonFeedMatch[1]));
-    return;
-  }
+    const jsonFeedMatch = url.pathname.match(/^\/feeds\/([^/]+)\.json$/);
+    if (jsonFeedMatch) {
+      sendJson(res, 200, jsonFeed(jsonFeedMatch[1]));
+      return;
+    }
 
-  if (url.pathname === "/feed.json" || url.pathname === "/feeds.json") {
-    sendJson(res, 200, jsonFeed());
-    return;
-  }
+    if (url.pathname === "/feed.json" || url.pathname === "/feeds.json") {
+      sendJson(res, 200, jsonFeed());
+      return;
+    }
 
-  const filePath = safePublicPath(url.pathname);
-  if (!filePath || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
-    send(res, 404, "Not found");
-    return;
-  }
+    const filePath = safePublicPath(url.pathname);
+    if (!filePath || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+      send(res, 404, "Not found");
+      return;
+    }
 
-  const ext = path.extname(filePath).toLowerCase();
-  send(res, 200, fs.readFileSync(filePath), mimeTypes[ext] || "application/octet-stream");
-});
+    const ext = path.extname(filePath).toLowerCase();
+    send(res, 200, fs.readFileSync(filePath), mimeTypes[ext] || "application/octet-stream");
+  });
+}
 
-server.listen(port, () => {
-  console.log(`simple-www running at http://127.0.0.1:${port}`);
-});
+function startServer() {
+  createServer().listen(port, () => {
+    console.log(`simple-www running at http://127.0.0.1:${port}`);
+  });
+}
+
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = {
+  absoluteUrl,
+  createServer,
+  escapeXml,
+  jsonFeed,
+  loadedConfig,
+  publicDir,
+  root,
+  rssFeed,
+  sitePayload,
+  startServer,
+  version,
+};

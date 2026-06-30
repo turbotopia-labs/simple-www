@@ -18,6 +18,14 @@ docker compose up --build
 
 The site listens on port `6625`.
 
+## Export static files
+
+```powershell
+node scripts/export.js
+```
+
+Static files are written to `dist/`.
+
 ## Content
 
 Content lives in `content/<module>/*.md`.
@@ -49,6 +57,7 @@ Site settings and module toggles live in `data/config.json`. `data/config.yaml` 
 - `docs/THEME.md`
 - `docs/MODULE-FEATURES.md`
 - `docs/NAVIGATION-DISCOVERY.md`
+- `docs/DEPLOYMENT.md`
 - `docs/CATEGORIES.md`
 - `docs/ROADMAP.md`
 - `docs/MODULES.md`

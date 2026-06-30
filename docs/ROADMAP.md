@@ -58,12 +58,12 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v0.7.0 - Build and Export
 
-- Add static export to `dist/`.
-- Support running as server mode or exported static files.
-- Add clean handling for relative URLs and base URL.
-- Add generated sitemap.
-- Add generated robots.txt.
-- Document deployment options.
+- Done: Add static export to `dist/`.
+- Done: Support running as server mode or exported static files.
+- Done: Add clean handling for relative URLs and base URL.
+- Done: Add generated sitemap.
+- Done: Add generated robots.txt.
+- Done: Document deployment options.
 
 ## v0.8.0 - Admin Workflow
 
