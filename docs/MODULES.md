@@ -19,3 +19,5 @@ Initial modules:
 - `downloads`
 - `store`
 - `admin`
+
+See `docs/MODULE-FEATURES.md` for module-specific front matter and views.

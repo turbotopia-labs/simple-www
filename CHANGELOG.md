@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0 - 2026-07-01
+
+- Added module-specific rendering for projects, downloads, and store entries.
+- Added project `status`, `link`, and `repository` metadata.
+- Added download `file`, `link`, and `version` metadata.
+- Added store `sku`, `price`, and external `link` metadata without payment handling.
+- Added blog archive and category filter views.
+- Added read-only admin diagnostics for config and content health.
+- Documented module features and module-specific front matter.
+
 ## 0.4.0 - 2026-07-01
 
 - Refined the minimal pre-2010 card-based theme.

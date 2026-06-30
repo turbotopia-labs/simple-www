@@ -37,14 +37,14 @@ modules:
     limit: null
   store:
     label: Store
-    enabled: false
+    enabled: true
     emptyState: No store items are listed yet.
     order: 50
     sort: title-asc
     limit: null
   admin:
     label: Admin
-    enabled: false
+    enabled: true
     emptyState: No admin tools are enabled.
     order: 60
     sort: title-asc

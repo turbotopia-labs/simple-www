@@ -40,12 +40,12 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v0.5.0 - Module Features
 
-- News: dated entries with latest-first ordering.
-- Projects: status, link, and repository fields.
-- Blog: tags, archive view, and category view.
-- Downloads: file/link metadata and version field.
-- Store: product entries without payment handling.
-- Admin: read-only diagnostics page for config and content health.
+- Done: News: dated entries with latest-first ordering.
+- Done: Projects: status, link, and repository fields.
+- Done: Blog: tags, archive view, and category view.
+- Done: Downloads: file/link metadata and version field.
+- Done: Store: product entries without payment handling.
+- Done: Admin: read-only diagnostics page for config and content health.
 
 ## v0.6.0 - Navigation and Discovery
 

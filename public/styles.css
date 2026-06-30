@@ -207,6 +207,68 @@ h3 {
   font-size: 13px;
 }
 
+.module-tools {
+  grid-column: 1 / -1;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  box-shadow: 2px 2px 0 var(--shadow);
+  margin-bottom: 2px;
+  padding: 10px;
+}
+
+.tool-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.tool-row:last-child {
+  margin-bottom: 0;
+}
+
+.tool-row button {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--button);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  padding: 4px 8px;
+}
+
+.tool-row button[aria-pressed="true"] {
+  background: var(--accent-strong);
+  box-shadow: inset 1px 1px 0 var(--border-strong);
+}
+
+.details {
+  margin: 0 0 10px;
+}
+
+.details div {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 8px;
+  border-top: 1px dotted var(--border);
+  padding: 4px 0;
+}
+
+.details dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.action-link {
+  margin: 10px 0 0;
+}
+
 .content {
   overflow-wrap: anywhere;
 }
@@ -260,6 +322,15 @@ h3 {
     flex-wrap: nowrap;
     width: 100%;
     padding-bottom: 10px;
+  }
+
+  .tool-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .details div {
+    grid-template-columns: 80px 1fr;
   }
 
   h1 {

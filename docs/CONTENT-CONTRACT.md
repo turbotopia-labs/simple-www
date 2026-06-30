@@ -56,6 +56,13 @@ Supported fields:
 - `slug`: Optional slug override.
 - `draft`: Set to `true` to hide the file from the site.
 - `tags`: Optional list. Use `[one, two]` or `one, two`.
+- `status`: Project status.
+- `link`: Related page or external URL.
+- `repository`: Project repository URL.
+- `file`: Download file URL.
+- `version`: Download or release version.
+- `sku`: Store product SKU.
+- `price`: Store product price text.
 
 ## Body
 

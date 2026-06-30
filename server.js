@@ -367,6 +367,13 @@ function parseMarkdownFile(filePath) {
     summary: String(meta.summary || ""),
     draft: meta.draft === true,
     tags: normalizeTags(meta.tags),
+    status: String(meta.status || ""),
+    link: String(meta.link || ""),
+    repository: String(meta.repository || ""),
+    file: String(meta.file || ""),
+    version: String(meta.version || ""),
+    sku: String(meta.sku || ""),
+    price: String(meta.price || ""),
     body,
   };
 }
@@ -429,11 +436,30 @@ function sitePayload() {
     }
   });
 
+  const diagnostics = {
+    configSource: loadedConfig.source,
+    moduleCount: Object.keys(modules).length,
+    enabledModuleCount: Object.values(modules).filter((module) => module.enabled).length,
+    contentItemCount: Object.values(content).reduce((total, items) => total + items.length, 0),
+    modules: Object.fromEntries(
+      Object.keys(modules).map((moduleId) => [
+        moduleId,
+        {
+          enabled: modules[moduleId].enabled,
+          itemCount: (content[moduleId] || []).length,
+          order: modules[moduleId].order,
+          sort: modules[moduleId].sort,
+          limit: modules[moduleId].limit,
+        },
+      ])
+    ),
+  };
+
   warnings.forEach((warning) => {
     console.warn(`[${warning.type}] ${warning.module}/${warning.slug}: ${warning.sources.join(", ")}`);
   });
 
-  return { config, content, warnings, version };
+  return { config, content, diagnostics, warnings, version };
 }
 
 function safePublicPath(urlPath) {
