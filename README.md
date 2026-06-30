@@ -1,6 +1,6 @@
 # simple-www
 
-simple-www is a small static website engine with Markdown content, JSON configuration, and toggleable modules.
+simple-www is a small static website engine with Markdown content, JSON/YAML configuration, and toggleable modules.
 
 ## Run locally
 
@@ -39,12 +39,13 @@ Body content here.
 
 ## Configuration
 
-Site settings and module toggles live in `data/config.json`.
+Site settings and module toggles live in `data/config.json`. `data/config.yaml` and `data/config.yml` are also supported when JSON is not present.
 
 ## Documentation
 
 - `docs/CONTENT-GUIDE.md`
 - `docs/CONTENT-CONTRACT.md`
+- `docs/CONFIG.md`
 - `docs/CATEGORIES.md`
 - `docs/ROADMAP.md`
 - `docs/MODULES.md`

@@ -3,6 +3,7 @@ const nav = document.querySelector("#module-nav");
 const title = document.querySelector("#site-title");
 const description = document.querySelector("#site-description");
 const themeToggle = document.querySelector("#theme-toggle");
+const footerLabel = document.querySelector("#site-footer-label");
 
 let state = {
   activeModule: "",
@@ -77,7 +78,9 @@ function markdownToHtml(markdown) {
 }
 
 function enabledModuleIds() {
-  return Object.keys(state.modules).filter((moduleId) => state.modules[moduleId].enabled);
+  return Object.keys(state.modules)
+    .filter((moduleId) => state.modules[moduleId].enabled)
+    .sort((a, b) => state.modules[a].order - state.modules[b].order);
 }
 
 function renderNav() {
@@ -122,7 +125,7 @@ function renderModule(moduleId) {
 
 function setTheme(theme) {
   document.documentElement.dataset.theme = theme;
-  themeToggle.textContent = theme === "dark" ? "☀" : "☾";
+  themeToggle.textContent = theme === "dark" ? "\u2600" : "\u263e";
   localStorage.setItem("simple-www-theme", theme);
 }
 
@@ -141,12 +144,16 @@ async function boot() {
   const response = await fetch("/api/site");
   const payload = await response.json();
   const config = payload.config || {};
+  const site = config.site || {};
 
   state.modules = config.modules || {};
   state.content = payload.content || {};
   state.warnings = payload.warnings || [];
-  title.textContent = config.siteTitle || "simple-www";
-  description.textContent = config.siteDescription || "";
+  title.textContent = site.title || config.siteTitle || "simple-www";
+  description.textContent = site.description || config.siteDescription || "";
+  document.title = `${title.textContent} v.${payload.version || ""}`;
+  document.documentElement.lang = site.language || "en";
+  footerLabel.textContent = `${title.textContent} v.${payload.version || ""}`;
 
   state.warnings.forEach((warning) => {
     console.warn(`[simple-www:${warning.type}]`, warning);

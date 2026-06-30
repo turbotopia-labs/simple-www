@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 - 2026-07-01
+
+- Added YAML config support while keeping JSON as the default.
+- Added startup config validation with clear errors.
+- Added `site` metadata for title, description, language, author, timezone, and base URL.
+- Added per-module `order`, `sort`, and `limit` config.
+- Added documented config defaults.
+- Added `simple-www v.{VERSION}` footer title.
+
 ## 0.2.0 - 2026-07-01
 
 - Added stable Markdown content contract documentation.

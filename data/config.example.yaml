@@ -1,0 +1,50 @@
+site:
+  title: simple-www
+  description: A small Markdown-powered website.
+  language: en
+  author: ""
+  timezone: Europe/Oslo
+  baseUrl: http://127.0.0.1:6625
+modules:
+  news:
+    label: News
+    enabled: true
+    emptyState: No news has been published yet.
+    order: 10
+    sort: date-desc
+    limit: null
+  projects:
+    label: Projects
+    enabled: true
+    emptyState: No projects have been added yet.
+    order: 20
+    sort: date-desc
+    limit: null
+  blog:
+    label: Blog
+    enabled: true
+    emptyState: No blog posts have been published yet.
+    order: 30
+    sort: date-desc
+    limit: null
+  downloads:
+    label: Downloads
+    enabled: true
+    emptyState: No downloads are available yet.
+    order: 40
+    sort: date-desc
+    limit: null
+  store:
+    label: Store
+    enabled: false
+    emptyState: No store items are listed yet.
+    order: 50
+    sort: title-asc
+    limit: null
+  admin:
+    label: Admin
+    enabled: false
+    emptyState: No admin tools are enabled.
+    order: 60
+    sort: title-asc
+    limit: null

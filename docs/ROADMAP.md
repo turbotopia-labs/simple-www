@@ -23,11 +23,11 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v0.3.0 - Config
 
-- Add YAML config support while keeping JSON support.
-- Validate config at startup with clear errors.
-- Add site metadata: title, description, language, author, timezone, and base URL.
-- Add per-module ordering and item limits.
-- Add documented defaults for missing config values.
+- Done: Add YAML config support while keeping JSON support.
+- Done: Validate config at startup with clear errors.
+- Done: Add site metadata: title, description, language, author, timezone, and base URL.
+- Done: Add per-module ordering and item limits.
+- Done: Add documented defaults for missing config values.
 
 ## v0.4.0 - Theme and Layout
 
