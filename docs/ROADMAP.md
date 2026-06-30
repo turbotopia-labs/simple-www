@@ -1,4 +1,4 @@
-# Roadmap to v1.0.0
+# Roadmap
 
 simple-www should stay small, file-based, and easy to run. The roadmap favors stable content handling, predictable modules, and clear docs over broad framework work.
 
@@ -94,11 +94,105 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 - Done: Keep dependencies minimal and optional.
 - Done: Mark known future ideas as post-1.0 instead of expanding the release scope.
 
-## Post-1.0 Ideas
+## v1.x - Post-1.0 Maintenance
 
-- Plugin-style custom modules.
-- Theme packs.
-- Import/export tools.
-- Comment support.
-- Payment integration for store.
-- Multi-site support.
+- Keep the v1 content/config contract stable.
+- Fix bugs without changing the public contract.
+- Improve docs where real usage shows gaps.
+- Keep dependencies minimal and optional.
+- Keep Docker behavior stable on port `6625`.
+- Add small compatibility helpers only when they do not expand scope.
+
+## v1.1.0 - Expanded Content Contract
+
+- Add optional front matter fields for common publishing needs:
+  - `updated`
+  - `author`
+  - `image`
+  - `imageAlt`
+  - `pinned`
+  - `priority`
+  - `canonicalUrl`
+- Add richer validation for URLs, dates, booleans, and required module fields.
+- Add per-module required/optional field documentation.
+- Add examples for every supported module.
+- Add migration notes from the v1.0.0 contract.
+
+## v1.2.0 - Import and Export Tools
+
+- Add content import from JSON.
+- Add content import from CSV.
+- Add content export to JSON.
+- Add content export to CSV.
+- Add dry-run validation for imports.
+- Add duplicate handling rules for import.
+- Document backup expectations before imports.
+
+## v1.3.0 - Theme Packs
+
+- Add `themes/` folder support.
+- Add config-driven theme selection.
+- Ship a small default theme pack set.
+- Keep the current pre-2010 theme as the default.
+- Document safe theme pack structure.
+- Add theme validation for required CSS variables.
+
+## v1.4.0 - Plugin-Style Custom Modules
+
+- Add `modules/` folder for custom module definitions.
+- Support custom module labels, fields, views, and validation rules.
+- Keep built-in modules working without plugins.
+- Add module manifest validation.
+- Document the custom module API.
+- Add example custom module.
+
+## v1.5.0 - Comments
+
+- Add optional comment support behind an explicit config toggle.
+- Start with local/file-backed comments only.
+- Add moderation fields: approved, hidden, author, date.
+- Add admin review for comments.
+- Keep comments disabled by default.
+- Document privacy and backup expectations.
+
+## v1.6.0 - Store Integrations
+
+- Keep store entries usable without payment handling.
+- Add optional external checkout links.
+- Add optional payment-provider handoff fields.
+- Avoid storing payment data.
+- Document provider responsibilities and security boundaries.
+- Keep payment integration disabled by default.
+
+## v1.7.0 - Multi-Site Support
+
+- Add config for multiple site roots.
+- Support per-site `content/`, `data/`, and export output.
+- Add per-site base URL handling.
+- Add Docker docs for multi-site deployments.
+- Keep single-site mode as the default.
+- Document migration from single-site to multi-site.
+
+## v2.0.0 - Stable v2 Release
+
+- Ship expanded content contract.
+- Ship import/export tools.
+- Ship theme pack support.
+- Ship custom module support.
+- Ship optional comments.
+- Ship optional store integration handoff.
+- Ship multi-site support.
+- Keep v1 compatibility documented.
+- Mark any breaking changes clearly.
+
+## Later Ideas
+
+- Full-text search index generation.
+- Draft preview links.
+- Scheduled publishing.
+- Media library for local assets.
+- Content collections independent of modules.
+- Webhook or CLI hooks after export.
+- Simple analytics export without tracking scripts.
+- Translation/i18n support.
+- Role-based admin accounts if admin grows beyond local-only use.

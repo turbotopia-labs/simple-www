@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Expanded roadmap with v2 planning and post-1.0 milestones.
+
 ## 1.0.0 - 2026-07-01
 
 - Shipped stable Markdown content format.
