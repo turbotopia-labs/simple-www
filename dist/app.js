@@ -15,6 +15,7 @@ let state = {
   layout: "cards",
   filterType: "all",
   filterValue: "",
+  itemSlug: "",
   search: "",
   adminMessage: "",
 };
@@ -28,60 +29,170 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;");
 }
 
+function safeUrl(value) {
+  const url = String(value || "").trim();
+  if (/^(https?:|mailto:|\/|#|\.\.?\/)/i.test(url)) return url;
+  if (/^[a-z0-9./_-]+$/i.test(url)) return url;
+  return "#";
+}
+
+function tokenStore() {
+  const tokens = [];
+  return {
+    add(html) {
+      const key = `@@TOKEN${tokens.length}@@`;
+      tokens.push({ key, html });
+      return key;
+    },
+    restore(html) {
+      return tokens.reduce((value, token) => value.replaceAll(token.key, token.html), html);
+    },
+  };
+}
+
+function inlineMarkdown(value) {
+  const store = tokenStore();
+  let text = String(value || "");
+
+  text = text.replace(/`([^`]+)`/g, (_, code) => store.add(`<code>${escapeHtml(code)}</code>`));
+  text = text.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]+)")?\)/g, (_, alt, src, title) => {
+    const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
+    return store.add(`<img src="${escapeHtml(safeUrl(src))}" alt="${escapeHtml(alt)}"${titleAttr}>`);
+  });
+  text = text.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+"([^"]+)")?\)/g, (_, label, href, title) => {
+    const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
+    return store.add(`<a href="${escapeHtml(safeUrl(href))}"${titleAttr}>${escapeHtml(label)}</a>`);
+  });
+
+  let html = escapeHtml(text)
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/__([^_]+)__/g, "<strong>$1</strong>")
+    .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+    .replace(/_([^_]+)_/g, "<em>$1</em>")
+    .replace(/~~([^~]+)~~/g, "<del>$1</del>");
+
+  return store.restore(html);
+}
+
+function isTableSeparator(line) {
+  return /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line);
+}
+
+function tableCells(line) {
+  return line
+    .trim()
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((cell) => cell.trim());
+}
+
+function renderTable(lines) {
+  const header = tableCells(lines[0]);
+  const rows = lines.slice(2).map(tableCells);
+  return `
+    <table>
+      <thead><tr>${header.map((cell) => `<th>${inlineMarkdown(cell)}</th>`).join("")}</tr></thead>
+      <tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${inlineMarkdown(cell)}</td>`).join("")}</tr>`).join("")}</tbody>
+    </table>
+  `;
+}
+
 function markdownToHtml(markdown) {
   const lines = markdown.split(/\r?\n/);
-  let inList = false;
   const html = [];
+  let i = 0;
 
-  lines.forEach((line) => {
+  while (i < lines.length) {
+    const line = lines[i];
     const trimmed = line.trim();
 
     if (!trimmed) {
-      if (inList) {
-        html.push("</ul>");
-        inList = false;
+      i += 1;
+      continue;
+    }
+
+    const fence = trimmed.match(/^```(\w+)?\s*$/);
+    if (fence) {
+      const code = [];
+      i += 1;
+      while (i < lines.length && !lines[i].trim().startsWith("```")) {
+        code.push(lines[i]);
+        i += 1;
       }
-      return;
+      i += 1;
+      const language = fence[1] ? ` class="language-${escapeHtml(fence[1])}"` : "";
+      html.push(`<pre><code${language}>${escapeHtml(code.join("\n"))}</code></pre>`);
+      continue;
     }
 
-    if (trimmed.startsWith("### ")) {
-      if (inList) html.push("</ul>");
-      inList = false;
-      html.push(`<h3>${escapeHtml(trimmed.slice(4))}</h3>`);
-      return;
-    }
-
-    if (trimmed.startsWith("## ")) {
-      if (inList) html.push("</ul>");
-      inList = false;
-      html.push(`<h2>${escapeHtml(trimmed.slice(3))}</h2>`);
-      return;
-    }
-
-    if (trimmed.startsWith("# ")) {
-      if (inList) html.push("</ul>");
-      inList = false;
-      html.push(`<h2>${escapeHtml(trimmed.slice(2))}</h2>`);
-      return;
-    }
-
-    if (trimmed.startsWith("- ")) {
-      if (!inList) {
-        html.push("<ul>");
-        inList = true;
+    if (lines[i + 1] && isTableSeparator(lines[i + 1])) {
+      const tableLines = [lines[i], lines[i + 1]];
+      i += 2;
+      while (i < lines.length && lines[i].includes("|") && lines[i].trim()) {
+        tableLines.push(lines[i]);
+        i += 1;
       }
-      html.push(`<li>${escapeHtml(trimmed.slice(2))}</li>`);
-      return;
+      html.push(renderTable(tableLines));
+      continue;
     }
 
-    if (inList) {
-      html.push("</ul>");
-      inList = false;
+    const heading = trimmed.match(/^(#{1,6})\s+(.+)$/);
+    if (heading) {
+      const level = Math.min(6, heading[1].length);
+      html.push(`<h${level}>${inlineMarkdown(heading[2])}</h${level}>`);
+      i += 1;
+      continue;
     }
-    html.push(`<p>${escapeHtml(trimmed)}</p>`);
-  });
 
-  if (inList) html.push("</ul>");
+    if (/^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
+      html.push("<hr>");
+      i += 1;
+      continue;
+    }
+
+    if (/^>\s?/.test(trimmed)) {
+      const quote = [];
+      while (i < lines.length && /^>\s?/.test(lines[i].trim())) {
+        quote.push(lines[i].trim().replace(/^>\s?/, ""));
+        i += 1;
+      }
+      html.push(`<blockquote>${markdownToHtml(quote.join("\n"))}</blockquote>`);
+      continue;
+    }
+
+    const unordered = trimmed.match(/^[-*+]\s+(.+)$/);
+    const ordered = trimmed.match(/^\d+[.)]\s+(.+)$/);
+    if (unordered || ordered) {
+      const tag = unordered ? "ul" : "ol";
+      const items = [];
+      while (i < lines.length) {
+        const item = lines[i].trim().match(unordered ? /^[-*+]\s+(.+)$/ : /^\d+[.)]\s+(.+)$/);
+        if (!item) break;
+        items.push(`<li>${inlineMarkdown(item[1])}</li>`);
+        i += 1;
+      }
+      html.push(`<${tag}>${items.join("")}</${tag}>`);
+      continue;
+    }
+
+    const paragraph = [trimmed];
+    i += 1;
+    while (
+      i < lines.length &&
+      lines[i].trim() &&
+      !/^(#{1,6})\s+/.test(lines[i].trim()) &&
+      !/^([-*+]|\d+[.)])\s+/.test(lines[i].trim()) &&
+      !/^>\s?/.test(lines[i].trim()) &&
+      !/^```/.test(lines[i].trim()) &&
+      !/^(-{3,}|\*{3,}|_{3,})$/.test(lines[i].trim())
+    ) {
+      paragraph.push(lines[i].trim());
+      i += 1;
+    }
+    html.push(`<p>${inlineMarkdown(paragraph.join(" "))}</p>`);
+  }
+
   return html.join("");
 }
 
@@ -94,10 +205,11 @@ function enabledModuleIds() {
 function routeFromHash() {
   const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
   const moduleId = parts[0] || "";
-  const filterType = ["category", "tag", "archive"].includes(parts[1]) ? parts[1] : "all";
+  const itemSlug = parts[1] && !["category", "tag", "archive"].includes(parts[1]) ? parts[1] : "";
+  const filterType = itemSlug ? "all" : ["category", "tag", "archive"].includes(parts[1]) ? parts[1] : "all";
   const filterValue = filterType === "all" ? "" : parts[2] || "";
 
-  return { moduleId, filterType, filterValue };
+  return { moduleId, filterType, filterValue, itemSlug };
 }
 
 function setRouteHash(moduleId, filterType = "all", filterValue = "") {
@@ -110,13 +222,22 @@ function setRouteHash(moduleId, filterType = "all", filterValue = "") {
   location.hash = `/${encodedModule}/${encodeURIComponent(filterType)}/${encodeURIComponent(filterValue)}`;
 }
 
+function setItemHash(moduleId, slug) {
+  location.hash = `/${encodeURIComponent(moduleId)}/${encodeURIComponent(slug)}`;
+}
+
 function applyRoute(route) {
   if (!route.moduleId || !state.modules[route.moduleId]) return false;
 
   state.filterType = route.filterType;
   state.filterValue = route.filterValue;
+  state.itemSlug = route.itemSlug;
   state.search = "";
-  renderModule(route.moduleId);
+  if (route.itemSlug) {
+    renderDetail(route.moduleId, route.itemSlug);
+  } else {
+    renderModule(route.moduleId);
+  }
   return true;
 }
 
@@ -143,7 +264,38 @@ function detailList(details) {
 
 function actionLink(href, label) {
   if (!href) return "";
-  return `<p class="action-link"><a href="${escapeHtml(href)}">${escapeHtml(label)}</a></p>`;
+  return `<p class="action-link"><a href="${escapeHtml(safeUrl(href))}">${escapeHtml(label)}</a></p>`;
+}
+
+function stripMarkdown(markdown) {
+  return String(markdown || "")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/!\[[^\]]*]\([^)]*\)/g, " ")
+    .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
+    .replace(/[#>*_`~|-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function itemSummary(item) {
+  const summary = item.summary || stripMarkdown(item.body);
+  return summary.length > 180 ? `${summary.slice(0, 177).trim()}...` : summary;
+}
+
+function itemActions(moduleId, item) {
+  if (moduleId === "projects") {
+    return [actionLink(item.link, "Project link"), actionLink(item.repository, "Repository")].join("");
+  }
+
+  if (moduleId === "downloads") {
+    return [actionLink(item.file, "Download file"), actionLink(item.link, "More info")].join("");
+  }
+
+  if (moduleId === "store") {
+    return actionLink(item.link, "Product link");
+  }
+
+  return "";
 }
 
 function editableModuleIds() {
@@ -312,32 +464,65 @@ function visibleItems(moduleId, items) {
 
 function renderItem(moduleId, item) {
   const details = [];
-  let actions = "";
 
   if (moduleId === "projects") {
     details.push({ label: "Status", value: item.status });
-    actions = [actionLink(item.link, "Project link"), actionLink(item.repository, "Repository")].join("");
   }
 
   if (moduleId === "downloads") {
     details.push({ label: "Version", value: item.version });
-    actions = [actionLink(item.file, "Download file"), actionLink(item.link, "More info")].join("");
   }
 
   if (moduleId === "store") {
     details.push({ label: "SKU", value: item.sku }, { label: "Price", value: item.price });
-    actions = actionLink(item.link, "Product link");
   }
 
   return `
     <article class="card">
       <h2>${escapeHtml(item.title)}</h2>
       <div class="meta">${escapeHtml([item.date, item.category].filter(Boolean).join(" / "))}</div>
-      ${item.summary ? `<p>${escapeHtml(item.summary)}</p>` : ""}
+      <p>${inlineMarkdown(itemSummary(item))}</p>
       ${detailList(details)}
       ${item.tags && item.tags.length ? `<div class="tags">${item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
+      <p class="action-link"><a href="#/${escapeHtml(moduleId)}/${escapeHtml(item.slug)}">Read more</a></p>
+    </article>
+  `;
+}
+
+function renderDetail(moduleId, slug) {
+  const module = state.modules[moduleId];
+  const item = (state.content[moduleId] || []).find((entry) => entry.slug === slug);
+
+  state.activeModule = moduleId;
+  renderNav();
+  app.dataset.layout = "list";
+
+  if (!item) {
+    app.innerHTML = `
+      <section class="card">
+        <h2>${escapeHtml(module.label)}</h2>
+        <p class="empty">Content not found.</p>
+        <p class="action-link"><a href="#/${escapeHtml(moduleId)}">Back to ${escapeHtml(module.label)}</a></p>
+      </section>
+    `;
+    return;
+  }
+
+  app.innerHTML = `
+    <article class="card detail-card">
+      <p class="action-link"><a href="#/${escapeHtml(moduleId)}">Back to ${escapeHtml(module.label)}</a></p>
+      <h2>${escapeHtml(item.title)}</h2>
+      <div class="meta">${escapeHtml([item.date, item.category].filter(Boolean).join(" / "))}</div>
+      ${item.summary ? `<p class="summary">${inlineMarkdown(item.summary)}</p>` : ""}
+      ${detailList([
+        { label: "Status", value: item.status },
+        { label: "Version", value: item.version },
+        { label: "SKU", value: item.sku },
+        { label: "Price", value: item.price },
+      ])}
+      ${item.tags && item.tags.length ? `<div class="tags">${item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
       <div class="content">${markdownToHtml(item.body)}</div>
-      ${actions}
+      ${itemActions(moduleId, item)}
     </article>
   `;
 }
@@ -436,6 +621,7 @@ nav.addEventListener("click", (event) => {
   if (!button) return;
   state.filterType = "all";
   state.filterValue = "";
+  state.itemSlug = "";
   state.search = "";
   setRouteHash(button.dataset.module);
   renderModule(button.dataset.module);

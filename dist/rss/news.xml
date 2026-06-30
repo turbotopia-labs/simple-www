@@ -1,23 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>simple-www - News</title>
-    <link>http://127.0.0.1:6625</link>
-    <description>A small Markdown-powered website.</description>
+    <title>labs.turbotopia.no - News</title>
+    <link>labs.turbotopia.no</link>
+    <description>project overview</description>
     <language>en</language>
-    <item>
-      <title>Welcome</title>
-      <link>http://127.0.0.1:6625/#/news/welcome</link>
-      <guid>http://127.0.0.1:6625/#/news/welcome</guid>
-      <pubDate>Tue, 30 Jun 2026 00:00:00 GMT</pubDate>
-      <description>The first simple-www news item.</description>
-    </item>
-    <item>
-      <title>Older update</title>
-      <link>http://127.0.0.1:6625/#/news/older-update</link>
-      <guid>http://127.0.0.1:6625/#/news/older-update</guid>
-      <pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate>
-      <description>An older dated news entry.</description>
-    </item>
+    
   </channel>
 </rss>

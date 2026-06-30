@@ -1,90 +1,9 @@
 {
   "version": "https://jsonfeed.org/version/1.1",
-  "title": "simple-www",
-  "home_page_url": "http://127.0.0.1:6625",
-  "feed_url": "http://127.0.0.1:6625/feed.json",
-  "description": "A small Markdown-powered website.",
+  "title": "labs.turbotopia.no",
+  "home_page_url": "labs.turbotopia.no",
+  "feed_url": "labs.turbotopia.no/feed.json",
+  "description": "project overview",
   "authors": [],
-  "items": [
-    {
-      "id": "http://127.0.0.1:6625/#/news/welcome",
-      "url": "http://127.0.0.1:6625/#/news/welcome",
-      "title": "Welcome",
-      "summary": "The first simple-www news item.",
-      "content_text": "\nsimple-www is ready for Markdown-backed content.\n\n- Toggle modules in data/config.json\n- Add entries in content folders\n- Keep the design simple\n",
-      "date_published": "2026-06-30T00:00:00Z",
-      "tags": [
-        "starter",
-        "markdown"
-      ]
-    },
-    {
-      "id": "http://127.0.0.1:6625/#/projects/example-project",
-      "url": "http://127.0.0.1:6625/#/projects/example-project",
-      "title": "Example project",
-      "summary": "A placeholder project entry.",
-      "content_text": "\nReplace this file with a real project description.\n",
-      "date_published": "2026-06-30T00:00:00Z",
-      "tags": [
-        "example"
-      ]
-    },
-    {
-      "id": "http://127.0.0.1:6625/#/blog/first-post",
-      "url": "http://127.0.0.1:6625/#/blog/first-post",
-      "title": "First post",
-      "summary": "A starter blog post.",
-      "content_text": "\nThis blog module reads Markdown files from content/blog.\n",
-      "date_published": "2026-06-30T00:00:00Z",
-      "tags": [
-        "notes",
-        "starter"
-      ]
-    },
-    {
-      "id": "http://127.0.0.1:6625/#/downloads/readme",
-      "url": "http://127.0.0.1:6625/#/downloads/readme",
-      "title": "Downloads",
-      "summary": "Add download notes here.",
-      "content_text": "\nUse this module for files, release notes, or links.\n",
-      "date_published": "2026-06-30T00:00:00Z",
-      "tags": [
-        "files"
-      ]
-    },
-    {
-      "id": "http://127.0.0.1:6625/#/store/readme",
-      "url": "http://127.0.0.1:6625/#/store/readme",
-      "title": "Example product",
-      "summary": "A simple product entry without payment handling.",
-      "content_text": "\nUse the store module for product listings and external product links.\n",
-      "date_published": "2026-06-30T00:00:00Z",
-      "tags": [
-        "catalog",
-        "product"
-      ]
-    },
-    {
-      "id": "http://127.0.0.1:6625/#/news/older-update",
-      "url": "http://127.0.0.1:6625/#/news/older-update",
-      "title": "Older update",
-      "summary": "An older dated news entry.",
-      "content_text": "\nNews entries are sorted newest first.\n",
-      "date_published": "2026-06-01T00:00:00Z",
-      "tags": [
-        "news"
-      ]
-    },
-    {
-      "id": "http://127.0.0.1:6625/#/blog/archive-example",
-      "url": "http://127.0.0.1:6625/#/blog/archive-example",
-      "title": "Archive example",
-      "summary": "A second blog post for archive and category views.",
-      "content_text": "\nThis entry gives the blog module another year and category to filter.\n",
-      "date_published": "2025-12-15T00:00:00Z",
-      "tags": [
-        "archive"
-      ]
-    }
-  ]
+  "items": []
 }

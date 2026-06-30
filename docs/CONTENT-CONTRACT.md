@@ -52,7 +52,7 @@ Supported fields:
 - `title`: Display title. Defaults to the slug.
 - `date`: Sort date. Newest dates appear first.
 - `category`: Single category. Defaults to `general`.
-- `summary`: Short text shown before the body.
+- `summary`: Short text shown on module list cards and before the full body.
 - `slug`: Optional slug override.
 - `draft`: Set to `true` to hide the file from the site.
 - `tags`: Optional list. Use `[one, two]` or `one, two`.
@@ -66,11 +66,23 @@ Supported fields:
 
 ## Body
 
-The body starts after front matter. The current renderer supports:
+The body starts after front matter. Module list cards show a short summary or excerpt. The full body is shown on the entry page at:
 
-- `#`, `##`, and `###` headings.
+```text
+#/<module>/<slug>
+```
+
+The renderer supports common Markdown:
+
+- Headings `#` through `######`.
 - Paragraphs.
-- Unordered lists with `-`.
+- Bold, italic, strikethrough, and inline code.
+- Links and images.
+- Unordered and ordered lists.
+- Blockquotes.
+- Fenced code blocks.
+- Horizontal rules.
+- Tables.
 
 ## Empty Modules
 

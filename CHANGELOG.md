@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Expanded roadmap with v2 planning and post-1.0 milestones.
+- Added broader Markdown rendering for common Markdown syntax.
+- Changed module cards to show summary/excerpt and link to full entry pages.
 
 ## 1.0.0 - 2026-07-01
 

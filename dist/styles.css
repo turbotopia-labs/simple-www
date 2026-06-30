@@ -378,6 +378,70 @@ h3 {
   overflow-wrap: anywhere;
 }
 
+.content blockquote {
+  border-left: 3px solid var(--border-strong);
+  margin: 0 0 12px;
+  padding: 4px 0 4px 12px;
+  color: var(--muted);
+}
+
+.content code {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--button);
+  padding: 1px 4px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+}
+
+.content pre {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--button);
+  padding: 10px;
+}
+
+.content pre code {
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.content img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+}
+
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+}
+
+.content th,
+.content td {
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.content th {
+  background: var(--accent);
+}
+
+.content hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 14px 0;
+}
+
+.summary {
+  font-size: 17px;
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;

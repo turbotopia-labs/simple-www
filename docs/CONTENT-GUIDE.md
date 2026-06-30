@@ -55,4 +55,16 @@ Set `draft: true` to hide a file from the site. Use `tags` for short labels that
 
 ## Markdown support
 
-The current version supports headings, paragraphs, and unordered lists.
+The renderer supports common Markdown:
+
+- Headings `#` through `######`.
+- Paragraphs.
+- Bold, italic, strikethrough, and inline code.
+- Links and images.
+- Unordered and ordered lists.
+- Blockquotes.
+- Fenced code blocks.
+- Horizontal rules.
+- Tables.
+
+Module list cards show `summary` when available. If `summary` is missing, the card uses a short body excerpt. The full Markdown body is shown on the entry page at `#/<module>/<slug>`.

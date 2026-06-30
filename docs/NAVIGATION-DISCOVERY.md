@@ -6,6 +6,14 @@ Navigation and discovery features apply from `v0.6.0`.
 
 Enabled modules appear in the navigation bar using their configured `order`.
 
+Individual entries are available at:
+
+```text
+#/<module>/<slug>
+```
+
+Module cards link to these entry pages. Cards show `summary` when available, while entry pages show the full Markdown body.
+
 ## Filtering
 
 Each content module can show filters based on the entries it contains:

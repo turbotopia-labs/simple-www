@@ -1,33 +1,9 @@
 {
   "version": "https://jsonfeed.org/version/1.1",
-  "title": "simple-www - Blog",
-  "home_page_url": "http://127.0.0.1:6625",
-  "feed_url": "http://127.0.0.1:6625/feeds/blog.json",
-  "description": "A small Markdown-powered website.",
+  "title": "labs.turbotopia.no - Blog",
+  "home_page_url": "labs.turbotopia.no",
+  "feed_url": "labs.turbotopia.no/feeds/blog.json",
+  "description": "project overview",
   "authors": [],
-  "items": [
-    {
-      "id": "http://127.0.0.1:6625/#/blog/first-post",
-      "url": "http://127.0.0.1:6625/#/blog/first-post",
-      "title": "First post",
-      "summary": "A starter blog post.",
-      "content_text": "\nThis blog module reads Markdown files from content/blog.\n",
-      "date_published": "2026-06-30T00:00:00Z",
-      "tags": [
-        "notes",
-        "starter"
-      ]
-    },
-    {
-      "id": "http://127.0.0.1:6625/#/blog/archive-example",
-      "url": "http://127.0.0.1:6625/#/blog/archive-example",
-      "title": "Archive example",
-      "summary": "A second blog post for archive and category views.",
-      "content_text": "\nThis entry gives the blog module another year and category to filter.\n",
-      "date_published": "2025-12-15T00:00:00Z",
-      "tags": [
-        "archive"
-      ]
-    }
-  ]
+  "items": []
 }

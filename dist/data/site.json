@@ -1,12 +1,12 @@
 {
   "config": {
     "site": {
-      "title": "simple-www",
-      "description": "A small Markdown-powered website.",
+      "title": "labs.turbotopia.no",
+      "description": "project overview",
       "language": "en",
       "author": "",
       "timezone": "Europe/Oslo",
-      "baseUrl": "http://127.0.0.1:6625",
+      "baseUrl": "labs.turbotopia.no",
       "layout": "cards",
       "adminEditing": false
     },
@@ -29,7 +29,7 @@
       },
       "blog": {
         "label": "Blog",
-        "enabled": true,
+        "enabled": false,
         "emptyState": "No blog posts have been published yet.",
         "order": 30,
         "sort": "date-desc",
@@ -45,7 +45,7 @@
       },
       "store": {
         "label": "Store",
-        "enabled": true,
+        "enabled": false,
         "emptyState": "No store items are listed yet.",
         "order": 50,
         "sort": "title-asc",
@@ -62,198 +62,48 @@
     }
   },
   "content": {
-    "news": [
-      {
-        "slug": "welcome",
-        "source": "news/welcome.md",
-        "title": "Welcome",
-        "date": "2026-06-30",
-        "category": "general",
-        "summary": "The first simple-www news item.",
-        "draft": false,
-        "tags": [
-          "starter",
-          "markdown"
-        ],
-        "status": "",
-        "link": "",
-        "repository": "",
-        "file": "",
-        "version": "",
-        "sku": "",
-        "price": "",
-        "body": "\nsimple-www is ready for Markdown-backed content.\n\n- Toggle modules in data/config.json\n- Add entries in content folders\n- Keep the design simple\n"
-      },
-      {
-        "slug": "older-update",
-        "source": "news/older-update.md",
-        "title": "Older update",
-        "date": "2026-06-01",
-        "category": "general",
-        "summary": "An older dated news entry.",
-        "draft": false,
-        "tags": [
-          "news"
-        ],
-        "status": "",
-        "link": "",
-        "repository": "",
-        "file": "",
-        "version": "",
-        "sku": "",
-        "price": "",
-        "body": "\nNews entries are sorted newest first.\n"
-      }
-    ],
-    "projects": [
-      {
-        "slug": "example-project",
-        "source": "projects/example-project.md",
-        "title": "Example project",
-        "date": "2026-06-30",
-        "category": "demo",
-        "summary": "A placeholder project entry.",
-        "draft": false,
-        "tags": [
-          "example"
-        ],
-        "status": "active",
-        "link": "https://example.com/project",
-        "repository": "https://example.com/repository",
-        "file": "",
-        "version": "",
-        "sku": "",
-        "price": "",
-        "body": "\nReplace this file with a real project description.\n"
-      }
-    ],
-    "blog": [
-      {
-        "slug": "first-post",
-        "source": "blog/first-post.md",
-        "title": "First post",
-        "date": "2026-06-30",
-        "category": "notes",
-        "summary": "A starter blog post.",
-        "draft": false,
-        "tags": [
-          "notes",
-          "starter"
-        ],
-        "status": "",
-        "link": "",
-        "repository": "",
-        "file": "",
-        "version": "",
-        "sku": "",
-        "price": "",
-        "body": "\nThis blog module reads Markdown files from content/blog.\n"
-      },
-      {
-        "slug": "archive-example",
-        "source": "blog/archive-example.md",
-        "title": "Archive example",
-        "date": "2025-12-15",
-        "category": "archive",
-        "summary": "A second blog post for archive and category views.",
-        "draft": false,
-        "tags": [
-          "archive"
-        ],
-        "status": "",
-        "link": "",
-        "repository": "",
-        "file": "",
-        "version": "",
-        "sku": "",
-        "price": "",
-        "body": "\nThis entry gives the blog module another year and category to filter.\n"
-      }
-    ],
-    "downloads": [
-      {
-        "slug": "readme",
-        "source": "downloads/readme.md",
-        "title": "Downloads",
-        "date": "2026-06-30",
-        "category": "files",
-        "summary": "Add download notes here.",
-        "draft": false,
-        "tags": [
-          "files"
-        ],
-        "status": "",
-        "link": "https://example.com/downloads",
-        "repository": "",
-        "file": "/files/example.zip",
-        "version": "0.1.0",
-        "sku": "",
-        "price": "",
-        "body": "\nUse this module for files, release notes, or links.\n"
-      }
-    ],
-    "store": [
-      {
-        "slug": "readme",
-        "source": "store/readme.md",
-        "title": "Example product",
-        "date": "2026-06-30",
-        "category": "catalog",
-        "summary": "A simple product entry without payment handling.",
-        "draft": false,
-        "tags": [
-          "catalog",
-          "product"
-        ],
-        "status": "",
-        "link": "https://example.com/product",
-        "repository": "",
-        "file": "",
-        "version": "",
-        "sku": "SIMPLE-001",
-        "price": "10.00",
-        "body": "\nUse the store module for product listings and external product links.\n"
-      }
-    ]
+    "news": [],
+    "projects": [],
+    "downloads": []
   },
   "diagnostics": {
     "configSource": "C:\\Users\\thoma\\Documents\\alfred.vaultsworth\\tubotopia-labs_git\\simple-www\\data\\config.json",
     "moduleCount": 6,
-    "enabledModuleCount": 5,
-    "contentItemCount": 7,
+    "enabledModuleCount": 3,
+    "contentItemCount": 0,
     "adminEditing": false,
     "modules": {
       "news": {
         "enabled": true,
-        "itemCount": 2,
+        "itemCount": 0,
         "order": 10,
         "sort": "date-desc",
         "limit": null
       },
       "projects": {
         "enabled": true,
-        "itemCount": 1,
+        "itemCount": 0,
         "order": 20,
         "sort": "date-desc",
         "limit": null
       },
       "blog": {
-        "enabled": true,
-        "itemCount": 2,
+        "enabled": false,
+        "itemCount": 0,
         "order": 30,
         "sort": "date-desc",
         "limit": null
       },
       "downloads": {
         "enabled": true,
-        "itemCount": 1,
+        "itemCount": 0,
         "order": 40,
         "sort": "date-desc",
         "limit": null
       },
       "store": {
-        "enabled": true,
-        "itemCount": 1,
+        "enabled": false,
+        "itemCount": 0,
         "order": 50,
         "sort": "title-asc",
         "limit": null
