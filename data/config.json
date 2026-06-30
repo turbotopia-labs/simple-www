@@ -1,0 +1,30 @@
+{
+  "siteTitle": "simple-www",
+  "siteDescription": "A small Markdown-powered website.",
+  "modules": {
+    "news": {
+      "label": "News",
+      "enabled": true
+    },
+    "projects": {
+      "label": "Projects",
+      "enabled": true
+    },
+    "blog": {
+      "label": "Blog",
+      "enabled": true
+    },
+    "downloads": {
+      "label": "Downloads",
+      "enabled": true
+    },
+    "store": {
+      "label": "Store",
+      "enabled": false
+    },
+    "admin": {
+      "label": "Admin",
+      "enabled": false
+    }
+  }
+}

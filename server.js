@@ -1,0 +1,119 @@
+const fs = require("fs");
+const http = require("http");
+const path = require("path");
+
+const root = __dirname;
+const publicDir = path.join(root, "public");
+const contentDir = path.join(root, "content");
+const dataDir = path.join(root, "data");
+const port = Number(process.env.PORT || 6625);
+
+const mimeTypes = {
+  ".css": "text/css; charset=utf-8",
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".md": "text/markdown; charset=utf-8",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".svg": "image/svg+xml",
+};
+
+function send(res, status, body, type = "text/plain; charset=utf-8") {
+  res.writeHead(status, { "Content-Type": type });
+  res.end(body);
+}
+
+function sendJson(res, status, value) {
+  send(res, status, JSON.stringify(value, null, 2), "application/json; charset=utf-8");
+}
+
+function readJson(filePath, fallback) {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch {
+    return fallback;
+  }
+}
+
+function parseMarkdownFile(filePath) {
+  const raw = fs.readFileSync(filePath, "utf8");
+  const frontMatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
+  const meta = {};
+  let body = raw;
+
+  if (frontMatter) {
+    body = raw.slice(frontMatter[0].length);
+    frontMatter[1].split(/\r?\n/).forEach((line) => {
+      const splitAt = line.indexOf(":");
+      if (splitAt === -1) return;
+      const key = line.slice(0, splitAt).trim();
+      const value = line.slice(splitAt + 1).trim();
+      if (key) meta[key] = value;
+    });
+  }
+
+  const slug = path.basename(filePath, ".md");
+  return {
+    slug,
+    title: meta.title || slug.replace(/[-_]/g, " "),
+    date: meta.date || "",
+    category: meta.category || "general",
+    summary: meta.summary || "",
+    body,
+  };
+}
+
+function listModuleContent(moduleId) {
+  const modulePath = path.join(contentDir, moduleId);
+  if (!modulePath.startsWith(contentDir) || !fs.existsSync(modulePath)) return [];
+
+  return fs
+    .readdirSync(modulePath)
+    .filter((fileName) => fileName.endsWith(".md"))
+    .map((fileName) => parseMarkdownFile(path.join(modulePath, fileName)))
+    .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+}
+
+function sitePayload() {
+  const config = readJson(path.join(dataDir, "config.json"), {});
+  const modules = config.modules || {};
+  const content = {};
+
+  Object.keys(modules).forEach((moduleId) => {
+    if (modules[moduleId] && modules[moduleId].enabled) {
+      content[moduleId] = listModuleContent(moduleId);
+    }
+  });
+
+  return { config, content };
+}
+
+function safePublicPath(urlPath) {
+  const cleanPath = urlPath === "/" ? "/index.html" : decodeURIComponent(urlPath);
+  const filePath = path.normalize(path.join(publicDir, cleanPath));
+  return filePath.startsWith(publicDir) ? filePath : null;
+}
+
+const server = http.createServer((req, res) => {
+  const url = new URL(req.url, `http://${req.headers.host}`);
+
+  if (url.pathname === "/api/site") {
+    sendJson(res, 200, sitePayload());
+    return;
+  }
+
+  const filePath = safePublicPath(url.pathname);
+  if (!filePath || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+    send(res, 404, "Not found");
+    return;
+  }
+
+  const ext = path.extname(filePath).toLowerCase();
+  send(res, 200, fs.readFileSync(filePath), mimeTypes[ext] || "application/octet-stream");
+});
+
+server.listen(port, () => {
+  console.log(`simple-www running at http://127.0.0.1:${port}`);
+});
