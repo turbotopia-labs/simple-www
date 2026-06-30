@@ -97,6 +97,83 @@ function sendJson(res, status, value) {
   send(res, status, JSON.stringify(value, null, 2), "application/json; charset=utf-8");
 }
 
+function escapeXml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function absoluteUrl(baseUrl, moduleId, item) {
+  const base = String(baseUrl || "").replace(/\/+$/, "");
+  return `${base}/#/${encodeURIComponent(moduleId)}/${encodeURIComponent(item.slug)}`;
+}
+
+function feedItems(moduleId) {
+  const payload = sitePayload();
+  const items = moduleId
+    ? (payload.content[moduleId] || []).map((item) => ({ ...item, module: moduleId }))
+    : Object.entries(payload.content).flatMap(([id, items]) => items.map((item) => ({ ...item, module: id })));
+
+  return { payload, items: sortItems(items, "date-desc") };
+}
+
+function rssFeed(moduleId) {
+  const { payload, items } = feedItems(moduleId);
+  const site = payload.config.site;
+  const module = payload.config.modules[moduleId];
+  const feedTitle = `${site.title} - ${module.label}`;
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>${escapeXml(feedTitle)}</title>
+    <link>${escapeXml(site.baseUrl)}</link>
+    <description>${escapeXml(site.description)}</description>
+    <language>${escapeXml(site.language)}</language>
+    ${items
+      .map((item) => {
+        const itemUrl = absoluteUrl(site.baseUrl, moduleId, item);
+        return `<item>
+      <title>${escapeXml(item.title)}</title>
+      <link>${escapeXml(itemUrl)}</link>
+      <guid>${escapeXml(itemUrl)}</guid>
+      <pubDate>${escapeXml(item.date ? new Date(`${item.date}T00:00:00Z`).toUTCString() : "")}</pubDate>
+      <description>${escapeXml(item.summary || item.body)}</description>
+    </item>`;
+      })
+      .join("\n    ")}
+  </channel>
+</rss>`;
+}
+
+function jsonFeed(moduleId = "") {
+  const { payload, items } = feedItems(moduleId);
+  const site = payload.config.site;
+  const module = payload.config.modules[moduleId];
+  const title = moduleId && module ? `${site.title} - ${module.label}` : site.title;
+
+  return {
+    version: "https://jsonfeed.org/version/1.1",
+    title,
+    home_page_url: site.baseUrl,
+    feed_url: moduleId ? `${site.baseUrl}/feeds/${moduleId}.json` : `${site.baseUrl}/feed.json`,
+    description: site.description,
+    authors: site.author ? [{ name: site.author }] : [],
+    items: items.map((item) => ({
+      id: absoluteUrl(site.baseUrl, item.module, item),
+      url: absoluteUrl(site.baseUrl, item.module, item),
+      title: item.title,
+      summary: item.summary,
+      content_text: item.body,
+      date_published: item.date ? `${item.date}T00:00:00Z` : undefined,
+      tags: item.tags,
+    })),
+  };
+}
+
 function readJson(filePath, fallback) {
   try {
     return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -483,6 +560,27 @@ const server = http.createServer((req, res) => {
 
   if (url.pathname === "/api/site") {
     sendJson(res, 200, sitePayload());
+    return;
+  }
+
+  if (url.pathname === "/feeds/news.xml" || url.pathname === "/rss/news.xml") {
+    send(res, 200, rssFeed("news"), "application/rss+xml; charset=utf-8");
+    return;
+  }
+
+  if (url.pathname === "/feeds/blog.xml" || url.pathname === "/rss/blog.xml") {
+    send(res, 200, rssFeed("blog"), "application/rss+xml; charset=utf-8");
+    return;
+  }
+
+  const jsonFeedMatch = url.pathname.match(/^\/feeds\/([^/]+)\.json$/);
+  if (jsonFeedMatch) {
+    sendJson(res, 200, jsonFeed(jsonFeedMatch[1]));
+    return;
+  }
+
+  if (url.pathname === "/feed.json" || url.pathname === "/feeds.json") {
+    sendJson(res, 200, jsonFeed());
     return;
   }
 

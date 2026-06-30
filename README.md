@@ -48,6 +48,7 @@ Site settings and module toggles live in `data/config.json`. `data/config.yaml` 
 - `docs/CONFIG.md`
 - `docs/THEME.md`
 - `docs/MODULE-FEATURES.md`
+- `docs/NAVIGATION-DISCOVERY.md`
 - `docs/CATEGORIES.md`
 - `docs/ROADMAP.md`
 - `docs/MODULES.md`

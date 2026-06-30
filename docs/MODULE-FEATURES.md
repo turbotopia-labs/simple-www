@@ -37,6 +37,7 @@ repository: https://example.com/repository
 Blog entries support archive and category views in the frontend.
 
 - Archive buttons are built from the year in `date`.
+- Month archive buttons are built from `YYYY-MM` in `date`.
 - Category buttons are built from `category`.
 - Tags are shown on each post.
 

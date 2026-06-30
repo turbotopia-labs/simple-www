@@ -49,12 +49,12 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v0.6.0 - Navigation and Discovery
 
-- Add category filtering.
-- Add tag filtering.
-- Add simple client-side search.
-- Add archive pages by year/month where relevant.
-- Add RSS feed for news and blog.
-- Add JSON feed export.
+- Done: Add category filtering.
+- Done: Add tag filtering.
+- Done: Add simple client-side search.
+- Done: Add archive pages by year/month where relevant.
+- Done: Add RSS feed for news and blog.
+- Done: Add JSON feed export.
 
 ## v0.7.0 - Build and Export
 

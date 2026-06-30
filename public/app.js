@@ -13,9 +13,11 @@ let state = {
   diagnostics: {},
   warnings: [],
   layout: "cards",
-  blogView: "all",
-  blogValue: "",
+  filterType: "all",
+  filterValue: "",
+  search: "",
 };
+let searchTimer;
 
 function escapeHtml(value) {
   return String(value)
@@ -88,6 +90,35 @@ function enabledModuleIds() {
     .sort((a, b) => state.modules[a].order - state.modules[b].order);
 }
 
+function routeFromHash() {
+  const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
+  const moduleId = parts[0] || "";
+  const filterType = ["category", "tag", "archive"].includes(parts[1]) ? parts[1] : "all";
+  const filterValue = filterType === "all" ? "" : parts[2] || "";
+
+  return { moduleId, filterType, filterValue };
+}
+
+function setRouteHash(moduleId, filterType = "all", filterValue = "") {
+  const encodedModule = encodeURIComponent(moduleId);
+  if (filterType === "all" || !filterValue) {
+    location.hash = `/${encodedModule}`;
+    return;
+  }
+
+  location.hash = `/${encodedModule}/${encodeURIComponent(filterType)}/${encodeURIComponent(filterValue)}`;
+}
+
+function applyRoute(route) {
+  if (!route.moduleId || !state.modules[route.moduleId]) return false;
+
+  state.filterType = route.filterType;
+  state.filterValue = route.filterValue;
+  state.search = "";
+  renderModule(route.moduleId);
+  return true;
+}
+
 function renderNav() {
   nav.innerHTML = enabledModuleIds()
     .map((moduleId) => {
@@ -115,28 +146,43 @@ function actionLink(href, label) {
 }
 
 function renderModuleTools(moduleId, items) {
-  if (moduleId !== "blog") return "";
-
-  const years = [...new Set(items.map((item) => item.date.slice(0, 4)).filter(Boolean))];
   const categories = [...new Set(items.map((item) => item.category).filter(Boolean))];
+  const tags = [...new Set(items.flatMap((item) => item.tags || []).filter(Boolean))];
+  const years = [...new Set(items.map((item) => item.date.slice(0, 4)).filter(Boolean))];
+  const months = [...new Set(items.map((item) => item.date.slice(0, 7)).filter((value) => value.length === 7))];
+
+  if (!categories.length && !tags.length && !years.length && !state.search) return "";
+
   const button = (label, type, value = "") => {
-    const pressed = state.blogView === type && state.blogValue === value ? ' aria-pressed="true"' : "";
-    return `<button type="button" data-blog-view="${escapeHtml(type)}" data-blog-value="${escapeHtml(value)}"${pressed}>${escapeHtml(label)}</button>`;
+    const pressed = state.filterType === type && state.filterValue === value ? ' aria-pressed="true"' : "";
+    return `<button type="button" data-filter-type="${escapeHtml(type)}" data-filter-value="${escapeHtml(value)}"${pressed}>${escapeHtml(label)}</button>`;
   };
 
   return `
     <section class="module-tools">
-      <div class="tool-row">${button("All", "all")}${years.map((year) => button(year, "year", year)).join("")}</div>
-      <div class="tool-row">${categories.map((category) => button(category, "category", category)).join("")}</div>
+      <div class="search-row"><input type="search" id="module-search" value="${escapeHtml(state.search)}" placeholder="Search"></div>
+      <div class="tool-row">${button("All", "all")}${categories.map((category) => button(category, "category", category)).join("")}</div>
+      <div class="tool-row">${tags.map((tag) => button(`#${tag}`, "tag", tag)).join("")}</div>
+      <div class="tool-row">${years.map((year) => button(year, "archive", year)).join("")}${months.map((month) => button(month, "archive", month)).join("")}</div>
     </section>
   `;
 }
 
 function visibleItems(moduleId, items) {
-  if (moduleId !== "blog" || state.blogView === "all") return items;
-  if (state.blogView === "year") return items.filter((item) => item.date.startsWith(state.blogValue));
-  if (state.blogView === "category") return items.filter((item) => item.category === state.blogValue);
-  return items;
+  const search = state.search.trim().toLowerCase();
+
+  return items.filter((item) => {
+    if (state.filterType === "category" && item.category !== state.filterValue) return false;
+    if (state.filterType === "tag" && !(item.tags || []).includes(state.filterValue)) return false;
+    if (state.filterType === "archive" && !item.date.startsWith(state.filterValue)) return false;
+
+    if (!search) return true;
+
+    return [item.title, item.summary, item.category, item.body, ...(item.tags || [])]
+      .join(" ")
+      .toLowerCase()
+      .includes(search);
+  });
 }
 
 function renderItem(moduleId, item) {
@@ -230,7 +276,11 @@ function renderModule(moduleId) {
 
   const shownItems = visibleItems(moduleId, items);
   app.dataset.layout = state.layout;
-  app.innerHTML = `${renderModuleTools(moduleId, items)}${shownItems.map((item) => renderItem(moduleId, item)).join("")}`;
+  app.innerHTML = `${renderModuleTools(moduleId, items)}${
+    shownItems.length
+      ? shownItems.map((item) => renderItem(moduleId, item)).join("")
+      : `<section class="card"><h2>${escapeHtml(module.label)}</h2><p class="empty">No matching content.</p></section>`
+  }`;
 }
 
 function setLayout(layout) {
@@ -252,17 +302,35 @@ function setTheme(theme) {
 nav.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-module]");
   if (!button) return;
-  state.blogView = "all";
-  state.blogValue = "";
+  state.filterType = "all";
+  state.filterValue = "";
+  state.search = "";
+  setRouteHash(button.dataset.module);
   renderModule(button.dataset.module);
 });
 
 app.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-blog-view]");
+  const button = event.target.closest("button[data-filter-type]");
   if (!button) return;
-  state.blogView = button.dataset.blogView;
-  state.blogValue = button.dataset.blogValue || "";
-  renderModule("blog");
+  state.filterType = button.dataset.filterType;
+  state.filterValue = button.dataset.filterValue || "";
+  setRouteHash(state.activeModule, state.filterType, state.filterValue);
+  renderModule(state.activeModule);
+});
+
+app.addEventListener("input", (event) => {
+  const input = event.target.closest("#module-search");
+  if (!input) return;
+  state.search = input.value;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    renderModule(state.activeModule);
+    const nextInput = document.querySelector("#module-search");
+    if (nextInput) {
+      nextInput.focus();
+      nextInput.setSelectionRange(nextInput.value.length, nextInput.value.length);
+    }
+  }, 150);
 });
 
 themeToggle.addEventListener("click", () => {
@@ -274,6 +342,10 @@ layoutButtons.forEach((button) => {
   button.addEventListener("click", () => {
     setLayout(button.dataset.layout);
   });
+});
+
+window.addEventListener("hashchange", () => {
+  applyRoute(routeFromHash());
 });
 
 async function boot() {
@@ -298,6 +370,10 @@ async function boot() {
   });
 
   const firstModule = enabledModuleIds()[0];
+  if (applyRoute(routeFromHash())) {
+    return;
+  }
+
   if (firstModule) {
     renderModule(firstModule);
   } else {

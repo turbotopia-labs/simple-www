@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.0 - 2026-07-01
+
+- Added client-side category filtering.
+- Added client-side tag filtering.
+- Added simple client-side search for the active module.
+- Added archive filters by year and month where dated content exists.
+- Added RSS feeds for news and blog.
+- Added JSON feed export for all content and per-module feeds.
+- Documented navigation, discovery, and feed URLs.
+
 ## 0.5.0 - 2026-07-01
 
 - Added module-specific rendering for projects, downloads, and store entries.
