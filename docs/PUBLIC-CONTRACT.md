@@ -1,6 +1,6 @@
-# Public Contract for v2.1.0
+# Public Contract for v2.2.0
 
-This contract is stable for `v2.1.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
+This contract is stable for `v2.2.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
 
 ## Content
 
@@ -18,6 +18,7 @@ Supported front matter fields:
 - `summary`
 - `slug`
 - `draft`
+- `publishAt`
 - `tags`
 - `updated`
 - `author`
@@ -107,6 +108,7 @@ Stable server-mode endpoints:
 - `/`
 - `/api/site`
 - `/api/search-index`
+- `/api/preview`
 - `/api/comments`
 - `/health`
 - `/feed.json`

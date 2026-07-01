@@ -43,6 +43,7 @@ category: general
 summary: Short summary
 slug: page-title
 draft: false
+publishAt: 2026-07-01T08:00:00Z
 tags: [notes, release]
 updated: 2026-07-01
 author: Author name
@@ -62,6 +63,7 @@ Supported fields:
 - `summary`: Short text shown on module list cards and before the full body.
 - `slug`: Optional slug override.
 - `draft`: Set to `true` to hide the file from the site.
+- `publishAt`: Optional scheduled publish date. Use `YYYY-MM-DD` or an ISO date/time such as `2026-07-01T08:00:00Z`.
 - `tags`: Optional list. Use `[one, two]` or `one, two`.
 - `updated`: Optional update date in `YYYY-MM-DD`.
 - `author`: Optional author name.
@@ -88,6 +90,7 @@ Validation checks:
 
 - `title` is required for every module.
 - `date` and `updated` must use real `YYYY-MM-DD` dates when present.
+- `publishAt` must use `YYYY-MM-DD` or an ISO date/time when present.
 - `draft` and `pinned` must be booleans.
 - `priority` must be an integer.
 - `link`, `repository`, `file`, `image`, `canonicalUrl`, and `checkoutUrl` must be safe URLs or relative paths.
@@ -104,7 +107,7 @@ Module required fields:
 
 Module optional fields:
 
-- All modules: `category`, `summary`, `slug`, `draft`, `tags`, `updated`, `author`, `image`, `imageAlt`, `pinned`, `priority`, `canonicalUrl`
+- All modules: `category`, `summary`, `slug`, `draft`, `publishAt`, `tags`, `updated`, `author`, `image`, `imageAlt`, `pinned`, `priority`, `canonicalUrl`
 - `projects`: `link`, `repository`
 - `downloads`: `file`, `link`
 - `store`: `link`, `checkoutUrl`, `paymentProvider`, `paymentProviderProductId`, `paymentProviderPriceId`

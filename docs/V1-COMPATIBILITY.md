@@ -1,6 +1,6 @@
 # v1 Compatibility
 
-simple-www `v2.1.0` keeps single-site v1 usage working by default.
+simple-www `v2.2.0` keeps single-site v1 usage working by default.
 
 ## Compatible Defaults
 

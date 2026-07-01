@@ -24,6 +24,7 @@ let state = {
   itemSlug: "",
   search: "",
   adminMessage: "",
+  adminContent: {},
 };
 let searchTimer;
 
@@ -213,6 +214,9 @@ function routeFromHash() {
   if (parts[0] === "search") {
     return { moduleId: "", filterType: "all", filterValue: "", itemSlug: "", search: parts.slice(1).join("/") };
   }
+  if (parts[0] === "preview") {
+    return { moduleId: parts[1] || "", filterType: "all", filterValue: "", itemSlug: parts[2] || "", search: "", preview: true };
+  }
 
   const moduleId = parts[0] || "";
   const itemSlug = parts[1] && !["category", "tag", "archive"].includes(parts[1]) ? parts[1] : "";
@@ -252,6 +256,11 @@ function applyRoute(route) {
   }
 
   if (!route.moduleId || !state.modules[route.moduleId]) return false;
+
+  if (route.preview && route.itemSlug) {
+    renderPreview(route.moduleId, route.itemSlug);
+    return true;
+  }
 
   state.filterType = route.filterType;
   state.filterValue = route.filterValue;
@@ -423,6 +432,7 @@ function emptyAdminFields(moduleId = editableModuleIds()[0] || "news") {
     priority: "",
     canonicalUrl: "",
     draft: false,
+    publishAt: "",
     status: "",
     link: "",
     repository: "",
@@ -462,6 +472,7 @@ function adminForm(values = emptyAdminFields()) {
         <label>Priority<input name="priority" value="${escapeHtml(values.priority)}" placeholder="0"></label>
         <label>Canonical URL<input name="canonicalUrl" value="${escapeHtml(values.canonicalUrl)}"></label>
         <label class="checkbox-label"><input name="draft" type="checkbox"${values.draft ? " checked" : ""}> Draft</label>
+        <label>Publish at<input name="publishAt" value="${escapeHtml(values.publishAt)}" placeholder="YYYY-MM-DD or ISO date/time"></label>
         <label>Status<input name="status" value="${escapeHtml(values.status)}"></label>
         <label>Link<input name="link" value="${escapeHtml(values.link)}"></label>
         <label>Repository<input name="repository" value="${escapeHtml(values.repository)}"></label>
@@ -479,6 +490,7 @@ function adminForm(values = emptyAdminFields()) {
           <button type="submit" data-admin-action="create">Create</button>
           <button type="submit" data-admin-action="edit">Save</button>
           <button type="button" data-admin-action="delete">Delete</button>
+          ${values.slug ? `<a href="#/preview/${escapeHtml(values.module)}/${escapeHtml(values.slug)}">Preview</a>` : ""}
         </div>
       </form>
       ${state.adminMessage ? `<p class="admin-message">${escapeHtml(state.adminMessage)}</p>` : ""}
@@ -504,6 +516,7 @@ function formValues(form) {
       priority: form.elements.priority.value.trim(),
       canonicalUrl: form.elements.canonicalUrl.value.trim(),
       draft: form.elements.draft.checked,
+      publishAt: form.elements.publishAt.value.trim(),
       status: form.elements.status.value.trim(),
       link: form.elements.link.value.trim(),
       repository: form.elements.repository.value.trim(),
@@ -537,6 +550,7 @@ function valuesFromItem(moduleId, item) {
     priority: item.priority === 0 ? "" : item.priority,
     canonicalUrl: item.canonicalUrl,
     draft: item.draft,
+    publishAt: item.publishAt,
     status: item.status,
     link: item.link,
     repository: item.repository,
@@ -552,17 +566,36 @@ function valuesFromItem(moduleId, item) {
   };
 }
 
+function editorialStatus(item) {
+  if (item.draft) return "draft";
+  if (item.publishAt && Date.parse(item.publishAt) > Date.now()) return "scheduled";
+  return "published";
+}
+
+async function loadAdminContentList() {
+  try {
+    const response = await fetch("/api/admin/content");
+    const result = await response.json();
+    state.adminContent = result.content || {};
+    const list = document.querySelector("#admin-content-list");
+    if (list) list.innerHTML = adminContentList();
+  } catch (error) {
+    const list = document.querySelector("#admin-content-list");
+    if (list) list.innerHTML = `<section class="card"><p class="empty">${escapeHtml(error.message)}</p></section>`;
+  }
+}
+
 function adminContentList() {
   return editableModuleIds()
     .map((moduleId) => {
-      const items = state.content[moduleId] || [];
+      const items = state.adminContent[moduleId] || state.content[moduleId] || [];
       return `
         <section class="card">
           <h2>${escapeHtml(state.modules[moduleId].label)}</h2>
           ${
             items.length
-              ? `<ul class="admin-list">${items.map((item) => `<li><button type="button" data-admin-load="${escapeHtml(moduleId)}:${escapeHtml(item.slug)}">${escapeHtml(item.title)}</button></li>`).join("")}</ul>`
-              : `<p class="empty">No published content.</p>`
+              ? `<ul class="admin-list">${items.map((item) => `<li><button type="button" data-admin-load="${escapeHtml(moduleId)}:${escapeHtml(item.slug)}">${escapeHtml(item.title)}</button> <span class="meta">${escapeHtml(editorialStatus(item))}</span></li>`).join("")}</ul>`
+              : `<p class="empty">No content.</p>`
           }
         </section>
       `;
@@ -711,6 +744,56 @@ function renderDetail(moduleId, slug) {
   loadComments(moduleId, item.slug);
 }
 
+async function renderPreview(moduleId, slug) {
+  const module = state.modules[moduleId];
+  state.activeModule = moduleId;
+  state.filterType = "all";
+  state.filterValue = "";
+  state.itemSlug = slug;
+  state.search = "";
+  siteSearch.value = "";
+  renderNav();
+  app.dataset.layout = "list";
+  app.innerHTML = '<section class="card"><h2>Preview</h2><p class="empty">Loading preview...</p></section>';
+
+  try {
+    const response = await fetch(`/api/preview?module=${encodeURIComponent(moduleId)}&slug=${encodeURIComponent(slug)}`);
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Preview could not load.");
+    const item = result.item;
+
+    app.innerHTML = `
+      <article class="card detail-card">
+        <p class="action-link"><a href="#/${escapeHtml(moduleId)}">Back to ${escapeHtml(module.label)}</a></p>
+        <div class="meta">Preview / ${escapeHtml(result.status)}${item.publishAt ? ` / publish at ${escapeHtml(item.publishAt)}` : ""}</div>
+        <h2>${escapeHtml(item.title)}</h2>
+        <div class="meta">${escapeHtml([item.date, item.updated ? `updated ${item.updated}` : "", item.author, item.category].filter(Boolean).join(" / "))}</div>
+        ${itemImage(item)}
+        ${item.summary ? `<p class="summary">${inlineMarkdown(item.summary)}</p>` : ""}
+        ${detailList([
+          { label: "Status", value: item.status },
+          { label: "Version", value: item.version },
+          { label: "SKU", value: item.sku },
+          { label: "Price", value: item.price },
+          { label: "Publish at", value: item.publishAt },
+          ...(state.storePaymentsEnabled ? [{ label: "Provider", value: item.paymentProvider }] : []),
+          ...moduleFieldRows(moduleId, item, "detail"),
+        ])}
+        ${item.tags && item.tags.length ? `<div class="tags">${item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
+        <div class="content">${markdownToHtml(item.body)}</div>
+        ${itemActions(moduleId, item)}
+      </article>
+    `;
+  } catch (error) {
+    app.innerHTML = `
+      <section class="card">
+        <h2>Preview</h2>
+        <p class="empty">${escapeHtml(error.message)}</p>
+      </section>
+    `;
+  }
+}
+
 function renderSearch() {
   const query = state.search.trim();
   const results = searchResults(query);
@@ -797,7 +880,7 @@ function renderAdmin() {
     </section>
     ${
       editing
-        ? `${adminForm(state.adminDraft || emptyAdminFields())}${adminContentList()}`
+        ? `${adminForm(state.adminDraft || emptyAdminFields())}<div id="admin-content-list">${adminContentList()}</div>`
         : `<section class="card"><h2>Editing disabled</h2><p class="empty">Set site.adminEditing to true in config to enable local create, edit, and delete.</p></section>`
     }
     ${editing ? commentsReviewCard() : ""}
@@ -816,6 +899,7 @@ function renderAdmin() {
       `)
       .join("")}
   `;
+  if (editing) loadAdminContentList();
   if (editing && state.commentsEnabled) loadAdminComments();
 }
 
@@ -889,7 +973,7 @@ app.addEventListener("click", (event) => {
   const adminLoad = event.target.closest("[data-admin-load]");
   if (adminLoad) {
     const [moduleId, slug] = adminLoad.dataset.adminLoad.split(":");
-    const item = (state.content[moduleId] || []).find((entry) => entry.slug === slug);
+    const item = (state.adminContent[moduleId] || state.content[moduleId] || []).find((entry) => entry.slug === slug);
     if (item) {
       state.adminDraft = valuesFromItem(moduleId, item);
       state.adminMessage = "";

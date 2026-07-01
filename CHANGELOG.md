@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 2.2.0 - 2026-07-01
+
+- Added `publishAt` front matter for scheduled publishing.
+- Added draft and scheduled entry preview routes.
+- Added `/api/preview` for previewing saved unpublished entries.
+- Updated admin editing to list and preview draft/scheduled entries.
+- Kept drafts and scheduled content out of public content, feeds, static export, and search indexes.
+
 ## 2.1.0 - 2026-07-01
 
 - Added generated full-text search index output.

@@ -30,6 +30,7 @@ The admin module supports:
 - Delete Markdown entries.
 - Edit supported front matter fields.
 - Validate content before saving.
+- Preview saved draft and scheduled entries.
 - Review local comments when `site.commentsEnabled` is true.
 
 Supported fields match `docs/CONTENT-CONTRACT.md`.
@@ -44,9 +45,20 @@ Before saving, simple-www checks:
 - Edit/delete target an existing file.
 - Title is present for create/edit.
 - Date uses `YYYY-MM-DD` when provided.
+- Publish at uses `YYYY-MM-DD` or an ISO date/time when provided.
 - Draft is true or false.
 - Tags are an array or comma-separated string.
 - Unsupported front matter fields are rejected.
+
+## Drafts and Scheduling
+
+Saved entries can be previewed with:
+
+```text
+#/preview/<module>/<slug>
+```
+
+Draft entries stay out of public module lists, feeds, exports, and search indexes. Entries with future `publishAt` values also stay hidden until their publish time. Static exports include only content that is publishable when `node scripts/export.js` runs.
 
 ## Backups
 

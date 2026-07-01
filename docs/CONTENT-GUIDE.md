@@ -37,6 +37,7 @@ category: general
 summary: Short summary
 slug: page-title
 draft: false
+publishAt: 2026-07-01T08:00:00Z
 tags: [notes, release]
 updated: 2026-07-01
 author: Author name
@@ -56,6 +57,7 @@ Supported fields:
 - `summary`
 - `slug`
 - `draft`
+- `publishAt`
 - `tags`
 - `updated`
 - `author`
@@ -65,7 +67,7 @@ Supported fields:
 - `priority`
 - `canonicalUrl`
 
-Set `draft: true` to hide a file from the site. Use `tags` for short labels that can later support filtering.
+Set `draft: true` to hide a file from the site. Set `publishAt` to a future `YYYY-MM-DD` or ISO date/time to keep it hidden until that time. Use `tags` for short labels that can later support filtering.
 Use `pinned: true` and higher `priority` values to move important entries upward without changing dates.
 
 ## Markdown support

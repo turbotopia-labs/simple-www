@@ -18,6 +18,7 @@ The server provides:
 - `/`
 - `/api/site`
 - `/api/search-index`
+- `/api/preview`
 - `/health`
 - `/feeds/news.xml`
 - `/feeds/blog.xml`

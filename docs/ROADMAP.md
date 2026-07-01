@@ -195,8 +195,8 @@ v3 should focus on discovery, editorial workflow, asset handling, and operations
 
 ## v2.2.0 - Editorial Workflow
 
-- Draft preview links.
-- Scheduled publishing.
+- Done: Draft preview links.
+- Done: Scheduled publishing.
 
 ## v2.3.0 - Media Library
 

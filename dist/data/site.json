@@ -126,6 +126,7 @@
         "category": "software",
         "summary": "En enkel, selvdrevet fakturerings- og kostnadssporingstjeneste for små bedrifter og frilansere.",
         "draft": false,
+        "publishAt": "",
         "tags": [
           "software",
           "finance",
@@ -161,6 +162,7 @@
         "category": "open-source",
         "summary": "Kraken is a small, unmanned, shallow-water remotely operated vehicle (ROV) built around reused 1.5-2 L PET bottles and a floating radio hub.",
         "draft": false,
+        "publishAt": "",
         "tags": [
           "hardware",
           "rov",
@@ -197,6 +199,7 @@
         "category": "software",
         "summary": "TRACKtopia is a flexible place to record, collect, and understand personal statistics.",
         "draft": false,
+        "publishAt": "",
         "tags": [
           "software",
           "tracker",
@@ -290,5 +293,5 @@
     }
   },
   "warnings": [],
-  "version": "2.1.0"
+  "version": "2.2.0"
 }

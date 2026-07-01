@@ -12,6 +12,7 @@ const contentFields = [
   "summary",
   "slug",
   "draft",
+  "publishAt",
   "tags",
   "image",
   "imageAlt",

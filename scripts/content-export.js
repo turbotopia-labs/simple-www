@@ -13,6 +13,7 @@ const baseFields = [
   "category",
   "summary",
   "draft",
+  "publishAt",
   "tags",
   "image",
   "imageAlt",

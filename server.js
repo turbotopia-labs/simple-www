@@ -139,6 +139,7 @@ const editableFields = [
   "summary",
   "slug",
   "draft",
+  "publishAt",
   "tags",
   "updated",
   "author",
@@ -682,6 +683,24 @@ function isDateString(value) {
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
+function isPublishAtString(value) {
+  const text = String(value || "").trim();
+  if (!text) return true;
+  if (isDateString(text)) return true;
+  const date = new Date(text);
+  return !Number.isNaN(date.getTime());
+}
+
+function publishTime(value) {
+  const text = String(value || "").trim();
+  if (!text) return 0;
+  return isDateString(text) ? new Date(`${text}T00:00:00Z`).getTime() : new Date(text).getTime();
+}
+
+function isPublishedItem(item, now = Date.now()) {
+  return item.draft !== true && (!item.publishAt || publishTime(item.publishAt) <= now);
+}
+
 function isSafeContentUrl(value) {
   const url = String(value || "").trim();
   if (!url) return true;
@@ -735,6 +754,7 @@ function validateContentFields(moduleId, item, source) {
   ["date", "updated"].forEach((field) => {
     if (item[field] && !isDateString(item[field])) errors.push(`${source}: ${field} must use YYYY-MM-DD.`);
   });
+  if (item.publishAt && !isPublishAtString(item.publishAt)) errors.push(`${source}: publishAt must use YYYY-MM-DD or an ISO date/time.`);
 
   ["link", "repository", "file", "image", "canonicalUrl", "checkoutUrl"].forEach((field) => {
     if (item[field] && !isSafeContentUrl(item[field])) errors.push(`${source}: ${field} must be a safe URL or relative path.`);
@@ -830,6 +850,7 @@ function parseMarkdownFile(filePath) {
     category: String(meta.category || "general"),
     summary: String(meta.summary || ""),
     draft: booleanValue(meta.draft),
+    publishAt: String(meta.publishAt || ""),
     tags: normalizeTags(meta.tags),
     updated: String(meta.updated || ""),
     author: String(meta.author || ""),
@@ -979,6 +1000,7 @@ function validateAdminContentInput(input, mode) {
     ["date", "updated"].forEach((field) => {
       if (fields[field] && !isDateString(String(fields[field]))) errors.push(`${field} must use YYYY-MM-DD.`);
     });
+    if (fields.publishAt && !isPublishAtString(String(fields.publishAt))) errors.push("publishAt must use YYYY-MM-DD or an ISO date/time.");
     if (fields.draft !== undefined && typeof fields.draft !== "boolean") errors.push("draft must be true or false.");
     if (fields.pinned !== undefined && typeof fields.pinned !== "boolean") errors.push("pinned must be true or false.");
     if (fields.priority !== undefined && fields.priority !== "" && !Number.isInteger(Number(fields.priority))) errors.push("priority must be an integer.");
@@ -1125,8 +1147,9 @@ function validateSite() {
   const errors = [];
   const modules = payload.config.modules || {};
 
-  Object.entries(payload.content).forEach(([moduleId, items]) => {
+  Object.entries(modules).forEach(([moduleId, moduleConfig]) => {
     if (!modules[moduleId]) errors.push(`Unknown content module: ${moduleId}`);
+    const items = listModuleContent(moduleId, moduleConfig, [], { includeUnpublished: true });
 
     items.forEach((item) => {
       errors.push(...validateContentFields(moduleId, item, item.source));
@@ -1162,6 +1185,11 @@ async function handleAdminContent(req, res, url) {
   if (req.method === "GET") {
     const moduleId = String(url.searchParams.get("module") || "");
     const slug = String(url.searchParams.get("slug") || "");
+    if (!moduleId && !slug) {
+      sendJson(res, 200, { content: adminContentPayload() });
+      return;
+    }
+
     if (!/^[a-z0-9_-]+$/.test(moduleId) || slugify(slug) !== slug || !loadedConfig.config.modules[moduleId]) {
       sendJson(res, 400, { error: "Invalid module or slug." });
       return;
@@ -1207,6 +1235,30 @@ async function handleAdminContent(req, res, url) {
   }
 }
 
+function handlePreview(req, res, url) {
+  const moduleId = String(url.searchParams.get("module") || "").trim();
+  const slug = String(url.searchParams.get("slug") || "").trim();
+
+  if (!/^[a-z0-9_-]+$/.test(moduleId) || slugify(slug) !== slug || !loadedConfig.config.modules[moduleId]) {
+    sendJson(res, 400, { error: "Invalid module or slug." });
+    return;
+  }
+
+  const filePath = contentPathFor(moduleId, slug);
+  if (!fs.existsSync(filePath)) {
+    sendJson(res, 404, { error: "Content file not found." });
+    return;
+  }
+
+  const item = parseMarkdownFile(filePath);
+  sendJson(res, 200, {
+    module: moduleId,
+    item,
+    status: isPublishedItem(item) ? "published" : item.draft ? "draft" : "scheduled",
+    version,
+  });
+}
+
 function sortItems(items, sortMode) {
   const sorted = [...items];
 
@@ -1224,16 +1276,17 @@ function sortItems(items, sortMode) {
   return sorted;
 }
 
-function listModuleContent(moduleId, moduleConfig, warnings) {
+function listModuleContent(moduleId, moduleConfig, warnings, options = {}) {
   const modulePath = path.join(contentDir, moduleId);
   if (!modulePath.startsWith(contentDir) || !fs.existsSync(modulePath)) return [];
 
   const seenSlugs = new Map();
+  const includeUnpublished = options.includeUnpublished === true;
   const items = fs
     .readdirSync(modulePath)
     .filter((fileName) => fileName.endsWith(".md"))
     .map((fileName) => parseMarkdownFile(path.join(modulePath, fileName)))
-    .filter((item) => !item.draft);
+    .filter((item) => includeUnpublished || isPublishedItem(item));
 
   items.forEach((item) => {
     if (!seenSlugs.has(item.slug)) {
@@ -1250,7 +1303,7 @@ function listModuleContent(moduleId, moduleConfig, warnings) {
   });
 
   const sortedItems = sortItems(items, moduleConfig.sort);
-  return moduleConfig.limit === null ? sortedItems : sortedItems.slice(0, moduleConfig.limit);
+  return includeUnpublished || moduleConfig.limit === null ? sortedItems : sortedItems.slice(0, moduleConfig.limit);
 }
 
 function sitePayload() {
@@ -1296,6 +1349,16 @@ function sitePayload() {
   });
 
   return { config, content, diagnostics, warnings, version };
+}
+
+function adminContentPayload() {
+  const modules = loadedConfig.config.modules || {};
+  return Object.fromEntries(
+    Object.keys(modules)
+      .filter((moduleId) => modules[moduleId] && modules[moduleId].enabled && moduleId !== "admin")
+      .sort((a, b) => modules[a].order - modules[b].order)
+      .map((moduleId) => [moduleId, listModuleContent(moduleId, modules[moduleId], [], { includeUnpublished: true })])
+  );
 }
 
 function safePublicPath(urlPath) {
@@ -1344,6 +1407,11 @@ function createServer() {
 
       if (url.pathname === "/api/search-index") {
         sendJson(res, 200, buildSearchIndex());
+        return;
+      }
+
+      if (url.pathname === "/api/preview") {
+        handlePreview(req, res, url);
         return;
       }
 
