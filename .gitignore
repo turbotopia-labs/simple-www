@@ -1,0 +1,13 @@
+content/
+content/*
+media/
+logs/
+dist/
+dist/*
+data/config.json
+data/config.yaml
+data/config.yml
+overview.md
+docker-compose.y*
+sites/
+sites/*
