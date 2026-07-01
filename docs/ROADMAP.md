@@ -189,35 +189,35 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 v3 should focus on discovery, editorial workflow, asset handling, and operations while keeping the core file-based model.
 
-## v3.1.0 - Search Index
+## v2.1.0 - Search Index
 
 - Full-text search index generation.
 
-## v3.2.0 - Editorial Workflow
+## v2.2.0 - Editorial Workflow
 
 - Draft preview links.
 - Scheduled publishing.
 
-## v3.3.0 - Media Library
+## v2.3.0 - Media Library
 
 - Media library for local assets.
 
-## v3.4.0 - Content Collections
+## v2.4.0 - Content Collections
 
 - Content collections independent of modules.
 
-## v3.5.0 - Export Hooks
+## v2.5.0 - Export Hooks
 
 - Webhook or CLI hooks after export.
 
-## v3.6.0 - Analytics Export
+## v2.6.0 - Analytics Export
 
 - Simple analytics export without tracking scripts.
 
-## v3.7.0 - Translation and i18n
+## v2.7.0 - Translation and i18n
 
 - Translation/i18n support.
 
-## v3.8.0 - Admin Accounts
+## v2.8.0 - Admin Accounts
 
 - Role-based admin accounts if admin grows beyond local-only use.
