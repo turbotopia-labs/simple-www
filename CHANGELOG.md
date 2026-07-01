@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Moved project repository links to a discreet icon beside status.
+
 ## 2.8.0 - 2026-07-01
 
 - Added optional local admin accounts behind `adminAccounts.enabled`.

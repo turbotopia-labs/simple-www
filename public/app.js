@@ -333,12 +333,12 @@ function renderNav() {
 }
 
 function detailList(details) {
-  const rows = details.filter((detail) => detail.value);
+  const rows = details.filter((detail) => detail.value || detail.html);
   if (!rows.length) return "";
 
   return `
     <dl class="details">
-      ${rows.map((detail) => `<div><dt>${escapeHtml(detail.label)}</dt><dd>${escapeHtml(detail.value)}</dd></div>`).join("")}
+      ${rows.map((detail) => `<div><dt>${escapeHtml(detail.label)}</dt><dd>${detail.html || escapeHtml(detail.value)}</dd></div>`).join("")}
     </dl>
   `;
 }
@@ -363,6 +363,24 @@ function actionLink(href, label) {
   return `<p class="action-link"><a href="${escapeHtml(safeUrl(href))}">${escapeHtml(label)}</a></p>`;
 }
 
+function repositoryIconLink(href) {
+  if (!href) return "";
+  return `
+    <a class="repo-icon-link" href="${escapeHtml(safeUrl(href))}" title="Repository" aria-label="Repository">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M7 5a3 3 0 0 1 6 0v1h1a4 4 0 0 1 4 4v1.1a3 3 0 1 1-2 0V10a2 2 0 0 0-2-2h-1v8a3 3 0 1 1-2 0V8h-1a2 2 0 0 1-2-2V5Zm3 0a1 1 0 1 0-2 0v1h2V5Zm2 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm5-5a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"></path>
+      </svg>
+    </a>
+  `;
+}
+
+function projectStatusDetail(item) {
+  return {
+    label: "Status",
+    html: `<span class="status-with-repo">${escapeHtml(item.status || "")}${repositoryIconLink(item.repository)}</span>`,
+  };
+}
+
 function stripMarkdown(markdown) {
   return String(markdown || "")
     .replace(/```[\s\S]*?```/g, " ")
@@ -382,7 +400,7 @@ function itemActions(moduleId, item) {
   const canonical = actionLink(item.canonicalUrl, "Canonical URL");
 
   if (moduleId === "projects") {
-    return [actionLink(item.link, "Project link"), actionLink(item.repository, "Repository"), canonical].join("");
+    return [actionLink(item.link, "Project link"), canonical].join("");
   }
 
   if (moduleId === "downloads") {
@@ -796,7 +814,7 @@ function renderItem(moduleId, item) {
   let details = moduleFieldRows(moduleId, item, "list");
 
   if (!details.length && moduleId === "projects") {
-    details.push({ label: "Status", value: item.status });
+    details.push(projectStatusDetail(item));
   }
 
   if (!details.length && moduleId === "downloads") {
@@ -848,7 +866,7 @@ function renderDetail(moduleId, slug) {
       ${itemImage(item)}
       ${item.summary ? `<p class="summary">${inlineMarkdown(item.summary)}</p>` : ""}
       ${detailList([
-        { label: "Status", value: item.status },
+        ...(moduleId === "projects" ? [projectStatusDetail(item)] : [{ label: "Status", value: item.status }]),
         { label: "Version", value: item.version },
         { label: "SKU", value: item.sku },
         { label: "Price", value: item.price },

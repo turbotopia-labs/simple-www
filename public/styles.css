@@ -336,6 +336,30 @@ h3 {
   overflow-wrap: anywhere;
 }
 
+.status-with-repo {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.repo-icon-link {
+  display: inline-flex;
+  width: 17px;
+  height: 17px;
+  color: var(--muted);
+  vertical-align: text-bottom;
+}
+
+.repo-icon-link:hover {
+  color: var(--link);
+}
+
+.repo-icon-link svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+}
+
 .action-link {
   margin: 10px 0 0;
 }
