@@ -1,6 +1,6 @@
-# Public Contract for v1.3.0
+# Public Contract for v1.4.0
 
-This contract is stable for `v1.3.0`. Changes after `v1.3.0` should be additive unless a documented breaking release is planned.
+This contract is stable for `v1.4.0`. Changes after `v1.4.0` should be additive unless a documented breaking release is planned.
 
 ## Content
 
@@ -67,6 +67,23 @@ Stable module fields:
 - `order`
 - `sort`
 - `limit`
+
+Custom module manifests live in:
+
+- `modules/<module-id>.json`
+
+Stable manifest fields:
+
+- `id`
+- `label`
+- `enabled`
+- `emptyState`
+- `order`
+- `sort`
+- `limit`
+- `fields`
+- `views`
+- `validation`
 
 See `docs/CONFIG.md` for defaults and validation.
 

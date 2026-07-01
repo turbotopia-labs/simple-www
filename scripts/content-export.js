@@ -1,9 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 
-const { contentDir, loadedConfig, parseMarkdownFile, root, version } = require("../server");
+const { allContentFieldNames, contentDir, loadedConfig, parseMarkdownFile, root, version } = require("../server");
 
-const fields = [
+const baseFields = [
   "module",
   "slug",
   "title",
@@ -54,7 +54,13 @@ function csvValue(value) {
 }
 
 function rowsToCsv(rows) {
+  const fields = exportFields(rows);
   return [fields.join(","), ...rows.map((row) => fields.map((field) => csvValue(row[field])).join(","))].join("\n") + "\n";
+}
+
+function exportFields(rows) {
+  const moduleFields = rows.flatMap((row) => allContentFieldNames(row.module));
+  return [...new Set([...baseFields, ...moduleFields, ...rows.flatMap((row) => Object.keys(row))])];
 }
 
 function readItems(moduleFilter) {

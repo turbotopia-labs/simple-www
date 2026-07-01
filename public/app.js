@@ -283,6 +283,21 @@ function detailList(details) {
   `;
 }
 
+function moduleFieldRows(moduleId, item, viewName) {
+  const module = state.modules[moduleId] || {};
+  const fields = Array.isArray(module.fields) ? module.fields : [];
+  const explicitView = Array.isArray(module.views?.[viewName]) ? module.views[viewName] : [];
+  const selected = explicitView.length ? explicitView : fields.filter((field) => field[viewName]).map((field) => field.name);
+
+  return selected
+    .map((fieldName) => {
+      const field = fields.find((entry) => entry.name === fieldName) || { name: fieldName, label: fieldName };
+      const value = Array.isArray(item[fieldName]) ? item[fieldName].join(", ") : item[fieldName];
+      return { label: field.label || field.name, value };
+    })
+    .filter((row) => row.value !== undefined && row.value !== "");
+}
+
 function actionLink(href, label) {
   if (!href) return "";
   return `<p class="action-link"><a href="${escapeHtml(safeUrl(href))}">${escapeHtml(label)}</a></p>`;
@@ -536,17 +551,17 @@ function searchResults(query) {
 }
 
 function renderItem(moduleId, item) {
-  const details = [];
+  let details = moduleFieldRows(moduleId, item, "list");
 
-  if (moduleId === "projects") {
+  if (!details.length && moduleId === "projects") {
     details.push({ label: "Status", value: item.status });
   }
 
-  if (moduleId === "downloads") {
+  if (!details.length && moduleId === "downloads") {
     details.push({ label: "Version", value: item.version });
   }
 
-  if (moduleId === "store") {
+  if (!details.length && moduleId === "store") {
     details.push({ label: "SKU", value: item.sku }, { label: "Price", value: item.price });
   }
 
@@ -594,6 +609,7 @@ function renderDetail(moduleId, slug) {
         { label: "Version", value: item.version },
         { label: "SKU", value: item.sku },
         { label: "Price", value: item.price },
+        ...moduleFieldRows(moduleId, item, "detail"),
       ])}
       ${item.tags && item.tags.length ? `<div class="tags">${item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
       <div class="content">${markdownToHtml(item.body)}</div>

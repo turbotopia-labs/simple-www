@@ -137,33 +137,14 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 - Done: Document safe theme pack structure.
 - Done: Add theme validation for required CSS variables.
 
-## v1.2.0 - Import and Export Tools
-
-- Add content import from JSON.
-- Add content import from CSV.
-- Add content export to JSON.
-- Add content export to CSV.
-- Add dry-run validation for imports.
-- Add duplicate handling rules for import.
-- Document backup expectations before imports.
-
-## v1.3.0 - Theme Packs
-
-- Add `themes/` folder support.
-- Add config-driven theme selection.
-- Ship a small default theme pack set.
-- Keep the current pre-2010 theme as the default.
-- Document safe theme pack structure.
-- Add theme validation for required CSS variables.
-
 ## v1.4.0 - Plugin-Style Custom Modules
 
-- Add `modules/` folder for custom module definitions.
-- Support custom module labels, fields, views, and validation rules.
-- Keep built-in modules working without plugins.
-- Add module manifest validation.
-- Document the custom module API.
-- Add example custom module.
+- Done: Add `modules/` folder for custom module definitions.
+- Done: Support custom module labels, fields, views, and validation rules.
+- Done: Keep built-in modules working without plugins.
+- Done: Add module manifest validation.
+- Done: Document the custom module API.
+- Done: Add example custom module.
 
 ## v1.5.0 - Comments
 

@@ -6,6 +6,7 @@ const root = __dirname;
 const publicDir = path.join(root, "public");
 const contentDir = path.join(root, "content");
 const dataDir = path.join(root, "data");
+const modulesDir = path.join(root, "modules");
 const themesDir = path.join(root, "themes");
 const port = Number(process.env.PORT || 6625);
 const version = fs.readFileSync(path.join(root, "VERSION"), "utf8").trim();
@@ -92,6 +93,7 @@ const defaultConfig = {
 
 const validSorts = new Set(["date-desc", "date-asc", "title-asc", "title-desc", "slug-asc", "slug-desc"]);
 const validLayouts = new Set(["list", "cards", "compact"]);
+const validManifestFieldTypes = new Set(["string", "text", "date", "boolean", "integer", "url", "tags"]);
 const editableFields = [
   "title",
   "date",
@@ -127,6 +129,105 @@ const mimeTypes = {
   ".jpeg": "image/jpeg",
   ".svg": "image/svg+xml",
 };
+
+function readJsonFile(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, "utf8"));
+}
+
+function validateModuleManifest(moduleId, manifest, source) {
+  const errors = [];
+  const allowedFieldNames = new Set(editableFields);
+
+  if (!manifest || typeof manifest !== "object" || Array.isArray(manifest)) {
+    return [`${source}: manifest must be an object.`];
+  }
+
+  if (manifest.id !== undefined && manifest.id !== moduleId) errors.push(`${source}: id must match file name: ${moduleId}.`);
+  if (manifest.label !== undefined && typeof manifest.label !== "string") errors.push(`${source}: label must be a string.`);
+  if (manifest.enabled !== undefined && typeof manifest.enabled !== "boolean") errors.push(`${source}: enabled must be true or false.`);
+  if (manifest.emptyState !== undefined && typeof manifest.emptyState !== "string") errors.push(`${source}: emptyState must be a string.`);
+  if (manifest.order !== undefined && !Number.isInteger(manifest.order)) errors.push(`${source}: order must be an integer.`);
+  if (manifest.limit !== undefined && manifest.limit !== null && (!Number.isInteger(manifest.limit) || manifest.limit < 0)) {
+    errors.push(`${source}: limit must be null or a non-negative integer.`);
+  }
+  if (manifest.sort !== undefined && !validSorts.has(manifest.sort)) errors.push(`${source}: sort must be one of ${Array.from(validSorts).join(", ")}.`);
+
+  if (manifest.fields !== undefined && !Array.isArray(manifest.fields)) {
+    errors.push(`${source}: fields must be an array.`);
+  }
+
+  (manifest.fields || []).forEach((field, index) => {
+    if (!field || typeof field !== "object" || Array.isArray(field)) {
+      errors.push(`${source}: fields[${index}] must be an object.`);
+      return;
+    }
+    if (!/^[a-z][a-z0-9]*$/i.test(String(field.name || ""))) errors.push(`${source}: fields[${index}].name must use letters and numbers.`);
+    if (!validManifestFieldTypes.has(field.type || "string")) errors.push(`${source}: fields[${index}].type is not supported.`);
+    if (field.label !== undefined && typeof field.label !== "string") errors.push(`${source}: fields[${index}].label must be a string.`);
+    ["required", "list", "detail"].forEach((key) => {
+      if (field[key] !== undefined && typeof field[key] !== "boolean") errors.push(`${source}: fields[${index}].${key} must be true or false.`);
+    });
+    if (field.name) allowedFieldNames.add(field.name);
+  });
+
+  ["list", "detail"].forEach((viewName) => {
+    const view = manifest.views?.[viewName];
+    if (view !== undefined && !Array.isArray(view)) errors.push(`${source}: views.${viewName} must be an array.`);
+    (view || []).forEach((field) => {
+      if (!allowedFieldNames.has(field)) errors.push(`${source}: views.${viewName} contains unknown field: ${field}.`);
+    });
+  });
+
+  const required = manifest.validation?.required;
+  if (required !== undefined && !Array.isArray(required)) errors.push(`${source}: validation.required must be an array.`);
+  (required || []).forEach((field) => {
+    if (!allowedFieldNames.has(field)) errors.push(`${source}: validation.required contains unknown field: ${field}.`);
+  });
+
+  return errors;
+}
+
+function loadModuleManifests() {
+  if (!fs.existsSync(modulesDir)) return { manifests: {}, errors: [] };
+
+  const manifests = {};
+  const errors = [];
+  fs.readdirSync(modulesDir)
+    .filter((fileName) => fileName.endsWith(".json"))
+    .forEach((fileName) => {
+      const moduleId = path.basename(fileName, ".json");
+      const source = path.join(modulesDir, fileName);
+      if (!/^[a-z0-9_-]+$/.test(moduleId)) {
+        errors.push(`${source}: module file name must use lowercase letters, numbers, hyphens, or underscores.`);
+        return;
+      }
+
+      try {
+        const manifest = readJsonFile(source);
+        errors.push(...validateModuleManifest(moduleId, manifest, source));
+        manifests[moduleId] = {
+          id: moduleId,
+          label: labelFromModuleId(moduleId),
+          enabled: false,
+          emptyState: "No content yet.",
+          order: 1000,
+          sort: "date-desc",
+          limit: null,
+          fields: [],
+          views: {},
+          validation: {},
+          ...manifest,
+        };
+      } catch (error) {
+        errors.push(`${source}: ${error.message}`);
+      }
+    });
+
+  return { manifests, errors };
+}
+
+const loadedModuleManifests = loadModuleManifests();
+const moduleManifests = loadedModuleManifests.manifests;
 
 function send(res, status, body, type = "text/plain; charset=utf-8") {
   res.writeHead(status, { "Content-Type": type });
@@ -422,17 +523,20 @@ function normalizeConfig(raw) {
   if (raw.siteTitle && !raw.site?.title) site.title = raw.siteTitle;
   if (raw.siteDescription && !raw.site?.description) site.description = raw.siteDescription;
 
-  const moduleIds = new Set([...Object.keys(defaultModules), ...Object.keys(raw.modules || {})]);
+  const moduleIds = new Set([...Object.keys(defaultModules), ...Object.keys(moduleManifests), ...Object.keys(raw.modules || {})]);
   const modules = {};
 
   moduleIds.forEach((moduleId) => {
-    const fallback = defaultModules[moduleId] || {
+    const fallback = defaultModules[moduleId] || moduleManifests[moduleId] || {
       label: labelFromModuleId(moduleId),
       enabled: false,
       emptyState: "No content yet.",
       order: 1000,
       sort: "date-desc",
       limit: null,
+      fields: [],
+      views: {},
+      validation: {},
     };
 
     modules[moduleId] = {
@@ -446,7 +550,7 @@ function normalizeConfig(raw) {
 
 function loadConfig() {
   const { raw, source } = readConfigFile();
-  const errors = validateRawConfig(raw, source);
+  const errors = [...loadedModuleManifests.errors, ...validateRawConfig(raw, source)];
 
   if (errors.length) {
     throw new Error(`Config validation failed:\n- ${errors.join("\n- ")}`);
@@ -493,7 +597,27 @@ function integerValue(value, fallback = 0) {
   return Number.isInteger(number) ? number : fallback;
 }
 
+function moduleDefinition(moduleId) {
+  return loadedConfig?.config?.modules?.[moduleId] || moduleManifests[moduleId] || {};
+}
+
+function moduleFieldDefinitions(moduleId) {
+  return Array.isArray(moduleDefinition(moduleId).fields) ? moduleDefinition(moduleId).fields : [];
+}
+
+function allContentFieldNames(moduleId) {
+  return [...new Set([...editableFields, ...moduleFieldDefinitions(moduleId).map((field) => field.name).filter(Boolean)])];
+}
+
 function requiredFieldsForModule(moduleId) {
+  const definition = moduleDefinition(moduleId);
+  const manifestRequired = [
+    ...(definition.validation?.required || []),
+    ...moduleFieldDefinitions(moduleId)
+      .filter((field) => field.required)
+      .map((field) => field.name),
+  ];
+  if (manifestRequired.length) return [...new Set(["title", ...manifestRequired])];
   if (moduleId === "news" || moduleId === "blog") return ["title", "date"];
   if (moduleId === "projects") return ["title", "status"];
   if (moduleId === "downloads") return ["title", "version"];
@@ -518,6 +642,16 @@ function validateContentFields(moduleId, item, source) {
   if (typeof item.draft !== "boolean") errors.push(`${source}: draft must be true or false.`);
   if (typeof item.pinned !== "boolean") errors.push(`${source}: pinned must be true or false.`);
   if (!Number.isInteger(item.priority)) errors.push(`${source}: priority must be an integer.`);
+
+  moduleFieldDefinitions(moduleId).forEach((field) => {
+    const value = item[field.name];
+    if (value === undefined || value === "") return;
+    if (field.type === "date" && !isDateString(value)) errors.push(`${source}: ${field.name} must use YYYY-MM-DD.`);
+    if (field.type === "boolean" && typeof value !== "boolean") errors.push(`${source}: ${field.name} must be true or false.`);
+    if (field.type === "integer" && !Number.isInteger(Number(value))) errors.push(`${source}: ${field.name} must be an integer.`);
+    if (field.type === "url" && !isSafeContentUrl(value)) errors.push(`${source}: ${field.name} must be a safe URL or relative path.`);
+    if (field.type === "tags" && !Array.isArray(value)) errors.push(`${source}: ${field.name} must be a list.`);
+  });
 
   return errors;
 }
@@ -579,7 +713,13 @@ function parseMarkdownFile(filePath) {
   const raw = fs.readFileSync(filePath, "utf8");
   const { meta, body } = parseFrontMatter(raw);
   const fileSlug = path.basename(filePath, ".md");
+  const moduleId = path.relative(contentDir, path.dirname(filePath)).split(path.sep)[0];
   const slug = slugify(meta.slug || fileSlug, fileSlug);
+  const customFields = Object.fromEntries(
+    moduleFieldDefinitions(moduleId)
+      .filter((field) => field.name && !editableFields.includes(field.name))
+      .map((field) => [field.name, field.type === "tags" ? normalizeTags(meta[field.name]) : meta[field.name] ?? ""])
+  );
 
   return {
     slug,
@@ -604,6 +744,7 @@ function parseMarkdownFile(filePath) {
     version: String(meta.version || ""),
     sku: String(meta.sku || ""),
     price: String(meta.price || ""),
+    ...customFields,
     body,
   };
 }
@@ -702,7 +843,8 @@ function frontMatterValue(value) {
 
 function serializeMarkdown(fields, body, slug) {
   const normalizedFields = { ...fields, slug };
-  const lines = editableFields
+  const fieldOrder = [...editableFields, ...Object.keys(normalizedFields).filter((field) => !editableFields.includes(field))];
+  const lines = fieldOrder
     .filter((field) => normalizedFields[field] !== undefined && normalizedFields[field] !== "")
     .map((field) => `${field}: ${frontMatterValue(normalizedFields[field])}`);
 
@@ -996,6 +1138,7 @@ if (require.main === module) {
 
 module.exports = {
   absoluteUrl,
+  allContentFieldNames,
   contentDir,
   createServer,
   escapeXml,

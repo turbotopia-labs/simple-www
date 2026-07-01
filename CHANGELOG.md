@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 1.4.0 - 2026-07-01
+
+- Added `modules/` folder support for custom module manifests.
+- Added custom module labels, fields, card/detail views, and validation rules.
+- Kept built-in modules working without manifests.
+- Added module manifest validation at startup.
+- Added example `links` custom module.
+- Documented the custom module API.
+
 ## 1.3.0 - 2026-07-01
 
 - Added `themes/` folder support and static serving/export.

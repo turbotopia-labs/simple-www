@@ -92,6 +92,8 @@ Unknown custom modules default to:
 }
 ```
 
+Custom module manifests can also live in `modules/<module-id>.json`. Manifest defaults are merged before `data/config.json`, so config can override labels, ordering, enabled state, sort, and limits. See `docs/CUSTOM-MODULES.md`.
+
 ## Validation
 
 Config is validated at startup. Invalid config stops the server with a clear error message.

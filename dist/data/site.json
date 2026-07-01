@@ -60,6 +60,55 @@
         "order": 60,
         "sort": "title-asc",
         "limit": null
+      },
+      "links": {
+        "id": "links",
+        "label": "Links",
+        "enabled": false,
+        "emptyState": "No links have been added yet.",
+        "order": 70,
+        "sort": "title-asc",
+        "limit": null,
+        "fields": [
+          {
+            "name": "url",
+            "label": "URL",
+            "type": "url",
+            "required": true,
+            "list": true,
+            "detail": true
+          },
+          {
+            "name": "source",
+            "label": "Source",
+            "type": "string",
+            "list": true,
+            "detail": true
+          },
+          {
+            "name": "rating",
+            "label": "Rating",
+            "type": "integer",
+            "detail": true
+          }
+        ],
+        "views": {
+          "list": [
+            "url",
+            "source"
+          ],
+          "detail": [
+            "url",
+            "source",
+            "rating"
+          ]
+        },
+        "validation": {
+          "required": [
+            "title",
+            "url"
+          ]
+        }
       }
     }
   },
@@ -165,7 +214,7 @@
   },
   "diagnostics": {
     "configSource": "C:\\Users\\thoma\\Documents\\alfred.vaultsworth\\tubotopia-labs_git\\simple-www\\data\\config.json",
-    "moduleCount": 6,
+    "moduleCount": 7,
     "enabledModuleCount": 3,
     "contentItemCount": 3,
     "adminEditing": false,
@@ -211,9 +260,16 @@
         "order": 60,
         "sort": "title-asc",
         "limit": null
+      },
+      "links": {
+        "enabled": false,
+        "itemCount": 0,
+        "order": 70,
+        "sort": "title-asc",
+        "limit": null
       }
     }
   },
   "warnings": [],
-  "version": "1.3.0"
+  "version": "1.4.0"
 }

@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const { contentDir, loadedConfig, root, serializeMarkdown, slugify, validateContentFields } = require("../server");
+const { allContentFieldNames, contentDir, loadedConfig, root, serializeMarkdown, slugify, validateContentFields } = require("../server");
 
 const contentFields = [
   "title",
@@ -133,8 +133,9 @@ function normalizeRecord(record, index) {
   const rawSlug = String(record.slug || record.title || `item-${index + 1}`).trim();
   const slug = slugify(rawSlug);
   const fields = {};
+  const importFields = allContentFieldNames(moduleId);
 
-  contentFields.forEach((field) => {
+  importFields.forEach((field) => {
     if (record[field] !== undefined) fields[field] = record[field];
   });
 
@@ -147,7 +148,7 @@ function normalizeRecord(record, index) {
   fields.tags = parseTags(fields.tags);
 
   const item = {
-    ...Object.fromEntries(contentFields.map((field) => [field, fields[field] ?? ""])),
+    ...Object.fromEntries(importFields.map((field) => [field, fields[field] ?? ""])),
     slug,
     draft: fields.draft,
     pinned: fields.pinned,

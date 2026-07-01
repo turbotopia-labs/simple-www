@@ -1,0 +1,39 @@
+{
+  "id": "links",
+  "label": "Links",
+  "enabled": false,
+  "emptyState": "No links have been added yet.",
+  "order": 70,
+  "sort": "title-asc",
+  "limit": null,
+  "fields": [
+    {
+      "name": "url",
+      "label": "URL",
+      "type": "url",
+      "required": true,
+      "list": true,
+      "detail": true
+    },
+    {
+      "name": "source",
+      "label": "Source",
+      "type": "string",
+      "list": true,
+      "detail": true
+    },
+    {
+      "name": "rating",
+      "label": "Rating",
+      "type": "integer",
+      "detail": true
+    }
+  ],
+  "views": {
+    "list": ["url", "source"],
+    "detail": ["url", "source", "rating"]
+  },
+  "validation": {
+    "required": ["title", "url"]
+  }
+}
