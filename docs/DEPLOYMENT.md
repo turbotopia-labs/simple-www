@@ -75,6 +75,8 @@ Static export mode is read-only. Admin editing is not available from exported fi
 
 In multi-site mode, export writes to the active site's configured `exportDir`.
 
+Export hooks can run after a successful export. See `docs/EXPORT-HOOKS.md`.
+
 ## Validation
 
 Run validation before deployment:

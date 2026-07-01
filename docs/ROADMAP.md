@@ -208,7 +208,7 @@ v3 should focus on discovery, editorial workflow, asset handling, and operations
 
 ## v2.5.0 - Export Hooks
 
-- Webhook or CLI hooks after export.
+- Done: Webhook or CLI hooks after export.
 
 ## v2.6.0 - Analytics Export
 

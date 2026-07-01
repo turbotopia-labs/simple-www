@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { spawn } = require("child_process");
 
 const {
   absoluteUrl,
@@ -117,7 +118,107 @@ function notFoundHtml(payload) {
 </html>`;
 }
 
-function exportSite() {
+function hookPayload(payload) {
+  return {
+    version: payload.version,
+    exportedAt: new Date().toISOString(),
+    exportDir: distDir,
+    configSource: loadedConfig.source,
+    site: {
+      title: payload.config.site.title,
+      baseUrl: payload.config.site.baseUrl,
+    },
+    counts: {
+      content: payload.diagnostics.contentItemCount,
+      collections: payload.diagnostics.collectionItemCount,
+      media: payload.diagnostics.mediaItemCount,
+    },
+  };
+}
+
+function runCommandHook(command, context, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, {
+      cwd: root,
+      shell: true,
+      windowsHide: true,
+      env: {
+        ...process.env,
+        SIMPLE_WWW_VERSION: context.version,
+        SIMPLE_WWW_EXPORT_DIR: context.exportDir,
+        SIMPLE_WWW_CONFIG_SOURCE: context.configSource,
+      },
+      timeout: timeoutMs,
+    });
+    let output = "";
+
+    child.stdout.on("data", (chunk) => {
+      output += chunk.toString();
+    });
+    child.stderr.on("data", (chunk) => {
+      output += chunk.toString();
+    });
+    child.on("error", reject);
+    child.on("close", (code) => {
+      if (code === 0) {
+        resolve(output.trim());
+        return;
+      }
+      reject(new Error(`command exited with ${code}: ${command}${output.trim() ? `\n${output.trim()}` : ""}`));
+    });
+  });
+}
+
+async function runWebhookHook(webhook, context, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(webhook.url, {
+      method: String(webhook.method || "POST").toUpperCase(),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(context),
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`webhook returned HTTP ${response.status}: ${webhook.url}`);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function runExportHooks(payload) {
+  const hooks = payload.config.exportHooks || {};
+  if (hooks.enabled !== true) return;
+
+  const context = hookPayload(payload);
+  const timeoutMs = Number.isInteger(hooks.timeoutMs) ? hooks.timeoutMs : 30000;
+  const failures = [];
+
+  for (const command of hooks.commands || []) {
+    try {
+      await runCommandHook(command, context, timeoutMs);
+      console.log(`Export hook command OK: ${command}`);
+    } catch (error) {
+      failures.push(error.message);
+      console.warn(`Export hook command failed: ${error.message}`);
+    }
+  }
+
+  for (const webhook of hooks.webhooks || []) {
+    try {
+      await runWebhookHook(webhook, context, timeoutMs);
+      console.log(`Export hook webhook OK: ${webhook.url}`);
+    } catch (error) {
+      failures.push(error.message);
+      console.warn(`Export hook webhook failed: ${error.message}`);
+    }
+  }
+
+  if (failures.length && hooks.failOnError === true) {
+    throw new Error(`Export hooks failed:\n- ${failures.join("\n- ")}`);
+  }
+}
+
+async function exportSite() {
   const payload = sitePayload();
 
   copyPublic();
@@ -141,6 +242,10 @@ function exportSite() {
 
   console.log(`Exported ${payload.version} to ${distDir}`);
   console.log(`Config: ${loadedConfig.source}`);
+  await runExportHooks(payload);
 }
 
-exportSite();
+exportSite().catch((error) => {
+  console.error(error.message);
+  process.exit(1);
+});

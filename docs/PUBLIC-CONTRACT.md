@@ -1,6 +1,6 @@
-# Public Contract for v2.4.0
+# Public Contract for v2.5.0
 
-This contract is stable for `v2.4.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
+This contract is stable for `v2.5.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
 
 ## Content
 
@@ -160,6 +160,14 @@ Stable export output:
 - `dist/404.html`
 
 In multi-site mode, `dist/` means the active site's configured `exportDir`.
+
+Export hooks:
+
+- `exportHooks.enabled`
+- `exportHooks.failOnError`
+- `exportHooks.timeoutMs`
+- `exportHooks.commands`
+- `exportHooks.webhooks`
 
 ## Content Import and Export
 

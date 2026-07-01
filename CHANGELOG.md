@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 2.5.0 - 2026-07-01
+
+- Added opt-in export hooks after successful static export.
+- Added CLI command hooks with export-related environment variables.
+- Added webhook hooks with JSON export payloads.
+- Added `exportHooks.failOnError` and `exportHooks.timeoutMs`.
+- Kept export hooks disabled by default.
+
 ## 2.4.0 - 2026-07-01
 
 - Added content collections under `content/collections/<collection>/`.

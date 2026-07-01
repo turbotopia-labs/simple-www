@@ -128,6 +128,13 @@ const defaultConfig = {
     commentsEnabled: false,
     storePaymentsEnabled: false,
   },
+  exportHooks: {
+    enabled: false,
+    failOnError: false,
+    timeoutMs: 30000,
+    commands: [],
+    webhooks: [],
+  },
   modules: defaultModules,
 };
 
@@ -587,6 +594,48 @@ function validateRawConfig(raw, source) {
     errors.push(`${source}: modules must be an object.`);
   }
 
+  if (raw.exportHooks !== undefined && (typeof raw.exportHooks !== "object" || Array.isArray(raw.exportHooks))) {
+    errors.push(`${source}: exportHooks must be an object.`);
+  }
+
+  if (raw.exportHooks) {
+    if (raw.exportHooks.enabled !== undefined && typeof raw.exportHooks.enabled !== "boolean") {
+      errors.push(`${source}: exportHooks.enabled must be true or false.`);
+    }
+    if (raw.exportHooks.failOnError !== undefined && typeof raw.exportHooks.failOnError !== "boolean") {
+      errors.push(`${source}: exportHooks.failOnError must be true or false.`);
+    }
+    if (
+      raw.exportHooks.timeoutMs !== undefined &&
+      (!Number.isInteger(raw.exportHooks.timeoutMs) || raw.exportHooks.timeoutMs < 1000)
+    ) {
+      errors.push(`${source}: exportHooks.timeoutMs must be an integer of at least 1000.`);
+    }
+    if (raw.exportHooks.commands !== undefined && !Array.isArray(raw.exportHooks.commands)) {
+      errors.push(`${source}: exportHooks.commands must be an array.`);
+    }
+    (raw.exportHooks.commands || []).forEach((command, index) => {
+      if (typeof command !== "string" || !command.trim()) {
+        errors.push(`${source}: exportHooks.commands[${index}] must be a non-empty string.`);
+      }
+    });
+    if (raw.exportHooks.webhooks !== undefined && !Array.isArray(raw.exportHooks.webhooks)) {
+      errors.push(`${source}: exportHooks.webhooks must be an array.`);
+    }
+    (raw.exportHooks.webhooks || []).forEach((webhook, index) => {
+      if (!webhook || typeof webhook !== "object" || Array.isArray(webhook)) {
+        errors.push(`${source}: exportHooks.webhooks[${index}] must be an object.`);
+        return;
+      }
+      if (typeof webhook.url !== "string" || !/^https?:\/\//i.test(webhook.url)) {
+        errors.push(`${source}: exportHooks.webhooks[${index}].url must be an http or https URL.`);
+      }
+      if (webhook.method !== undefined && !["POST", "PUT"].includes(String(webhook.method).toUpperCase())) {
+        errors.push(`${source}: exportHooks.webhooks[${index}].method must be POST or PUT.`);
+      }
+    });
+  }
+
   Object.entries(raw.modules || {}).forEach(([moduleId, moduleConfig]) => {
     if (!moduleConfig || typeof moduleConfig !== "object" || Array.isArray(moduleConfig)) {
       errors.push(`${source}: modules.${moduleId} must be an object.`);
@@ -678,7 +727,14 @@ function normalizeConfig(raw) {
     };
   });
 
-  return { site, modules };
+  return {
+    site,
+    exportHooks: {
+      ...defaultConfig.exportHooks,
+      ...(raw.exportHooks || {}),
+    },
+    modules,
+  };
 }
 
 function loadConfig() {

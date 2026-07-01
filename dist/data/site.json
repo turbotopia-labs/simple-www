@@ -15,6 +15,13 @@
       "commentsEnabled": false,
       "storePaymentsEnabled": false
     },
+    "exportHooks": {
+      "enabled": false,
+      "failOnError": false,
+      "timeoutMs": 30000,
+      "commands": [],
+      "webhooks": []
+    },
     "modules": {
       "news": {
         "label": "News",
@@ -297,5 +304,5 @@
     }
   },
   "warnings": [],
-  "version": "2.4.0"
+  "version": "2.5.0"
 }

@@ -102,6 +102,22 @@ Unknown custom modules default to:
 
 Custom module manifests can also live in `modules/<module-id>.json`. Manifest defaults are merged before `data/config.json`, so config can override labels, ordering, enabled state, sort, and limits. See `docs/CUSTOM-MODULES.md`.
 
+## Export Hooks
+
+Export hooks are disabled by default:
+
+```json
+"exportHooks": {
+  "enabled": false,
+  "failOnError": false,
+  "timeoutMs": 30000,
+  "commands": [],
+  "webhooks": []
+}
+```
+
+See `docs/EXPORT-HOOKS.md`.
+
 ## Validation
 
 Config is validated at startup. Invalid config stops the server with a clear error message.
@@ -116,6 +132,10 @@ Validation checks:
 - `site.commentsEnabled` must be true or false.
 - `site.storePaymentsEnabled` must be true or false.
 - `modules` must be an object.
+- `exportHooks.enabled` and `exportHooks.failOnError` must be true or false.
+- `exportHooks.timeoutMs` must be an integer of at least 1000.
+- `exportHooks.commands` must be an array of command strings.
+- `exportHooks.webhooks` must be an array of objects with http/https URLs.
 - Each module must be an object.
 - `enabled` must be true or false.
 - `order` must be an integer.
