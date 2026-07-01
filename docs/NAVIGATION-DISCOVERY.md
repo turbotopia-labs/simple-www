@@ -4,7 +4,7 @@ Navigation and discovery features apply from `v0.6.0`.
 
 ## Module Navigation
 
-Enabled modules appear in the navigation bar using their configured `order`.
+Enabled modules appear as bookmark-style tabs under the site subtitle using their configured `order`.
 
 Individual entries are available at:
 

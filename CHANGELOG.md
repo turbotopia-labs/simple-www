@@ -8,6 +8,7 @@
 - Moved search out of module tools into a discreet universal header search.
 - Made tag filtering less visually prominent in module tools.
 - Made all module filters more discreet and integrated with the page layout.
+- Moved module navigation into the header as bookmark-style tabs.
 
 ## 1.0.0 - 2026-07-01
 
