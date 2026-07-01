@@ -40,7 +40,7 @@ Filter views can be linked with hash URLs:
 
 ## Search
 
-The module search field filters the current module in the browser.
+The header search field searches all published content in the browser.
 
 Search checks:
 
@@ -49,6 +49,12 @@ Search checks:
 - category
 - tags
 - body text
+
+Search views can be linked with hash URLs:
+
+```text
+#/search/raspberry
+```
 
 ## RSS Feeds
 

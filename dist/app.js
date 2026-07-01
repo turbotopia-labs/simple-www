@@ -5,6 +5,7 @@ const description = document.querySelector("#site-description");
 const themeToggle = document.querySelector("#theme-toggle");
 const footerLabel = document.querySelector("#site-footer-label");
 const layoutButtons = document.querySelectorAll("[data-layout]");
+const siteSearch = document.querySelector("#site-search");
 
 let state = {
   activeModule: "",
@@ -204,12 +205,16 @@ function enabledModuleIds() {
 
 function routeFromHash() {
   const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
+  if (parts[0] === "search") {
+    return { moduleId: "", filterType: "all", filterValue: "", itemSlug: "", search: parts.slice(1).join("/") };
+  }
+
   const moduleId = parts[0] || "";
   const itemSlug = parts[1] && !["category", "tag", "archive"].includes(parts[1]) ? parts[1] : "";
   const filterType = itemSlug ? "all" : ["category", "tag", "archive"].includes(parts[1]) ? parts[1] : "all";
   const filterValue = filterType === "all" ? "" : parts[2] || "";
 
-  return { moduleId, filterType, filterValue, itemSlug };
+  return { moduleId, filterType, filterValue, itemSlug, search: "" };
 }
 
 function setRouteHash(moduleId, filterType = "all", filterValue = "") {
@@ -226,13 +231,28 @@ function setItemHash(moduleId, slug) {
   location.hash = `/${encodeURIComponent(moduleId)}/${encodeURIComponent(slug)}`;
 }
 
+function setSearchHash(query) {
+  const trimmed = String(query || "").trim();
+  location.hash = trimmed ? `/search/${encodeURIComponent(trimmed)}` : `/${encodeURIComponent(state.activeModule || enabledModuleIds()[0] || "")}`;
+}
+
 function applyRoute(route) {
+  if (route.search) {
+    state.filterType = "all";
+    state.filterValue = "";
+    state.itemSlug = "";
+    state.search = route.search;
+    renderSearch();
+    return true;
+  }
+
   if (!route.moduleId || !state.modules[route.moduleId]) return false;
 
   state.filterType = route.filterType;
   state.filterValue = route.filterValue;
   state.itemSlug = route.itemSlug;
   state.search = "";
+  siteSearch.value = "";
   if (route.itemSlug) {
     renderDetail(route.moduleId, route.itemSlug);
   } else {
@@ -428,7 +448,7 @@ function renderModuleTools(moduleId, items) {
   const years = [...new Set(items.map((item) => item.date.slice(0, 4)).filter(Boolean))];
   const months = [...new Set(items.map((item) => item.date.slice(0, 7)).filter((value) => value.length === 7))];
 
-  if (!categories.length && !tags.length && !years.length && !state.search) return "";
+  if (!categories.length && !tags.length && !years.length) return "";
 
   const button = (label, type, value = "") => {
     const pressed = state.filterType === type && state.filterValue === value ? ' aria-pressed="true"' : "";
@@ -437,7 +457,6 @@ function renderModuleTools(moduleId, items) {
 
   return `
     <section class="module-tools">
-      <div class="search-row"><label for="module-search">Search</label><input type="search" id="module-search" value="${escapeHtml(state.search)}" placeholder="Search this module"></div>
       <div class="tool-row">${button("All", "all")}${categories.map((category) => button(category, "category", category)).join("")}</div>
       <div class="tool-row">${tags.map((tag) => button(`#${tag}`, "tag", tag)).join("")}</div>
       <div class="tool-row">${years.map((year) => button(year, "archive", year)).join("")}${months.map((month) => button(month, "archive", month)).join("")}</div>
@@ -446,20 +465,28 @@ function renderModuleTools(moduleId, items) {
 }
 
 function visibleItems(moduleId, items) {
-  const search = state.search.trim().toLowerCase();
-
   return items.filter((item) => {
     if (state.filterType === "category" && item.category !== state.filterValue) return false;
     if (state.filterType === "tag" && !(item.tags || []).includes(state.filterValue)) return false;
     if (state.filterType === "archive" && !item.date.startsWith(state.filterValue)) return false;
-
-    if (!search) return true;
-
-    return [item.title, item.summary, item.category, item.body, ...(item.tags || [])]
-      .join(" ")
-      .toLowerCase()
-      .includes(search);
+    return true;
   });
+}
+
+function itemMatchesSearch(item, query) {
+  return [item.title, item.summary, item.category, item.body, ...(item.tags || [])]
+    .join(" ")
+    .toLowerCase()
+    .includes(query.toLowerCase());
+}
+
+function searchResults(query) {
+  const trimmed = String(query || "").trim();
+  if (!trimmed) return [];
+
+  return editableModuleIds()
+    .flatMap((moduleId) => (state.content[moduleId] || []).map((item) => ({ moduleId, item })))
+    .filter((result) => itemMatchesSearch(result.item, trimmed));
 }
 
 function renderItem(moduleId, item) {
@@ -524,6 +551,25 @@ function renderDetail(moduleId, slug) {
       <div class="content">${markdownToHtml(item.body)}</div>
       ${itemActions(moduleId, item)}
     </article>
+  `;
+}
+
+function renderSearch() {
+  const query = state.search.trim();
+  const results = searchResults(query);
+  state.activeModule = "";
+  siteSearch.value = query;
+  renderNav();
+  app.dataset.layout = state.layout;
+  app.innerHTML = `
+    <section class="module-tools">
+      <div class="meta">${escapeHtml(results.length)} result${results.length === 1 ? "" : "s"} for "${escapeHtml(query)}"</div>
+    </section>
+    ${
+      results.length
+        ? results.map((result) => renderItem(result.moduleId, result.item)).join("")
+        : `<section class="card"><h2>Search</h2><p class="empty">No matching content.</p></section>`
+    }
   `;
 }
 
@@ -623,6 +669,7 @@ nav.addEventListener("click", (event) => {
   state.filterValue = "";
   state.itemSlug = "";
   state.search = "";
+  siteSearch.value = "";
   setRouteHash(button.dataset.module);
   renderModule(button.dataset.module);
 });
@@ -698,17 +745,13 @@ async function adminSubmit(method, payload) {
   }
 }
 
-app.addEventListener("input", (event) => {
-  const input = event.target.closest("#module-search");
-  if (!input) return;
-  state.search = input.value;
+siteSearch.addEventListener("input", () => {
+  state.search = siteSearch.value;
   clearTimeout(searchTimer);
   searchTimer = setTimeout(() => {
-    renderModule(state.activeModule);
-    const nextInput = document.querySelector("#module-search");
-    if (nextInput) {
-      nextInput.focus();
-      nextInput.setSelectionRange(nextInput.value.length, nextInput.value.length);
+    setSearchHash(state.search);
+    if (state.search.trim()) {
+      renderSearch();
     }
   }, 150);
 });

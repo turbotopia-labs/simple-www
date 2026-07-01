@@ -5,5 +5,22 @@
   "feed_url": "labs.turbotopia.no/feed.json",
   "description": "project overview",
   "authors": [],
-  "items": []
+  "items": [
+    {
+      "id": "labs.turbotopia.no/#/projects/kraken",
+      "url": "labs.turbotopia.no/#/projects/kraken",
+      "title": "Kraken Bottle ROV",
+      "summary": "Kraken is a small, unmanned, shallow-water remotely operated vehicle (ROV) built around reused 1.5-2 L PET bottles, a Raspberry Pi, a custom control HAT, four shrouded thrusters, and a floating radio hub.",
+      "content_text": "\r\nKraken is a small, unmanned, shallow-water remotely operated vehicle (ROV) built around reused 1.5-2 L PET bottles, a Raspberry Pi, a custom control HAT, four shrouded thrusters, and a floating radio hub.\r\n\r\nThe design package is intentionally conservative:\r\n\r\n- The bottles are buoyancy/fairing elements, never electronics pressure housings.\r\n- The default operating depth is 0-2 m. Operation to 3 m is permitted only after the exact bottle and pressure-vessel assemblies pass the documented tests.\r\n- The vehicle is positively buoyant, so loss of power makes it rise.\r\n- A tether carries data between vehicle and surface hub; radio is used only above the water.\r\n- The HAT carries logic and sensing, not raw thruster current.\r\n- This is an unmanned ROV. Nothing in this repository is suitable for human breathing, human diving, or life support.\r\n\r\nKraken is a low-cost inspection ROV built on a rectangular HDPE/PVC frame. Four reused PET bottles sit high and outboard to provide buoyancy and roll stability. A separate pressure tube contains the Raspberry Pi, camera interface, custom HAT, low-voltage electronics, and battery monitoring. Four reversible, shrouded thrusters provide two horizontal and two vertical control channels. The vehicle is trimmed 100-250 g positively buoyant.\r\n\r\nA light tether joins the ROV to a floating surface hub. The tether carries 100BASE-TX Ethernet and a redundant half-duplex RS-485 control/telemetry pair. The surface hub contains a second Raspberry Pi, a USB Ethernet adapter, a protected battery, and a weatherproof Wi-Fi access point. The pilot connects to the hub by 2.4 or 5 GHz Wi-Fi. An optional LoRa link may carry low-rate position, health, and “return to surface” commands, but it is not suitable for video or responsive primary piloting.\r\n\r\n### Recommended performance envelope\r\n\r\n| Property | Prototype target |\r\n|---|---:|\r\n| Operating depth | 0-2 m |\r\n| Conditional maximum depth | 3 m after pressure and bottle tests |\r\n| Tether length | 10 m standard; 20 m after voltage/data tests |\r\n| Vehicle mass in air | 5-8 kg depending on thrusters and battery |\r\n| Displacement | Trim to mass + 0.10-0.25 kg |\r\n| Endurance | 35-70 min typical |\r\n| Horizontal speed | 0.3-0.7 m/s, configuration dependent |\r\n| Video | 720p/30 low-latency target |\r\n| Water | Fresh water first; salt water only after corrosion upgrades |\r\n| Weather | Sheltered water; no current, surf, ice, or boat traffic |\r\n\r\nThe 3 m limit is not set by the electronics sensor. It is set by the improvised buoyancy bodies, penetrators, pressure tube, tether handling, and recovery risk.\r\n\r\n### Functional requirements\r\n\r\n1. Pilot shall command surge, yaw, heave, lights, camera, and emergency ascent from shore.\r\n2. ROV shall transmit video and health telemetry to the pilot.\r\n3. Vehicle shall surface after command loss, software crash, low battery, or detected leak.\r\n4. Surface hub shall keep all RF antennas above water.\r\n5. Tether shall be mechanically strain-relieved independently of electrical connectors.\r\n6. Custom HAT shall measure depth, attitude, battery voltage/current, internal temperature, leak state, and tether state.\r\n7. HAT shall provide expansion buses for sonar, water-quality probes, manipulator, and additional lighting.\r\n8. Thruster power shall be independently fused and shall not pass through the HAT.\r\n\r\n### Non-goals\r\n\r\n- Human occupancy, breathing gas, diver propulsion, or life support.\r\n- Operation beyond visual recovery range.\r\n- Open-water, ocean, surf, current, or navigation around boats.\r\n- Autonomous missions without an attended surface operator.\r\n- Certification as a commercial or scientific instrument.",
+      "date_published": "2026-06-30T00:00:00Z",
+      "tags": [
+        "hardware",
+        "rov",
+        "raspberry",
+        "pi",
+        "custom",
+        "open source"
+      ]
+    }
+  ]
 }

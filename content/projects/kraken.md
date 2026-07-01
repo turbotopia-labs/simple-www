@@ -1,13 +1,13 @@
 ---
 title: Kraken Bottle ROV
 date: 2026-06-30
-category: hardware
+category: open-source
 summary: Kraken is a small, unmanned, shallow-water remotely operated vehicle (ROV) built around reused 1.5-2 L PET bottles, a Raspberry Pi, a custom control HAT, four shrouded thrusters, and a floating radio hub.
 tags: [hardware, rov, raspberry, pi, custom, open source]
 status: planning
 link: 
 repository: 
-draft: true
+draft: false
 ---
 
 Kraken is a small, unmanned, shallow-water remotely operated vehicle (ROV) built around reused 1.5-2 L PET bottles, a Raspberry Pi, a custom control HAT, four shrouded thrusters, and a floating radio hub.
