@@ -378,7 +378,10 @@ function untappdIconLink(href) {
   if (!href) return "";
   return `
     <a class="untappd-icon-link" href="${escapeHtml(safeUrl(href))}" title="Untappd beer profile" aria-label="Untappd beer profile">
-      <span aria-hidden="true">U</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <rect x="2" y="2" width="20" height="20" rx="4"></rect>
+        <path d="M8.1 7.2h3.2l-1.4 9.6H6.7L8.1 7.2Zm4.6 0h3.2l1.4 9.6h-3.2L12.7 7.2Zm-3.2 2.1 5 5m.1-5.1-5.2 5.1"></path>
+      </svg>
     </a>
   `;
 }
@@ -398,11 +401,11 @@ function beerRatingDetail(item) {
     label: "Rating",
     html: `
       <span class="beer-rating">
-        ${untappdIconLink(item.untappd)}
         <span class="rating-bar" aria-label="${escapeHtml(`${rating.toFixed(2)} out of 5`)}">
           <span style="width: ${percentage}%"></span>
         </span>
         <span>${escapeHtml(rating.toFixed(2))}/5</span>
+        ${untappdIconLink(item.untappd)}
       </span>
     `,
   };

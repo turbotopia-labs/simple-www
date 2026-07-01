@@ -362,20 +362,33 @@ h3 {
 
 .untappd-icon-link {
   display: inline-flex;
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  color: var(--muted);
-  font: bold 11px/1 Georgia, "Times New Roman", serif;
   text-decoration: none;
+  vertical-align: text-bottom;
+}
+
+.untappd-icon-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+.untappd-icon-link rect {
+  fill: #f6c343;
+}
+
+.untappd-icon-link path {
+  fill: none;
+  stroke: #1d1d1b;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .untappd-icon-link:hover {
-  color: var(--link);
-  border-color: var(--link);
+  opacity: 0.82;
 }
 
 .beer-rating {
