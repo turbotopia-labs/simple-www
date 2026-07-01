@@ -318,6 +318,10 @@ function itemActions(moduleId, item) {
   return "";
 }
 
+function footerText(site, version) {
+  return String(site.footerText || "simple-www v.{VERSION}").replaceAll("{VERSION}", version || "");
+}
+
 function editableModuleIds() {
   return enabledModuleIds().filter((moduleId) => moduleId !== "admin");
 }
@@ -784,7 +788,7 @@ function applyPayload(payload) {
   description.textContent = site.description || config.siteDescription || "";
   document.title = `${title.textContent} v.${payload.version || ""}`;
   document.documentElement.lang = site.language || "en";
-  footerLabel.textContent = `${title.textContent} v.${payload.version || ""}`;
+  footerLabel.textContent = footerText(site, payload.version || "");
   setLayout(localStorage.getItem("simple-www-layout") || site.layout || "cards");
 
   state.warnings.forEach((warning) => {

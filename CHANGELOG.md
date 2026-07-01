@@ -9,6 +9,7 @@
 - Made tag filtering less visually prominent in module tools.
 - Made all module filters more discreet and integrated with the page layout.
 - Moved module navigation into the header as bookmark-style tabs.
+- Added configurable footer text with `{VERSION}` replacement.
 
 ## 1.0.0 - 2026-07-01
 

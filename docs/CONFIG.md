@@ -22,6 +22,7 @@ JSON remains the default format. YAML support is intentionally small and support
   "author": "",
   "timezone": "UTC",
   "baseUrl": "http://127.0.0.1:6625",
+  "footerText": "simple-www v.{VERSION}",
   "layout": "cards",
   "adminEditing": false
 }
@@ -35,10 +36,13 @@ Defaults:
 - `author`: empty string
 - `timezone`: `UTC`
 - `baseUrl`: `http://127.0.0.1:6625`
+- `footerText`: `simple-www v.{VERSION}`
 - `layout`: `cards`
 - `adminEditing`: `false`
 
 Legacy `siteTitle` and `siteDescription` still work when `site.title` and `site.description` are not set.
+
+`footerText` supports `{VERSION}`, which is replaced with the value from the `VERSION` file.
 
 ## Modules
 

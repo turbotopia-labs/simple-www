@@ -6,6 +6,7 @@
     "author": "",
     "timezone": "Europe/Oslo",
     "baseUrl": "http://127.0.0.1:6625",
+    "footerText": "powered by simple-www v.{VERSION}",
     "layout": "list",
     "adminEditing": false
   },

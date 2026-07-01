@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>labs.turbotopia.no</loc>
+    <loc>http://127.0.0.1:6625</loc>
   </url>
   <url>
-    <loc>labs.turbotopia.no/#/news</loc>
+    <loc>http://127.0.0.1:6625/#/news</loc>
   </url>
   <url>
-    <loc>labs.turbotopia.no/#/projects</loc>
+    <loc>http://127.0.0.1:6625/#/projects</loc>
   </url>
   <url>
-    <loc>labs.turbotopia.no/#/projects/kraken</loc>
+    <loc>http://127.0.0.1:6625/#/projects/billtopia</loc>
   </url>
   <url>
-    <loc>labs.turbotopia.no/#/downloads</loc>
+    <loc>http://127.0.0.1:6625/#/projects/kraken</loc>
+  </url>
+  <url>
+    <loc>http://127.0.0.1:6625/#/projects/tracktopia</loc>
+  </url>
+  <url>
+    <loc>http://127.0.0.1:6625/#/downloads</loc>
   </url>
 </urlset>

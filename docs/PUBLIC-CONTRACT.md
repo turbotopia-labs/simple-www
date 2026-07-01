@@ -47,6 +47,7 @@ Stable `site` fields:
 - `author`
 - `timezone`
 - `baseUrl`
+- `footerText`
 - `layout`
 - `adminEditing`
 
