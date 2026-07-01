@@ -72,12 +72,13 @@ Create does not make a backup because there is no previous file.
 
 ## Data Retention
 
-Docker mounts `content/` and `data/`, so content and config remain on the host.
+Docker mounts `content/`, `data/`, and `media/`, so content, config, comments, and local assets remain on the host.
 
 Recommended practice:
 
 - Back up `content/`.
 - Back up `data/`.
+- Back up `media/`.
 - Keep `content/.backups/` when using admin editing.
 - Keep `data/comments/` when using local comments.
 - Review old backups before deleting them manually.

@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 2.3.0 - 2026-07-01
+
+- Added local `media/` asset library support.
+- Added static serving for `/media/<path>`.
+- Added `/api/media` and exported `dist/data/media.json`.
+- Copied `media/` into static exports.
+- Added media listing to the admin diagnostics view.
+- Added Docker volume mount for `media/`.
+
 ## 2.2.0 - 2026-07-01
 
 - Added `publishAt` front matter for scheduled publishing.

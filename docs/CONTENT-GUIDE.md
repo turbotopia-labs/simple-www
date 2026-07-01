@@ -3,6 +3,7 @@
 Add content as Markdown files under `content/<module>/`.
 
 See `docs/CONTENT-CONTRACT.md` for the stable content contract.
+Use `media/` for local images and files referenced from Markdown or front matter.
 
 ## Folder layout
 
@@ -15,6 +16,7 @@ content/blog/
 content/downloads/
 content/store/
 content/admin/
+media/
 ```
 
 File names become slugs by default. Prefer lowercase names with hyphens:

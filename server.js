@@ -8,6 +8,7 @@ const siteRoot = siteSelection.root;
 const publicDir = path.join(root, "public");
 const contentDir = path.join(siteRoot, "content");
 const dataDir = path.join(siteRoot, "data");
+const mediaDir = path.join(siteRoot, "media");
 const commentsDir = path.join(dataDir, "comments");
 const modulesDir = path.join(root, "modules");
 const themesDir = path.join(root, "themes");
@@ -170,7 +171,11 @@ const mimeTypes = {
   ".png": "image/png",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
+  ".gif": "image/gif",
+  ".webp": "image/webp",
   ".svg": "image/svg+xml",
+  ".pdf": "application/pdf",
+  ".txt": "text/plain; charset=utf-8",
 };
 
 function readJsonFile(filePath) {
@@ -1327,6 +1332,7 @@ function sitePayload() {
     moduleCount: Object.keys(modules).length,
     enabledModuleCount: Object.values(modules).filter((module) => module.enabled).length,
     contentItemCount: Object.values(content).reduce((total, items) => total + items.length, 0),
+    mediaItemCount: listMediaFiles().length,
     adminEditing: adminEditingEnabled(),
     commentsEnabled: commentsEnabled(),
     commentCount: commentsEnabled() ? allComments().length : 0,
@@ -1374,6 +1380,51 @@ function safeThemeAssetPath(urlPath) {
   return filePath.startsWith(themesDir) ? filePath : null;
 }
 
+function safeMediaAssetPath(urlPath) {
+  if (!urlPath.startsWith("/media/")) return null;
+  const cleanPath = decodeURIComponent(urlPath.replace(/^\/media\//, ""));
+  const filePath = path.resolve(mediaDir, cleanPath);
+  const resolvedMediaDir = path.resolve(mediaDir);
+  return filePath.startsWith(`${resolvedMediaDir}${path.sep}`) ? filePath : null;
+}
+
+function listMediaFiles() {
+  const resolvedMediaDir = path.resolve(mediaDir);
+  if (!fs.existsSync(resolvedMediaDir)) return [];
+
+  function walk(directory) {
+    return fs
+      .readdirSync(directory, { withFileTypes: true })
+      .filter((entry) => !entry.name.startsWith("."))
+      .flatMap((entry) => {
+        const filePath = path.join(directory, entry.name);
+        if (entry.isDirectory()) return walk(filePath);
+        if (!entry.isFile()) return [];
+
+        const relativePath = path.relative(resolvedMediaDir, filePath).replace(/\\/g, "/");
+        const stats = fs.statSync(filePath);
+        const ext = path.extname(filePath).toLowerCase();
+        return [{
+          path: relativePath,
+          name: path.basename(filePath),
+          url: `/media/${relativePath.split("/").map(encodeURIComponent).join("/")}`,
+          type: mimeTypes[ext] || "application/octet-stream",
+          size: stats.size,
+          modifiedAt: stats.mtime.toISOString(),
+        }];
+      });
+  }
+
+  return walk(resolvedMediaDir).sort((a, b) => a.path.localeCompare(b.path));
+}
+
+function mediaPayload() {
+  return {
+    version,
+    items: listMediaFiles(),
+  };
+}
+
 let loadedConfig;
 
 try {
@@ -1407,6 +1458,11 @@ function createServer() {
 
       if (url.pathname === "/api/search-index") {
         sendJson(res, 200, buildSearchIndex());
+        return;
+      }
+
+      if (url.pathname === "/api/media") {
+        sendJson(res, 200, mediaPayload());
         return;
       }
 
@@ -1458,6 +1514,13 @@ function createServer() {
         return;
       }
 
+      const mediaFilePath = safeMediaAssetPath(url.pathname);
+      if (mediaFilePath && fs.existsSync(mediaFilePath) && !fs.statSync(mediaFilePath).isDirectory()) {
+        const ext = path.extname(mediaFilePath).toLowerCase();
+        send(res, 200, fs.readFileSync(mediaFilePath), mimeTypes[ext] || "application/octet-stream");
+        return;
+      }
+
       const filePath = safePublicPath(url.pathname);
       if (!filePath || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
         sendError(res, 404, "Not found", "The requested page or file does not exist.");
@@ -1492,7 +1555,10 @@ module.exports = {
   escapeXml,
   exportDir,
   jsonFeed,
+  listMediaFiles,
   loadedConfig,
+  mediaDir,
+  mediaPayload,
   parseMarkdownFile,
   publicDir,
   root,

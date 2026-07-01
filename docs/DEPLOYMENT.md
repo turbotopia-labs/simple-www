@@ -16,8 +16,10 @@ node server.js
 The server provides:
 
 - `/`
+- `/media/*`
 - `/api/site`
 - `/api/search-index`
+- `/api/media`
 - `/api/preview`
 - `/health`
 - `/feeds/news.xml`
@@ -52,8 +54,10 @@ The export includes:
 - `dist/index.html`
 - `dist/app.js`
 - `dist/styles.css`
+- `dist/media/*`
 - `dist/data/site.json`
 - `dist/data/search-index.json`
+- `dist/data/media.json`
 - `dist/feed.json`
 - `dist/feeds.json`
 - `dist/feeds/news.json`

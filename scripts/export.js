@@ -7,6 +7,8 @@ const {
   exportDir,
   jsonFeed,
   loadedConfig,
+  mediaDir,
+  mediaPayload,
   publicDir,
   root,
   rssFeed,
@@ -42,12 +44,15 @@ function copyPublic() {
   if (fs.existsSync(themesDir)) {
     fs.cpSync(themesDir, path.join(distDir, "themes"), { recursive: true });
   }
+  if (fs.existsSync(mediaDir)) {
+    fs.cpSync(mediaDir, path.join(distDir, "media"), { recursive: true });
+  }
 }
 
 function patchIndexForStaticData() {
   const indexPath = path.join(distDir, "index.html");
   const html = fs.readFileSync(indexPath, "utf8");
-  const staticDataScript = '    <script>window.SIMPLE_WWW_DATA_PATH = "data/site.json"; window.SIMPLE_WWW_SEARCH_INDEX_PATH = "data/search-index.json";</script>\n';
+  const staticDataScript = '    <script>window.SIMPLE_WWW_DATA_PATH = "data/site.json"; window.SIMPLE_WWW_SEARCH_INDEX_PATH = "data/search-index.json"; window.SIMPLE_WWW_MEDIA_PATH = "data/media.json";</script>\n';
   writeFile(indexPath, html.replace("    <script src=\"app.js\"></script>", `${staticDataScript}    <script src="app.js"></script>`));
 }
 
@@ -112,6 +117,7 @@ function exportSite() {
 
   writeFile(path.join(dataDir, "site.json"), JSON.stringify(payload, null, 2));
   writeFile(path.join(dataDir, "search-index.json"), JSON.stringify(buildSearchIndex(payload), null, 2));
+  writeFile(path.join(dataDir, "media.json"), JSON.stringify(mediaPayload(), null, 2));
   writeFile(path.join(distDir, "feed.json"), JSON.stringify(jsonFeed(), null, 2));
   writeFile(path.join(distDir, "feeds.json"), JSON.stringify(jsonFeed(), null, 2));
   writeFile(path.join(feedsDir, "news.json"), JSON.stringify(jsonFeed("news"), null, 2));

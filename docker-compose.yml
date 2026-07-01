@@ -8,3 +8,4 @@ services:
     volumes:
       - ./content:/app/content
       - ./data:/app/data
+      - ./media:/app/media

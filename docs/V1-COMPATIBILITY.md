@@ -1,6 +1,6 @@
 # v1 Compatibility
 
-simple-www `v2.2.0` keeps single-site v1 usage working by default.
+simple-www `v2.3.0` keeps single-site v1 usage working by default.
 
 ## Compatible Defaults
 
@@ -9,6 +9,7 @@ These v1 paths and commands still work when `SITE_ID` is not set:
 ```text
 content/
 data/
+media/
 dist/
 node server.js
 node scripts/export.js
@@ -47,7 +48,7 @@ No breaking changes are required for default single-site operation.
 Potential compatibility notes:
 
 - Content validation is stricter than early v1. Missing module-required fields may fail `node scripts/validate.js`.
-- `SITE_ID` changes active `content/`, `data/`, comments, and export paths. Leave it unset for v1-style behavior.
+- `SITE_ID` changes active `content/`, `data/`, `media/`, comments, and export paths. Leave it unset for v1-style behavior.
 - Comments, store checkout links, admin editing, and custom modules remain disabled unless explicitly enabled.
 
 ## Migration
@@ -56,4 +57,4 @@ To stay in v1-style single-site mode, do nothing.
 
 To adopt v2 multi-site mode, follow `docs/MULTI-SITE.md`.
 
-Back up `content/`, `data/`, and `sites/` before moving site roots or running bulk imports.
+Back up `content/`, `data/`, `media/`, and `sites/` before moving site roots or running bulk imports.

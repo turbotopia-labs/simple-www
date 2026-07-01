@@ -237,6 +237,7 @@
     "moduleCount": 7,
     "enabledModuleCount": 3,
     "contentItemCount": 3,
+    "mediaItemCount": 0,
     "adminEditing": false,
     "commentsEnabled": false,
     "commentCount": 0,
@@ -293,5 +294,5 @@
     }
   },
   "warnings": [],
-  "version": "2.2.0"
+  "version": "2.3.0"
 }

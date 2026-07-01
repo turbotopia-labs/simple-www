@@ -7,6 +7,7 @@ Single-site mode remains the default. If `SITE_ID` is not set, simple-www uses:
 ```text
 content/
 data/
+media/
 dist/
 ```
 
@@ -43,6 +44,7 @@ With `SITE_ID=example`, simple-www uses:
 ```text
 sites/example/content/
 sites/example/data/
+sites/example/media/
 sites/example/dist/
 ```
 
@@ -87,6 +89,7 @@ services:
     volumes:
       - ./content:/app/content
       - ./data:/app/data
+      - ./media:/app/media
 
   simple-www-example:
     build: .
@@ -108,8 +111,9 @@ Reverse proxies can route hostnames to the matching container.
 2. Create a new site root such as `sites/example/`.
 3. Copy or create `sites/example/content/`.
 4. Copy or create `sites/example/data/config.json`.
-5. Add the site to `data/sites.json`.
-6. Run with `SITE_ID=example`.
-7. Export with `SITE_ID=example` when building static files.
+5. Copy or create `sites/example/media/` if the site uses local assets.
+6. Add the site to `data/sites.json`.
+7. Run with `SITE_ID=example`.
+8. Export with `SITE_ID=example` when building static files.
 
-Back up `content/`, `data/`, and `sites/` before reorganizing site roots.
+Back up `content/`, `data/`, `media/`, and `sites/` before reorganizing site roots.

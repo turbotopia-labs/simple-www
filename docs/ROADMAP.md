@@ -200,7 +200,7 @@ v3 should focus on discovery, editorial workflow, asset handling, and operations
 
 ## v2.3.0 - Media Library
 
-- Media library for local assets.
+- Done: Media library for local assets.
 
 ## v2.4.0 - Content Collections
 

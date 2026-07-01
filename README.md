@@ -2,7 +2,7 @@
 
 simple-www is a small static website engine with Markdown content, JSON/YAML configuration, and toggleable modules.
 
-Version: `2.2.0`
+Version: `2.3.0`
 
 ## Install
 
@@ -24,7 +24,7 @@ docker compose up --build
 
 The site listens on port `6625`.
 
-`content/` and `data/` are mounted by Docker so content and config are retained on the host.
+`content/`, `data/`, and `media/` are mounted by Docker so content, config, and local assets are retained on the host.
 
 ## Export static files
 
@@ -34,7 +34,7 @@ node scripts/export.js
 
 Static files are written to `dist/`.
 
-The export includes `dist/data/search-index.json` for full-text search.
+The export includes `dist/data/search-index.json` for full-text search and `dist/media/` for local assets.
 
 ## Validate
 
@@ -56,6 +56,7 @@ simple-www has no required npm dependencies. `package.json` only provides conven
 ## Content
 
 Content lives in `content/<module>/*.md`.
+Local media assets live in `media/` and are served from `/media/<path>`.
 
 Each Markdown file can start with simple front matter:
 
@@ -94,6 +95,7 @@ Site settings and module toggles live in `data/config.json`. `data/config.yaml` 
 - `docs/IMPORT-EXPORT.md`
 - `docs/ADMIN-WORKFLOW.md`
 - `docs/COMMENTS.md`
+- `docs/MEDIA-LIBRARY.md`
 - `docs/PUBLIC-CONTRACT.md`
 - `docs/CATEGORIES.md`
 - `docs/ROADMAP.md`

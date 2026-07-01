@@ -1,6 +1,6 @@
-# Public Contract for v2.2.0
+# Public Contract for v2.3.0
 
-This contract is stable for `v2.2.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
+This contract is stable for `v2.3.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
 
 ## Content
 
@@ -106,8 +106,10 @@ See `docs/CONFIG.md` for defaults and validation.
 Stable server-mode endpoints:
 
 - `/`
+- `/media/*`
 - `/api/site`
 - `/api/search-index`
+- `/api/media`
 - `/api/preview`
 - `/api/comments`
 - `/health`
@@ -141,8 +143,10 @@ Stable export output:
 - `dist/app.js`
 - `dist/styles.css`
 - `dist/themes/*.css`
+- `dist/media/*`
 - `dist/data/site.json`
 - `dist/data/search-index.json`
+- `dist/data/media.json`
 - `dist/feed.json`
 - `dist/feeds.json`
 - `dist/feeds/news.json`

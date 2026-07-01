@@ -25,6 +25,7 @@ let state = {
   search: "",
   adminMessage: "",
   adminContent: {},
+  media: [],
 };
 let searchTimer;
 
@@ -585,6 +586,44 @@ async function loadAdminContentList() {
   }
 }
 
+function formatBytes(bytes) {
+  const size = Number(bytes) || 0;
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function renderMediaLibrary() {
+  const items = state.media || [];
+  return `
+    <section class="card">
+      <h2>Media library</h2>
+      ${
+        items.length
+          ? `<ul class="admin-list media-list">${items.map((item) => `
+              <li>
+                <a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(item.path)}</a>
+                <span class="meta">${escapeHtml([formatBytes(item.size), item.type].filter(Boolean).join(" / "))}</span>
+              </li>
+            `).join("")}</ul>`
+          : `<p class="empty">No media files. Add local assets to the media folder.</p>`
+      }
+    </section>
+  `;
+}
+
+async function loadMediaLibrary() {
+  try {
+    const response = await fetch(window.SIMPLE_WWW_MEDIA_PATH || "/api/media");
+    const result = await response.json();
+    state.media = Array.isArray(result.items) ? result.items : [];
+    const panel = document.querySelector("#media-library");
+    if (panel) panel.innerHTML = renderMediaLibrary();
+  } catch {
+    state.media = [];
+  }
+}
+
 function adminContentList() {
   return editableModuleIds()
     .map((moduleId) => {
@@ -872,6 +911,7 @@ function renderAdmin() {
         { label: "Modules", value: String(diagnostics.moduleCount || 0) },
         { label: "Enabled", value: String(diagnostics.enabledModuleCount || 0) },
         { label: "Content", value: String(diagnostics.contentItemCount || 0) },
+        { label: "Media", value: String(diagnostics.mediaItemCount || 0) },
         { label: "Comments", value: String(diagnostics.commentCount || 0) },
         { label: "Warnings", value: String(state.warnings.length) },
         { label: "Editing", value: editing ? "enabled" : "disabled" },
@@ -880,7 +920,7 @@ function renderAdmin() {
     </section>
     ${
       editing
-        ? `${adminForm(state.adminDraft || emptyAdminFields())}<div id="admin-content-list">${adminContentList()}</div>`
+        ? `${adminForm(state.adminDraft || emptyAdminFields())}<div id="admin-content-list">${adminContentList()}</div><div id="media-library">${renderMediaLibrary()}</div>`
         : `<section class="card"><h2>Editing disabled</h2><p class="empty">Set site.adminEditing to true in config to enable local create, edit, and delete.</p></section>`
     }
     ${editing ? commentsReviewCard() : ""}
@@ -900,6 +940,7 @@ function renderAdmin() {
       .join("")}
   `;
   if (editing) loadAdminContentList();
+  if (editing) loadMediaLibrary();
   if (editing && state.commentsEnabled) loadAdminComments();
 }
 
@@ -1125,6 +1166,7 @@ function applyPayload(payload) {
   state.searchIndex = [];
   state.diagnostics = payload.diagnostics || {};
   state.warnings = payload.warnings || [];
+  state.media = [];
   state.commentsEnabled = site.commentsEnabled === true;
   state.storePaymentsEnabled = site.storePaymentsEnabled === true;
   title.textContent = site.title || config.siteTitle || "simple-www";
@@ -1157,6 +1199,7 @@ async function boot() {
   const payload = await response.json();
   applyPayload(payload);
   await loadSearchIndex();
+  await loadMediaLibrary();
 
   const firstModule = enabledModuleIds()[0];
   if (applyRoute(routeFromHash())) {
