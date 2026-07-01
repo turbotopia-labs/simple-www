@@ -120,6 +120,16 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v1.2.0 - Import and Export Tools
 
+- Done: Add content import from JSON.
+- Done: Add content import from CSV.
+- Done: Add content export to JSON.
+- Done: Add content export to CSV.
+- Done: Add dry-run validation for imports.
+- Done: Add duplicate handling rules for import.
+- Done: Document backup expectations before imports.
+
+## v1.2.0 - Import and Export Tools
+
 - Add content import from JSON.
 - Add content import from CSV.
 - Add content export to JSON.

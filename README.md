@@ -2,7 +2,7 @@
 
 simple-www is a small static website engine with Markdown content, JSON/YAML configuration, and toggleable modules.
 
-Version: `1.1.0`
+Version: `1.2.0`
 
 ## Install
 
@@ -38,6 +38,13 @@ Static files are written to `dist/`.
 
 ```powershell
 node scripts/validate.js
+```
+
+## Import and export content
+
+```powershell
+node scripts/content-export.js --out exports/content.json
+node scripts/content-import.js --file exports/content.json --dry-run
 ```
 
 ## Dependencies
@@ -77,6 +84,7 @@ Site settings and module toggles live in `data/config.json`. `data/config.yaml` 
 - `docs/MODULE-FEATURES.md`
 - `docs/NAVIGATION-DISCOVERY.md`
 - `docs/DEPLOYMENT.md`
+- `docs/IMPORT-EXPORT.md`
 - `docs/ADMIN-WORKFLOW.md`
 - `docs/PUBLIC-CONTRACT.md`
 - `docs/CATEGORIES.md`

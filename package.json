@@ -1,10 +1,12 @@
 {
   "name": "simple-www",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "start": "node server.js",
     "validate": "node scripts/validate.js",
-    "export": "node scripts/export.js"
+    "export": "node scripts/export.js",
+    "content:export": "node scripts/content-export.js",
+    "content:import": "node scripts/content-import.js"
   }
 }

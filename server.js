@@ -942,15 +942,20 @@ if (require.main === module) {
 
 module.exports = {
   absoluteUrl,
+  contentDir,
   createServer,
   escapeXml,
   jsonFeed,
   loadedConfig,
+  parseMarkdownFile,
   publicDir,
   root,
   rssFeed,
+  serializeMarkdown,
   sitePayload,
+  slugify,
   startServer,
+  validateContentFields,
   validateSite,
   version,
 };

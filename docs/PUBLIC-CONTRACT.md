@@ -1,6 +1,6 @@
-# Public Contract for v1.1.0
+# Public Contract for v1.2.0
 
-This contract is stable for `v1.1.0`. Changes after `v1.1.0` should be additive unless a documented breaking release is planned.
+This contract is stable for `v1.2.0`. Changes after `v1.2.0` should be additive unless a documented breaking release is planned.
 
 ## Content
 
@@ -108,6 +108,19 @@ Stable export output:
 - `dist/sitemap.xml`
 - `dist/robots.txt`
 - `dist/404.html`
+
+## Content Import and Export
+
+Stable CLI tools:
+
+- `node scripts/content-export.js --out <file.json|file.csv>`
+- `node scripts/content-import.js --file <file.json|file.csv> --dry-run`
+
+Import duplicate handling:
+
+- `--duplicates fail`
+- `--duplicates skip`
+- `--duplicates replace`
 
 ## Compatibility Rule
 

@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 1.2.0 - 2026-07-01
+
+- Added content export to JSON and CSV.
+- Added content import from JSON and CSV.
+- Added import dry-run validation.
+- Added explicit duplicate handling with `fail`, `skip`, and `replace`.
+- Added import replacement backups under `content/.backups/import/`.
+- Documented import/export usage and backup expectations.
+
 ## 1.1.0 - 2026-07-01
 
 - Expanded roadmap with v2 planning and post-1.0 milestones.
