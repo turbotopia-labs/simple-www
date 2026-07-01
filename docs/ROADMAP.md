@@ -155,6 +155,15 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 - Done: Keep comments disabled by default.
 - Done: Document privacy and backup expectations.
 
+## v1.6.0 - Store Integrations
+
+- Done: Keep store entries usable without payment handling.
+- Done: Add optional external checkout links.
+- Done: Add optional payment-provider handoff fields.
+- Done: Avoid storing payment data.
+- Done: Document provider responsibilities and security boundaries.
+- Done: Keep payment integration disabled by default.
+
 ## v1.5.0 - Comments
 
 - Add optional comment support behind an explicit config toggle.

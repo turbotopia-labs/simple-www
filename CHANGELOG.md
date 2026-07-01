@@ -4,6 +4,14 @@
 
 - Added optional footer contact link driven by `site.contactEmail`.
 
+## 1.6.0 - 2026-07-01
+
+- Added optional store checkout links through `checkoutUrl`.
+- Added payment-provider handoff metadata fields.
+- Added `site.storePaymentsEnabled`, disabled by default.
+- Kept store entries usable as plain product listings without payments.
+- Documented payment provider responsibilities and security boundaries.
+
 ## 1.5.0 - 2026-07-01
 
 - Added optional local/file-backed comments behind `site.commentsEnabled`.

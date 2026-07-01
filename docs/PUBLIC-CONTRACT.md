@@ -1,6 +1,6 @@
-# Public Contract for v1.5.0
+# Public Contract for v1.6.0
 
-This contract is stable for `v1.5.0`. Changes after `v1.5.0` should be additive unless a documented breaking release is planned.
+This contract is stable for `v1.6.0`. Changes after `v1.6.0` should be additive unless a documented breaking release is planned.
 
 ## Content
 
@@ -33,6 +33,10 @@ Supported front matter fields:
 - `version`
 - `sku`
 - `price`
+- `checkoutUrl`
+- `paymentProvider`
+- `paymentProviderProductId`
+- `paymentProviderPriceId`
 
 See `docs/CONTENT-CONTRACT.md` for field details.
 
@@ -60,6 +64,7 @@ Stable `site` fields:
 - `layout`
 - `adminEditing`
 - `commentsEnabled`
+- `storePaymentsEnabled`
 
 Stable module fields:
 

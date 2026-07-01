@@ -82,6 +82,10 @@ summary: Small sticker pack.
 image: /images/stickers.jpg
 imageAlt: Sticker pack
 link: https://example.com/store/stickers
+checkoutUrl: https://checkout.example.com/stickers
+paymentProvider: external
+paymentProviderProductId: prod_123
+paymentProviderPriceId: price_123
 ---
 
 Product details.
