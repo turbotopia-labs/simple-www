@@ -204,7 +204,7 @@ v3 should focus on discovery, editorial workflow, asset handling, and operations
 
 ## v2.4.0 - Content Collections
 
-- Content collections independent of modules.
+- Done: Content collections independent of modules.
 
 ## v2.5.0 - Export Hooks
 

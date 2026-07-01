@@ -3,6 +3,7 @@
 Add content as Markdown files under `content/<module>/`.
 
 See `docs/CONTENT-CONTRACT.md` for the stable content contract.
+Use `content/collections/<collection>/` for content groups that are independent of modules.
 Use `media/` for local images and files referenced from Markdown or front matter.
 
 ## Folder layout
@@ -16,6 +17,7 @@ content/blog/
 content/downloads/
 content/store/
 content/admin/
+content/collections/pages/
 media/
 ```
 

@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 2.4.0 - 2026-07-01
+
+- Added content collections under `content/collections/<collection>/`.
+- Added collection routes at `#/collections/<collection>` and `#/collections/<collection>/<slug>`.
+- Added collections to site payloads, search index, sitemap, and static export metadata.
+- Added `/api/collections` for server mode.
+- Kept collections independent from module toggles and module config.
+
 ## 2.3.0 - 2026-07-01
 
 - Added local `media/` asset library support.

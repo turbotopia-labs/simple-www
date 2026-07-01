@@ -13,6 +13,8 @@ const {
   root,
   rssFeed,
   buildSearchIndex,
+  collectionsPayload,
+  collectionUrl,
   sitePayload,
   themesDir,
 } = require("../server");
@@ -67,6 +69,12 @@ function sitemapXml(payload) {
       urls.push(absoluteUrl(baseUrl, moduleId, item));
     });
   });
+  Object.entries(payload.collections || {}).forEach(([collectionId, collection]) => {
+    urls.push(`${baseUrl}/#/collections/${encodeURIComponent(collectionId)}`);
+    collection.items.forEach((item) => {
+      urls.push(collectionUrl(baseUrl, collectionId, item));
+    });
+  });
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -118,6 +126,7 @@ function exportSite() {
   writeFile(path.join(dataDir, "site.json"), JSON.stringify(payload, null, 2));
   writeFile(path.join(dataDir, "search-index.json"), JSON.stringify(buildSearchIndex(payload), null, 2));
   writeFile(path.join(dataDir, "media.json"), JSON.stringify(mediaPayload(), null, 2));
+  writeFile(path.join(dataDir, "collections.json"), JSON.stringify({ version: payload.version, collections: collectionsPayload() }, null, 2));
   writeFile(path.join(distDir, "feed.json"), JSON.stringify(jsonFeed(), null, 2));
   writeFile(path.join(distDir, "feeds.json"), JSON.stringify(jsonFeed(), null, 2));
   writeFile(path.join(feedsDir, "news.json"), JSON.stringify(jsonFeed("news"), null, 2));

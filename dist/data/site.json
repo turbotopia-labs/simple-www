@@ -230,6 +230,7 @@
     ],
     "downloads": []
   },
+  "collections": {},
   "diagnostics": {
     "siteId": "single",
     "siteRoot": "C:\\Users\\thoma\\Documents\\alfred.vaultsworth\\tubotopia-labs_git\\simple-www",
@@ -237,6 +238,8 @@
     "moduleCount": 7,
     "enabledModuleCount": 3,
     "contentItemCount": 3,
+    "collectionCount": 0,
+    "collectionItemCount": 0,
     "mediaItemCount": 0,
     "adminEditing": false,
     "commentsEnabled": false,
@@ -294,5 +297,5 @@
     }
   },
   "warnings": [],
-  "version": "2.3.0"
+  "version": "2.4.0"
 }

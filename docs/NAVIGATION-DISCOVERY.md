@@ -14,6 +14,13 @@ Individual entries are available at:
 
 Module cards link to these entry pages. Cards show `summary` when available, while entry pages show the full Markdown body.
 
+Collections use separate routes:
+
+```text
+#/collections/pages
+#/collections/pages/about
+```
+
 ## Filtering
 
 Each content module can show filters based on the entries it contains:
@@ -49,6 +56,8 @@ Search checks:
 - category
 - tags
 - body text
+
+Search includes published module content and published collection content.
 
 Server mode exposes the index at:
 

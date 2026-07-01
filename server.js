@@ -7,6 +7,7 @@ const siteSelection = resolveSiteSelection();
 const siteRoot = siteSelection.root;
 const publicDir = path.join(root, "public");
 const contentDir = path.join(siteRoot, "content");
+const collectionsDir = path.join(contentDir, "collections");
 const dataDir = path.join(siteRoot, "data");
 const mediaDir = path.join(siteRoot, "media");
 const commentsDir = path.join(dataDir, "comments");
@@ -325,6 +326,11 @@ function absoluteUrl(baseUrl, moduleId, item) {
   return `${base}/#/${encodeURIComponent(moduleId)}/${encodeURIComponent(item.slug)}`;
 }
 
+function collectionUrl(baseUrl, collectionId, item) {
+  const base = String(baseUrl || "").replace(/\/+$/, "");
+  return `${base}/#/collections/${encodeURIComponent(collectionId)}/${encodeURIComponent(item.slug)}`;
+}
+
 function searchText(value) {
   return String(value || "")
     .replace(/```[\s\S]*?```/g, " ")
@@ -339,39 +345,59 @@ function searchText(value) {
 function buildSearchIndex(payload = sitePayload()) {
   const site = payload.config.site || {};
   const modules = payload.config.modules || {};
+  const moduleItems = Object.entries(payload.content).flatMap(([moduleId, items]) =>
+    items.map((item) => {
+      const fields = [
+        item.title,
+        item.summary,
+        item.category,
+        item.author,
+        item.status,
+        item.version,
+        item.sku,
+        item.price,
+        ...(item.tags || []),
+        item.body,
+      ];
+
+      return {
+        type: "module",
+        module: moduleId,
+        moduleLabel: modules[moduleId]?.label || moduleId,
+        slug: item.slug,
+        title: item.title,
+        summary: item.summary,
+        date: item.date,
+        category: item.category,
+        tags: item.tags || [],
+        url: absoluteUrl(site.baseUrl, moduleId, item),
+        text: searchText(fields.join(" ")),
+      };
+    })
+  );
+  const collectionItems = Object.entries(payload.collections || {}).flatMap(([collectionId, collection]) =>
+    (collection.items || []).map((item) => {
+      const fields = [item.title, item.summary, item.category, item.author, ...(item.tags || []), item.body];
+      return {
+        type: "collection",
+        collection: collectionId,
+        collectionLabel: collection.label,
+        slug: item.slug,
+        title: item.title,
+        summary: item.summary,
+        date: item.date,
+        category: item.category,
+        tags: item.tags || [],
+        url: collectionUrl(site.baseUrl, collectionId, item),
+        text: searchText(fields.join(" ")),
+      };
+    })
+  );
 
   return {
     version,
     generatedAt: new Date().toISOString(),
-    items: Object.entries(payload.content).flatMap(([moduleId, items]) =>
-      items.map((item) => {
-        const fields = [
-          item.title,
-          item.summary,
-          item.category,
-          item.author,
-          item.status,
-          item.version,
-          item.sku,
-          item.price,
-          ...(item.tags || []),
-          item.body,
-        ];
-
-        return {
-          module: moduleId,
-          moduleLabel: modules[moduleId]?.label || moduleId,
-          slug: item.slug,
-          title: item.title,
-          summary: item.summary,
-          date: item.date,
-          category: item.category,
-          tags: item.tags || [],
-          url: absoluteUrl(site.baseUrl, moduleId, item),
-          text: searchText(fields.join(" ")),
-        };
-      })
-    ),
+    items: [...moduleItems, ...collectionItems],
   };
 }
 
@@ -1162,8 +1188,16 @@ function validateSite() {
     });
   });
 
-  payload.warnings.forEach((warning) => {
-    if (warning.type === "duplicate-slug") {
+  const collectionWarnings = [];
+  Object.entries(collectionsPayload({ includeUnpublished: true, warnings: collectionWarnings })).forEach(([, collection]) => {
+    collection.items.forEach((item) => {
+      errors.push(...validateContentFields("collection", item, item.source));
+      if (item.slug !== slugify(item.slug)) errors.push(`${item.source}: slug is not normalized.`);
+    });
+  });
+
+  [...payload.warnings, ...collectionWarnings].forEach((warning) => {
+    if (warning.type === "duplicate-slug" || warning.type === "duplicate-collection-slug") {
       errors.push(`${warning.module}/${warning.slug}: duplicate slug in ${warning.sources.join(", ")}`);
     }
   });
@@ -1171,7 +1205,7 @@ function validateSite() {
   return {
     ok: errors.length === 0,
     errors,
-    warnings: payload.warnings,
+    warnings: [...payload.warnings, ...collectionWarnings],
     version,
   };
 }
@@ -1191,7 +1225,7 @@ async function handleAdminContent(req, res, url) {
     const moduleId = String(url.searchParams.get("module") || "");
     const slug = String(url.searchParams.get("slug") || "");
     if (!moduleId && !slug) {
-      sendJson(res, 200, { content: adminContentPayload() });
+      sendJson(res, 200, adminContentPayload());
       return;
     }
 
@@ -1311,6 +1345,60 @@ function listModuleContent(moduleId, moduleConfig, warnings, options = {}) {
   return includeUnpublished || moduleConfig.limit === null ? sortedItems : sortedItems.slice(0, moduleConfig.limit);
 }
 
+function collectionIds() {
+  if (!fs.existsSync(collectionsDir)) return [];
+  return fs
+    .readdirSync(collectionsDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && /^[a-z0-9_-]+$/i.test(entry.name))
+    .map((entry) => entry.name)
+    .sort();
+}
+
+function listCollectionContent(collectionId, warnings = [], options = {}) {
+  if (!/^[a-z0-9_-]+$/i.test(collectionId)) return [];
+  const collectionPath = path.resolve(collectionsDir, collectionId);
+  const resolvedCollectionsDir = path.resolve(collectionsDir);
+  if (!collectionPath.startsWith(`${resolvedCollectionsDir}${path.sep}`) || !fs.existsSync(collectionPath)) return [];
+
+  const seenSlugs = new Map();
+  const includeUnpublished = options.includeUnpublished === true;
+  const items = fs
+    .readdirSync(collectionPath)
+    .filter((fileName) => fileName.endsWith(".md"))
+    .map((fileName) => parseMarkdownFile(path.join(collectionPath, fileName)))
+    .filter((item) => includeUnpublished || isPublishedItem(item));
+
+  items.forEach((item) => {
+    if (!seenSlugs.has(item.slug)) {
+      seenSlugs.set(item.slug, item.source);
+      return;
+    }
+
+    warnings.push({
+      type: "duplicate-collection-slug",
+      module: `collections/${collectionId}`,
+      slug: item.slug,
+      sources: [seenSlugs.get(item.slug), item.source],
+    });
+  });
+
+  return sortItems(items, "date-desc");
+}
+
+function collectionsPayload(options = {}) {
+  const warnings = options.warnings || [];
+  return Object.fromEntries(
+    collectionIds().map((collectionId) => [
+      collectionId,
+      {
+        id: collectionId,
+        label: labelFromModuleId(collectionId),
+        items: listCollectionContent(collectionId, warnings, options),
+      },
+    ])
+  );
+}
+
 function sitePayload() {
   const config = loadedConfig.config;
   const modules = config.modules || {};
@@ -1325,6 +1413,7 @@ function sitePayload() {
     }
   });
 
+  const collections = collectionsPayload({ warnings });
   const diagnostics = {
     siteId: siteSelection.id || "single",
     siteRoot,
@@ -1332,6 +1421,8 @@ function sitePayload() {
     moduleCount: Object.keys(modules).length,
     enabledModuleCount: Object.values(modules).filter((module) => module.enabled).length,
     contentItemCount: Object.values(content).reduce((total, items) => total + items.length, 0),
+    collectionCount: Object.keys(collections).length,
+    collectionItemCount: Object.values(collections).reduce((total, collection) => total + collection.items.length, 0),
     mediaItemCount: listMediaFiles().length,
     adminEditing: adminEditingEnabled(),
     commentsEnabled: commentsEnabled(),
@@ -1354,17 +1445,20 @@ function sitePayload() {
     console.warn(`[${warning.type}] ${warning.module}/${warning.slug}: ${warning.sources.join(", ")}`);
   });
 
-  return { config, content, diagnostics, warnings, version };
+  return { config, content, collections, diagnostics, warnings, version };
 }
 
 function adminContentPayload() {
   const modules = loadedConfig.config.modules || {};
-  return Object.fromEntries(
-    Object.keys(modules)
-      .filter((moduleId) => modules[moduleId] && modules[moduleId].enabled && moduleId !== "admin")
-      .sort((a, b) => modules[a].order - modules[b].order)
-      .map((moduleId) => [moduleId, listModuleContent(moduleId, modules[moduleId], [], { includeUnpublished: true })])
-  );
+  return {
+    content: Object.fromEntries(
+      Object.keys(modules)
+        .filter((moduleId) => modules[moduleId] && modules[moduleId].enabled && moduleId !== "admin")
+        .sort((a, b) => modules[a].order - modules[b].order)
+        .map((moduleId) => [moduleId, listModuleContent(moduleId, modules[moduleId], [], { includeUnpublished: true })])
+    ),
+    collections: collectionsPayload({ includeUnpublished: true }),
+  };
 }
 
 function safePublicPath(urlPath) {
@@ -1466,6 +1560,11 @@ function createServer() {
         return;
       }
 
+      if (url.pathname === "/api/collections") {
+        sendJson(res, 200, { version, collections: collectionsPayload() });
+        return;
+      }
+
       if (url.pathname === "/api/preview") {
         handlePreview(req, res, url);
         return;
@@ -1550,7 +1649,10 @@ module.exports = {
   absoluteUrl,
   allContentFieldNames,
   buildSearchIndex,
+  collectionUrl,
+  collectionsPayload,
   contentDir,
+  collectionsDir,
   createServer,
   escapeXml,
   exportDir,

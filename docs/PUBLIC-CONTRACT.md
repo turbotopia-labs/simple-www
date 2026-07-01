@@ -1,6 +1,6 @@
-# Public Contract for v2.3.0
+# Public Contract for v2.4.0
 
-This contract is stable for `v2.3.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
+This contract is stable for `v2.4.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
 
 ## Content
 
@@ -110,6 +110,7 @@ Stable server-mode endpoints:
 - `/api/site`
 - `/api/search-index`
 - `/api/media`
+- `/api/collections`
 - `/api/preview`
 - `/api/comments`
 - `/health`
@@ -147,6 +148,7 @@ Stable export output:
 - `dist/data/site.json`
 - `dist/data/search-index.json`
 - `dist/data/media.json`
+- `dist/data/collections.json`
 - `dist/feed.json`
 - `dist/feeds.json`
 - `dist/feeds/news.json`

@@ -43,6 +43,7 @@ With `SITE_ID=example`, simple-www uses:
 
 ```text
 sites/example/content/
+sites/example/content/collections/
 sites/example/data/
 sites/example/media/
 sites/example/dist/

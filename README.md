@@ -2,7 +2,7 @@
 
 simple-www is a small static website engine with Markdown content, JSON/YAML configuration, and toggleable modules.
 
-Version: `2.3.0`
+Version: `2.4.0`
 
 ## Install
 
@@ -56,6 +56,7 @@ simple-www has no required npm dependencies. `package.json` only provides conven
 ## Content
 
 Content lives in `content/<module>/*.md`.
+Content collections live in `content/collections/<collection>/*.md`.
 Local media assets live in `media/` and are served from `/media/<path>`.
 
 Each Markdown file can start with simple front matter:
@@ -82,6 +83,7 @@ Site settings and module toggles live in `data/config.json`. `data/config.yaml` 
 
 - `docs/CONTENT-GUIDE.md`
 - `docs/CONTENT-CONTRACT.md`
+- `docs/CONTENT-COLLECTIONS.md`
 - `docs/CONTENT-EXAMPLES.md`
 - `docs/CONFIG.md`
 - `docs/THEME.md`

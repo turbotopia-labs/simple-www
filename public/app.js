@@ -13,6 +13,7 @@ let state = {
   activeModule: "",
   modules: {},
   content: {},
+  collections: {},
   searchIndex: [],
   diagnostics: {},
   warnings: [],
@@ -25,6 +26,7 @@ let state = {
   search: "",
   adminMessage: "",
   adminContent: {},
+  activeCollection: "",
   media: [],
 };
 let searchTimer;
@@ -210,6 +212,14 @@ function enabledModuleIds() {
     .sort((a, b) => state.modules[a].order - state.modules[b].order);
 }
 
+function collectionIds() {
+  return Object.keys(state.collections || {}).sort((a, b) => {
+    const left = state.collections[a]?.label || a;
+    const right = state.collections[b]?.label || b;
+    return left.localeCompare(right);
+  });
+}
+
 function routeFromHash() {
   const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
   if (parts[0] === "search") {
@@ -217,6 +227,9 @@ function routeFromHash() {
   }
   if (parts[0] === "preview") {
     return { moduleId: parts[1] || "", filterType: "all", filterValue: "", itemSlug: parts[2] || "", search: "", preview: true };
+  }
+  if (parts[0] === "collections") {
+    return { moduleId: "", collectionId: parts[1] || "", collectionSlug: parts[2] || "", filterType: "all", filterValue: "", itemSlug: "", search: "" };
   }
 
   const moduleId = parts[0] || "";
@@ -241,9 +254,14 @@ function setItemHash(moduleId, slug) {
   location.hash = `/${encodeURIComponent(moduleId)}/${encodeURIComponent(slug)}`;
 }
 
+function setCollectionHash(collectionId, slug = "") {
+  location.hash = slug ? `/collections/${encodeURIComponent(collectionId)}/${encodeURIComponent(slug)}` : `/collections/${encodeURIComponent(collectionId)}`;
+}
+
 function setSearchHash(query) {
   const trimmed = String(query || "").trim();
-  location.hash = trimmed ? `/search/${encodeURIComponent(trimmed)}` : `/${encodeURIComponent(state.activeModule || enabledModuleIds()[0] || "")}`;
+  const fallback = state.activeCollection ? `/collections/${encodeURIComponent(state.activeCollection)}` : `/${encodeURIComponent(state.activeModule || enabledModuleIds()[0] || "")}`;
+  location.hash = trimmed ? `/search/${encodeURIComponent(trimmed)}` : fallback;
 }
 
 function applyRoute(route) {
@@ -252,7 +270,20 @@ function applyRoute(route) {
     state.filterValue = "";
     state.itemSlug = "";
     state.search = route.search;
+    state.activeCollection = "";
     renderSearch();
+    return true;
+  }
+
+  if (route.collectionId) {
+    state.filterType = "all";
+    state.filterValue = "";
+    state.itemSlug = "";
+    state.activeModule = "";
+    state.activeCollection = route.collectionId;
+    state.search = "";
+    siteSearch.value = "";
+    route.collectionSlug ? renderCollectionDetail(route.collectionId, route.collectionSlug) : renderCollection(route.collectionId);
     return true;
   }
 
@@ -266,6 +297,7 @@ function applyRoute(route) {
   state.filterType = route.filterType;
   state.filterValue = route.filterValue;
   state.itemSlug = route.itemSlug;
+  state.activeCollection = "";
   state.search = "";
   siteSearch.value = "";
   if (route.itemSlug) {
@@ -277,13 +309,21 @@ function applyRoute(route) {
 }
 
 function renderNav() {
-  nav.innerHTML = enabledModuleIds()
+  const moduleButtons = enabledModuleIds()
     .map((moduleId) => {
       const module = state.modules[moduleId];
       const current = moduleId === state.activeModule ? ' aria-current="page"' : "";
       return `<button type="button" data-module="${escapeHtml(moduleId)}"${current}>${escapeHtml(module.label)}</button>`;
     })
     .join("");
+  const collectionButtons = collectionIds()
+    .map((collectionId) => {
+      const collection = state.collections[collectionId];
+      const current = collectionId === state.activeCollection ? ' aria-current="page"' : "";
+      return `<button type="button" data-collection="${escapeHtml(collectionId)}"${current}>${escapeHtml(collection.label)}</button>`;
+    })
+    .join("");
+  nav.innerHTML = moduleButtons + collectionButtons;
 }
 
 function detailList(details) {
@@ -690,6 +730,10 @@ function normalizeSearchQuery(value) {
 }
 
 function resultFromSearchIndex(entry) {
+  if (entry.type === "collection") {
+    const item = (state.collections[entry.collection]?.items || []).find((candidate) => candidate.slug === entry.slug);
+    return item ? { collectionId: entry.collection, item } : null;
+  }
   const item = (state.content[entry.module] || []).find((candidate) => candidate.slug === entry.slug);
   return item ? { moduleId: entry.module, item } : null;
 }
@@ -708,7 +752,21 @@ function searchResults(query) {
 
   return editableModuleIds()
     .flatMap((moduleId) => (state.content[moduleId] || []).map((item) => ({ moduleId, item })))
+    .concat(collectionIds().flatMap((collectionId) => (state.collections[collectionId]?.items || []).map((item) => ({ collectionId, item }))))
     .filter((result) => itemMatchesSearch(result.item, trimmed));
+}
+
+function renderCollectionItem(collectionId, item) {
+  return `
+    <article class="card">
+      <h2>${escapeHtml(item.title)}</h2>
+      <div class="meta">${escapeHtml([item.date, item.updated ? `updated ${item.updated}` : "", item.author, item.category].filter(Boolean).join(" / "))}</div>
+      ${itemImage(item)}
+      <p>${inlineMarkdown(itemSummary(item))}</p>
+      ${item.tags && item.tags.length ? `<div class="tags">${item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
+      <p class="action-link"><a href="#/collections/${escapeHtml(collectionId)}/${escapeHtml(item.slug)}">Read more</a></p>
+    </article>
+  `;
 }
 
 function renderItem(moduleId, item) {
@@ -833,10 +891,63 @@ async function renderPreview(moduleId, slug) {
   }
 }
 
+function renderCollection(collectionId) {
+  const collection = state.collections[collectionId];
+  state.activeModule = "";
+  state.activeCollection = collectionId;
+  renderNav();
+  app.dataset.layout = state.layout;
+
+  if (!collection) {
+    app.innerHTML = '<section class="card"><h2>Collection</h2><p class="empty">Collection not found.</p></section>';
+    return;
+  }
+
+  const items = collection.items || [];
+  app.innerHTML = items.length
+    ? items.map((item) => renderCollectionItem(collectionId, item)).join("")
+    : `<section class="card"><h2>${escapeHtml(collection.label)}</h2><p class="empty">No collection entries.</p></section>`;
+}
+
+function renderCollectionDetail(collectionId, slug) {
+  const collection = state.collections[collectionId];
+  const item = (collection?.items || []).find((entry) => entry.slug === slug);
+
+  state.activeModule = "";
+  state.activeCollection = collectionId;
+  renderNav();
+  app.dataset.layout = "list";
+
+  if (!collection || !item) {
+    app.innerHTML = `
+      <section class="card">
+        <h2>Collection</h2>
+        <p class="empty">Collection content not found.</p>
+        <p class="action-link"><a href="#/collections/${escapeHtml(collectionId)}">Back to collection</a></p>
+      </section>
+    `;
+    return;
+  }
+
+  app.innerHTML = `
+    <article class="card detail-card">
+      <p class="action-link"><a href="#/collections/${escapeHtml(collectionId)}">Back to ${escapeHtml(collection.label)}</a></p>
+      <h2>${escapeHtml(item.title)}</h2>
+      <div class="meta">${escapeHtml([item.date, item.updated ? `updated ${item.updated}` : "", item.author, item.category].filter(Boolean).join(" / "))}</div>
+      ${itemImage(item)}
+      ${item.summary ? `<p class="summary">${inlineMarkdown(item.summary)}</p>` : ""}
+      ${item.tags && item.tags.length ? `<div class="tags">${item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
+      <div class="content">${markdownToHtml(item.body)}</div>
+      ${itemActions("", item)}
+    </article>
+  `;
+}
+
 function renderSearch() {
   const query = state.search.trim();
   const results = searchResults(query);
   state.activeModule = "";
+  state.activeCollection = "";
   siteSearch.value = query;
   renderNav();
   app.dataset.layout = state.layout;
@@ -846,7 +957,7 @@ function renderSearch() {
     </section>
     ${
       results.length
-        ? results.map((result) => renderItem(result.moduleId, result.item)).join("")
+        ? results.map((result) => (result.collectionId ? renderCollectionItem(result.collectionId, result.item) : renderItem(result.moduleId, result.item))).join("")
         : `<section class="card"><h2>Search</h2><p class="empty">No matching content.</p></section>`
     }
   `;
@@ -911,6 +1022,8 @@ function renderAdmin() {
         { label: "Modules", value: String(diagnostics.moduleCount || 0) },
         { label: "Enabled", value: String(diagnostics.enabledModuleCount || 0) },
         { label: "Content", value: String(diagnostics.contentItemCount || 0) },
+        { label: "Collections", value: String(diagnostics.collectionCount || 0) },
+        { label: "Collection items", value: String(diagnostics.collectionItemCount || 0) },
         { label: "Media", value: String(diagnostics.mediaItemCount || 0) },
         { label: "Comments", value: String(diagnostics.commentCount || 0) },
         { label: "Warnings", value: String(state.warnings.length) },
@@ -993,11 +1106,24 @@ function setTheme(theme) {
 }
 
 nav.addEventListener("click", (event) => {
+  const collectionButton = event.target.closest("button[data-collection]");
+  if (collectionButton) {
+    state.filterType = "all";
+    state.filterValue = "";
+    state.itemSlug = "";
+    state.search = "";
+    siteSearch.value = "";
+    setCollectionHash(collectionButton.dataset.collection);
+    renderCollection(collectionButton.dataset.collection);
+    return;
+  }
+
   const button = event.target.closest("button[data-module]");
   if (!button) return;
   state.filterType = "all";
   state.filterValue = "";
   state.itemSlug = "";
+  state.activeCollection = "";
   state.search = "";
   siteSearch.value = "";
   setRouteHash(button.dataset.module);
@@ -1163,10 +1289,12 @@ function applyPayload(payload) {
 
   state.modules = config.modules || {};
   state.content = payload.content || {};
+  state.collections = payload.collections || {};
   state.searchIndex = [];
   state.diagnostics = payload.diagnostics || {};
   state.warnings = payload.warnings || [];
   state.media = [];
+  state.activeCollection = "";
   state.commentsEnabled = site.commentsEnabled === true;
   state.storePaymentsEnabled = site.storePaymentsEnabled === true;
   title.textContent = site.title || config.siteTitle || "simple-www";
@@ -1208,6 +1336,8 @@ async function boot() {
 
   if (firstModule) {
     renderModule(firstModule);
+  } else if (collectionIds()[0]) {
+    renderCollection(collectionIds()[0]);
   } else {
     app.innerHTML = '<section class="card"><h2>No modules enabled</h2></section>';
   }
