@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 1.3.0 - 2026-07-01
+
+- Added `themes/` folder support and static serving/export.
+- Added config-driven `site.theme` selection.
+- Added built-in `classic`, `blueprint`, and `ledger` theme packs.
+- Kept the current pre-2010 style as the default `classic` theme.
+- Added theme validation for required CSS variables.
+- Documented safe theme pack structure.
+
 ## 1.2.0 - 2026-07-01
 
 - Added content export to JSON and CSV.

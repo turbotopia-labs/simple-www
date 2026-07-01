@@ -10,6 +10,7 @@ const {
   root,
   rssFeed,
   sitePayload,
+  themesDir,
 } = require("../server");
 
 const distDir = path.join(root, "dist");
@@ -36,6 +37,9 @@ function copyPublic() {
   fs.rmSync(distDir, { recursive: true, force: true });
   fs.mkdirSync(distDir, { recursive: true });
   fs.cpSync(publicDir, distDir, { recursive: true });
+  if (fs.existsSync(themesDir)) {
+    fs.cpSync(themesDir, path.join(distDir, "themes"), { recursive: true });
+  }
 }
 
 function patchIndexForStaticData() {

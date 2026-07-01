@@ -2,9 +2,31 @@
 
 simple-www uses a small pre-2010 style: plain typography, bordered panels, simple buttons, and light shadows.
 
-## Theme Variables
+## Theme Packs
 
-Theme variables live in `public/styles.css`.
+Theme packs live in `themes/` as plain CSS files. The default pack is:
+
+```text
+themes/classic.css
+```
+
+Built-in packs:
+
+- `classic`: current pre-2010 default.
+- `blueprint`: cooler technical palette.
+- `ledger`: warmer document palette.
+
+Select a pack in config:
+
+```json
+"site": {
+  "theme": "classic"
+}
+```
+
+The browser loads `themes/<theme>.css` after `public/styles.css`, so packs should override variables only.
+
+## Required Variables
 
 Safe variables to customize:
 
@@ -22,17 +44,20 @@ Safe variables to customize:
 
 Keep colors readable in both `:root` and `:root[data-theme="dark"]`.
 
+Theme validation requires every pack to define all listed variables. Define them for both light and dark modes when possible.
+
 ## Safe Customization Points
 
 Prefer editing:
 
-- CSS variables at the top of `public/styles.css`.
+- CSS variables in a file under `themes/`.
 - Card spacing in `.card`.
 - Layout gaps in `.layout`.
 - Module button spacing in `.module-nav button`.
 
 Avoid changing:
 
+- Core layout rules in `public/styles.css` unless the app structure changes.
 - Element IDs used by `public/app.js`.
 - `data-layout` attribute selectors.
 - `aria-current` and `aria-pressed` states.

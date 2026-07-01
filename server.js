@@ -6,8 +6,22 @@ const root = __dirname;
 const publicDir = path.join(root, "public");
 const contentDir = path.join(root, "content");
 const dataDir = path.join(root, "data");
+const themesDir = path.join(root, "themes");
 const port = Number(process.env.PORT || 6625);
 const version = fs.readFileSync(path.join(root, "VERSION"), "utf8").trim();
+const requiredThemeVariables = [
+  "bg",
+  "panel",
+  "text",
+  "muted",
+  "border",
+  "border-strong",
+  "link",
+  "accent",
+  "accent-strong",
+  "shadow",
+  "button",
+];
 
 const defaultModules = {
   news: {
@@ -69,6 +83,7 @@ const defaultConfig = {
     timezone: "UTC",
     baseUrl: "http://127.0.0.1:6625",
     footerText: "simple-www v.{VERSION}",
+    theme: "classic",
     layout: "cards",
     adminEditing: false,
   },
@@ -321,7 +336,7 @@ function validateRawConfig(raw, source) {
     errors.push(`${source}: site must be an object.`);
   }
 
-  ["title", "description", "language", "author", "timezone", "baseUrl", "footerText", "layout"].forEach((field) => {
+  ["title", "description", "language", "author", "timezone", "baseUrl", "footerText", "theme", "layout"].forEach((field) => {
     if (raw.site && raw.site[field] !== undefined && typeof raw.site[field] !== "string") {
       errors.push(`${source}: site.${field} must be a string.`);
     }
@@ -372,6 +387,25 @@ function validateRawConfig(raw, source) {
   return errors;
 }
 
+function themePath(themeName) {
+  const safeName = String(themeName || "").trim();
+  if (!/^[a-z0-9_-]+$/i.test(safeName)) return null;
+  const filePath = path.resolve(themesDir, `${safeName}.css`);
+  return filePath.startsWith(path.resolve(themesDir)) ? filePath : null;
+}
+
+function validateThemePack(themeName) {
+  const filePath = themePath(themeName);
+  if (!filePath || !fs.existsSync(filePath)) {
+    return [`theme does not exist: ${themeName}`];
+  }
+
+  const css = fs.readFileSync(filePath, "utf8");
+  return requiredThemeVariables
+    .filter((variable) => !new RegExp(`--${variable}\\s*:`).test(css))
+    .map((variable) => `${path.relative(root, filePath)} is missing --${variable}.`);
+}
+
 function labelFromModuleId(moduleId) {
   return moduleId
     .split(/[-_]/)
@@ -418,7 +452,13 @@ function loadConfig() {
     throw new Error(`Config validation failed:\n- ${errors.join("\n- ")}`);
   }
 
-  return { config: normalizeConfig(raw), source };
+  const config = normalizeConfig(raw);
+  const themeErrors = validateThemePack(config.site.theme);
+  if (themeErrors.length) {
+    throw new Error(`Theme validation failed:\n- ${themeErrors.join("\n- ")}`);
+  }
+
+  return { config, source };
 }
 
 function slugify(value, fallback = "item") {
@@ -858,6 +898,13 @@ function safePublicPath(urlPath) {
   return filePath.startsWith(publicDir) ? filePath : null;
 }
 
+function safeThemeAssetPath(urlPath) {
+  if (!urlPath.startsWith("/themes/")) return null;
+  const cleanPath = decodeURIComponent(urlPath.replace(/^\/themes\//, ""));
+  const filePath = path.normalize(path.join(themesDir, cleanPath));
+  return filePath.startsWith(themesDir) ? filePath : null;
+}
+
 let loadedConfig;
 
 try {
@@ -915,6 +962,13 @@ function createServer() {
         return;
       }
 
+      const themeFilePath = safeThemeAssetPath(url.pathname);
+      if (themeFilePath && fs.existsSync(themeFilePath) && !fs.statSync(themeFilePath).isDirectory()) {
+        const ext = path.extname(themeFilePath).toLowerCase();
+        send(res, 200, fs.readFileSync(themeFilePath), mimeTypes[ext] || "application/octet-stream");
+        return;
+      }
+
       const filePath = safePublicPath(url.pathname);
       if (!filePath || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
         sendError(res, 404, "Not found", "The requested page or file does not exist.");
@@ -955,6 +1009,7 @@ module.exports = {
   sitePayload,
   slugify,
   startServer,
+  themesDir,
   validateContentFields,
   validateSite,
   version,

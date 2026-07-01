@@ -23,6 +23,7 @@ JSON remains the default format. YAML support is intentionally small and support
   "timezone": "UTC",
   "baseUrl": "http://127.0.0.1:6625",
   "footerText": "simple-www v.{VERSION}",
+  "theme": "classic",
   "layout": "cards",
   "adminEditing": false
 }
@@ -37,6 +38,7 @@ Defaults:
 - `timezone`: `UTC`
 - `baseUrl`: `http://127.0.0.1:6625`
 - `footerText`: `simple-www v.{VERSION}`
+- `theme`: `classic`
 - `layout`: `cards`
 - `adminEditing`: `false`
 
@@ -98,6 +100,7 @@ Validation checks:
 
 - `site` must be an object.
 - Site metadata values must be strings.
+- `site.theme` must match a CSS file in `themes/`.
 - `site.layout` must be `list`, `cards`, or `compact`.
 - `site.adminEditing` must be true or false.
 - `modules` must be an object.

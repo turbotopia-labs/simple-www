@@ -128,6 +128,15 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 - Done: Add duplicate handling rules for import.
 - Done: Document backup expectations before imports.
 
+## v1.3.0 - Theme Packs
+
+- Done: Add `themes/` folder support.
+- Done: Add config-driven theme selection.
+- Done: Ship a small default theme pack set.
+- Done: Keep the current pre-2010 theme as the default.
+- Done: Document safe theme pack structure.
+- Done: Add theme validation for required CSS variables.
+
 ## v1.2.0 - Import and Export Tools
 
 - Add content import from JSON.

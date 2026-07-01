@@ -1,6 +1,6 @@
-# Public Contract for v1.2.0
+# Public Contract for v1.3.0
 
-This contract is stable for `v1.2.0`. Changes after `v1.2.0` should be additive unless a documented breaking release is planned.
+This contract is stable for `v1.3.0`. Changes after `v1.3.0` should be additive unless a documented breaking release is planned.
 
 ## Content
 
@@ -55,6 +55,7 @@ Stable `site` fields:
 - `timezone`
 - `baseUrl`
 - `footerText`
+- `theme`
 - `layout`
 - `adminEditing`
 
@@ -98,6 +99,7 @@ Stable export output:
 - `dist/index.html`
 - `dist/app.js`
 - `dist/styles.css`
+- `dist/themes/*.css`
 - `dist/data/site.json`
 - `dist/feed.json`
 - `dist/feeds.json`
