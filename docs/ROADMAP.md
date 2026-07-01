@@ -231,15 +231,15 @@ v3 should focus on discovery, editorial workflow, asset handling, and operations
 
 ## v3.0.0 - Stable v3 Release
 
-- Ship stable discovery features.
-- Ship stable editorial workflow.
-- Ship stable media library.
-- Ship stable content collections.
-- Ship stable export hooks.
-- Ship stable tracking-free analytics export.
-- Ship stable i18n contract.
-- Keep v1 and v2 compatibility documented.
-- Clearly mark any breaking changes.
+- Done: Ship stable discovery features.
+- Done: Ship stable editorial workflow.
+- Done: Ship stable media library.
+- Done: Ship stable content collections.
+- Done: Ship stable export hooks.
+- Done: Ship stable tracking-free analytics export.
+- Done: Ship stable i18n contract.
+- Done: Keep v1 and v2 compatibility documented.
+- Done: Clearly mark any breaking changes.
 
 ## Future ideas/features
 

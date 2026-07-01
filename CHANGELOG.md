@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 3.0.0 - 2026-07-01
+
+- Shipped stable discovery features.
+- Shipped stable editorial workflow.
+- Shipped stable media library.
+- Shipped stable content collections.
+- Shipped stable export hooks.
+- Shipped stable tracking-free analytics export.
+- Shipped stable i18n contract.
+- Kept v1 and v2 compatibility documented.
+- Marked known breaking-change status: no intentional breaking changes from `v2.9.0`.
+
 ## 2.9.0 - 2026-07-01
 
 - Moved project repository links to a discreet icon beside status.

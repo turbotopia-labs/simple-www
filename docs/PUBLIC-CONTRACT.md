@@ -1,6 +1,6 @@
-# Public Contract for v2.9.0
+# Public Contract for v3.0.0
 
-This contract is stable for `v2.9.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and `docs/V2-TO-V3-MIGRATION.md` for v3 preparation notes.
+This contract is stable for `v3.0.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and `docs/V2-TO-V3-MIGRATION.md` for v2 compatibility and migration notes.
 
 ## Content
 
@@ -200,6 +200,8 @@ Import duplicate handling:
 
 After `v1.0.0`, changes should be additive where possible. Breaking changes must update this file, `CHANGELOG.md`, and related docs.
 
-## v3 Preparation Notes
+## v3 Stability Notes
 
-`v2.9.0` does not intentionally break v2 behavior. The main v3 risk areas are weak legacy config aliases, language-neutral translated content, generated `dist/` edits, broad export hooks, and local-only admin account assumptions. See `docs/V2-TO-V3-MIGRATION.md`.
+`v3.0.0` does not intentionally break `v2.9.0` behavior. Discovery, editorial workflow, media library, collections, export hooks, tracking-free analytics export, and i18n are stable parts of the public contract.
+
+Known weak or compatibility-only behavior remains documented in `docs/V2-TO-V3-MIGRATION.md`. There are no intentional breaking changes from `v2.9.0`.

@@ -1,6 +1,6 @@
 # v2 to v3 Migration Notes
 
-`v2.9.0` is the v3 preparation release. It does not intentionally break v2 behavior, but it marks the areas that should be cleaned up before treating `v3.0.0` as stable.
+`v3.0.0` is the stable v3 release. It does not intentionally break `v2.9.0` behavior. This document keeps the v2 compatibility notes and migration checklist in one place.
 
 ## Breaking-Change Risk Review
 
@@ -33,4 +33,8 @@
 
 ## v3.0.0 Expectation
 
-v3 should keep the file-based model, server mode, static export mode, and v1/v2 compatibility docs. Any breaking change must be called out in `docs/PUBLIC-CONTRACT.md`, `CHANGELOG.md`, and the affected feature docs.
+v3 keeps the file-based model, server mode, static export mode, and v1/v2 compatibility docs. Any future breaking change must be called out in `docs/PUBLIC-CONTRACT.md`, `CHANGELOG.md`, and the affected feature docs.
+
+## Breaking Changes
+
+There are no intentional breaking changes from `v2.9.0` to `v3.0.0`.
