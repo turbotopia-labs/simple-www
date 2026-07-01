@@ -6,6 +6,8 @@ const { allContentFieldNames, contentDir, loadedConfig, root, serializeMarkdown,
 const contentFields = [
   "title",
   "date",
+  "lang",
+  "translationKey",
   "updated",
   "author",
   "category",

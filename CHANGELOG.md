@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 2.7.0 - 2026-07-01
+
+- Added config-driven language list with `site.languages`.
+- Added `lang` and `translationKey` front matter fields.
+- Added a header language selector when multiple languages are configured.
+- Filtered module content, collections, and search results by active language.
+- Added language counts to tracking-free analytics export.
+- Documented translation and i18n workflow.
+
 ## 2.6.0 - 2026-07-01
 
 - Added tracking-free analytics export.

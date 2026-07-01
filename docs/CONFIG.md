@@ -21,6 +21,7 @@ JSON remains the default format. YAML support is intentionally small and support
   "title": "simple-www",
   "description": "A small Markdown-powered website.",
   "language": "en",
+  "languages": ["en"],
   "author": "",
   "timezone": "UTC",
   "baseUrl": "http://127.0.0.1:6625",
@@ -39,6 +40,7 @@ Defaults:
 - `title`: `simple-www`
 - `description`: `A small Markdown-powered website.`
 - `language`: `en`
+- `languages`: `["en"]`
 - `author`: empty string
 - `timezone`: `UTC`
 - `baseUrl`: `http://127.0.0.1:6625`
@@ -126,6 +128,7 @@ Validation checks:
 
 - `site` must be an object.
 - Site metadata values must be strings.
+- `site.languages` must be an array of strings.
 - `site.theme` must match a CSS file in `themes/`.
 - `site.layout` must be `list`, `cards`, or `compact`.
 - `site.adminEditing` must be true or false.

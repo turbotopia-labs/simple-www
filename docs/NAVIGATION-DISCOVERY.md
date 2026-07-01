@@ -58,6 +58,7 @@ Search checks:
 - body text
 
 Search includes published module content and published collection content.
+When multiple site languages are configured, search results are filtered by the active language.
 
 Server mode exposes the index at:
 

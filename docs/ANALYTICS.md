@@ -31,6 +31,7 @@ The analytics file is generated from site metadata only:
 - total media count and bytes
 - category counts
 - tag counts
+- language counts
 - year and month archive counts
 - media MIME type counts
 - largest media files

@@ -2,6 +2,7 @@ site:
   title: simple-www
   description: A small Markdown-powered website.
   language: en
+  languages: [en]
   author: ""
   timezone: Europe/Oslo
   baseUrl: http://127.0.0.1:6625

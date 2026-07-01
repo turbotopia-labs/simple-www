@@ -8,12 +8,16 @@ const footerLabel = document.querySelector("#site-footer-label");
 const footerContact = document.querySelector("#site-footer-contact");
 const layoutButtons = document.querySelectorAll("[data-layout]");
 const siteSearch = document.querySelector("#site-search");
+const siteLanguage = document.querySelector("#site-language");
+const siteLanguageLabel = document.querySelector(".header-language");
 
 let state = {
   activeModule: "",
   modules: {},
   content: {},
   collections: {},
+  languages: ["en"],
+  language: "en",
   searchIndex: [],
   diagnostics: {},
   warnings: [],
@@ -401,6 +405,14 @@ function setFooterContact(email) {
   footerContact.href = value ? `mailto:${value}` : "";
 }
 
+function itemInLanguage(item) {
+  return !item.lang || item.lang === state.language;
+}
+
+function languageFilteredItems(items) {
+  return (items || []).filter(itemInLanguage);
+}
+
 function themePackHref(themeName) {
   const safeName = /^[a-z0-9_-]+$/i.test(String(themeName || "")) ? themeName : "classic";
   return `themes/${safeName}.css`;
@@ -462,6 +474,8 @@ function emptyAdminFields(moduleId = editableModuleIds()[0] || "news") {
     slug: "",
     title: "",
     date: "",
+    lang: "",
+    translationKey: "",
     category: "general",
     summary: "",
     tags: "",
@@ -502,6 +516,8 @@ function adminForm(values = emptyAdminFields()) {
         <label>Slug<input name="slug" value="${escapeHtml(values.slug)}" required></label>
         <label>Title<input name="title" value="${escapeHtml(values.title)}" required></label>
         <label>Date<input name="date" value="${escapeHtml(values.date)}" placeholder="YYYY-MM-DD"></label>
+        <label>Language<input name="lang" value="${escapeHtml(values.lang)}" placeholder="${escapeHtml(state.language)}"></label>
+        <label>Translation key<input name="translationKey" value="${escapeHtml(values.translationKey)}"></label>
         <label>Category<input name="category" value="${escapeHtml(values.category)}"></label>
         <label>Summary<input name="summary" value="${escapeHtml(values.summary)}"></label>
         <label>Tags<input name="tags" value="${escapeHtml(values.tags)}" placeholder="one, two"></label>
@@ -546,6 +562,8 @@ function formValues(form) {
     fields: {
       title: form.elements.title.value.trim(),
       date: form.elements.date.value.trim(),
+      lang: form.elements.lang.value.trim(),
+      translationKey: form.elements.translationKey.value.trim(),
       category: form.elements.category.value.trim(),
       summary: form.elements.summary.value.trim(),
       tags: form.elements.tags.value.split(",").map((tag) => tag.trim()).filter(Boolean),
@@ -580,6 +598,8 @@ function valuesFromItem(moduleId, item) {
     slug: item.slug,
     title: item.title,
     date: item.date,
+    lang: item.lang,
+    translationKey: item.translationKey,
     category: item.category,
     summary: item.summary,
     tags: (item.tags || []).join(", "),
@@ -730,6 +750,7 @@ function normalizeSearchQuery(value) {
 }
 
 function resultFromSearchIndex(entry) {
+  if (entry.lang && entry.lang !== state.language) return null;
   if (entry.type === "collection") {
     const item = (state.collections[entry.collection]?.items || []).find((candidate) => candidate.slug === entry.slug);
     return item ? { collectionId: entry.collection, item } : null;
@@ -751,8 +772,8 @@ function searchResults(query) {
   }
 
   return editableModuleIds()
-    .flatMap((moduleId) => (state.content[moduleId] || []).map((item) => ({ moduleId, item })))
-    .concat(collectionIds().flatMap((collectionId) => (state.collections[collectionId]?.items || []).map((item) => ({ collectionId, item }))))
+    .flatMap((moduleId) => languageFilteredItems(state.content[moduleId]).map((item) => ({ moduleId, item })))
+    .concat(collectionIds().flatMap((collectionId) => languageFilteredItems(state.collections[collectionId]?.items).map((item) => ({ collectionId, item }))))
     .filter((result) => itemMatchesSearch(result.item, trimmed));
 }
 
@@ -800,7 +821,7 @@ function renderItem(moduleId, item) {
 
 function renderDetail(moduleId, slug) {
   const module = state.modules[moduleId];
-  const item = (state.content[moduleId] || []).find((entry) => entry.slug === slug);
+  const item = languageFilteredItems(state.content[moduleId]).find((entry) => entry.slug === slug);
 
   state.activeModule = moduleId;
   renderNav();
@@ -903,7 +924,7 @@ function renderCollection(collectionId) {
     return;
   }
 
-  const items = collection.items || [];
+  const items = languageFilteredItems(collection.items);
   app.innerHTML = items.length
     ? items.map((item) => renderCollectionItem(collectionId, item)).join("")
     : `<section class="card"><h2>${escapeHtml(collection.label)}</h2><p class="empty">No collection entries.</p></section>`;
@@ -911,7 +932,7 @@ function renderCollection(collectionId) {
 
 function renderCollectionDetail(collectionId, slug) {
   const collection = state.collections[collectionId];
-  const item = (collection?.items || []).find((entry) => entry.slug === slug);
+  const item = languageFilteredItems(collection?.items).find((entry) => entry.slug === slug);
 
   state.activeModule = "";
   state.activeCollection = collectionId;
@@ -1059,7 +1080,7 @@ function renderAdmin() {
 
 function renderModule(moduleId) {
   const module = state.modules[moduleId];
-  const items = state.content[moduleId] || [];
+  const items = languageFilteredItems(state.content[moduleId]);
 
   state.activeModule = moduleId;
   renderNav();
@@ -1279,9 +1300,30 @@ layoutButtons.forEach((button) => {
   });
 });
 
+siteLanguage.addEventListener("change", () => {
+  state.language = siteLanguage.value;
+  document.documentElement.lang = state.language;
+  localStorage.setItem("simple-www-language", state.language);
+  if (!applyRoute(routeFromHash())) renderDefaultRoute();
+});
+
 window.addEventListener("hashchange", () => {
   applyRoute(routeFromHash());
 });
+
+function configureLanguages(site) {
+  const configured = Array.isArray(site.languages) ? site.languages : [];
+  const languages = [...new Set([site.language || "en", ...configured].map((value) => String(value || "").trim()).filter(Boolean))];
+  state.languages = languages.length ? languages : ["en"];
+  state.language = state.languages.includes(localStorage.getItem("simple-www-language"))
+    ? localStorage.getItem("simple-www-language")
+    : state.languages[0];
+  document.documentElement.lang = state.language;
+
+  siteLanguage.innerHTML = state.languages.map((language) => `<option value="${escapeHtml(language)}">${escapeHtml(language)}</option>`).join("");
+  siteLanguage.value = state.language;
+  siteLanguageLabel.hidden = state.languages.length < 2;
+}
 
 function applyPayload(payload) {
   const config = payload.config || {};
@@ -1297,10 +1339,10 @@ function applyPayload(payload) {
   state.activeCollection = "";
   state.commentsEnabled = site.commentsEnabled === true;
   state.storePaymentsEnabled = site.storePaymentsEnabled === true;
+  configureLanguages(site);
   title.textContent = site.title || config.siteTitle || "simple-www";
   description.textContent = site.description || config.siteDescription || "";
   document.title = `${title.textContent} v.${payload.version || ""}`;
-  document.documentElement.lang = site.language || "en";
   themePack.href = themePackHref(site.theme || "classic");
   footerLabel.textContent = footerText(site, payload.version || "");
   setFooterContact(site.contactEmail);
@@ -1329,11 +1371,15 @@ async function boot() {
   await loadSearchIndex();
   await loadMediaLibrary();
 
-  const firstModule = enabledModuleIds()[0];
   if (applyRoute(routeFromHash())) {
     return;
   }
 
+  renderDefaultRoute();
+}
+
+function renderDefaultRoute() {
+  const firstModule = enabledModuleIds()[0];
   if (firstModule) {
     renderModule(firstModule);
   } else if (collectionIds()[0]) {

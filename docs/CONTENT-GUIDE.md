@@ -37,6 +37,8 @@ Use this optional block at the top of each file:
 ---
 title: Page title
 date: 2026-06-30
+lang: en
+translationKey: page-title
 category: general
 summary: Short summary
 slug: page-title
@@ -57,6 +59,8 @@ Supported fields:
 
 - `title`
 - `date`
+- `lang`
+- `translationKey`
 - `category`
 - `summary`
 - `slug`

@@ -39,6 +39,8 @@ Front matter is optional, but recommended:
 ---
 title: Page title
 date: 2026-06-30
+lang: en
+translationKey: page-title
 category: general
 summary: Short summary
 slug: page-title
@@ -59,6 +61,8 @@ Supported fields:
 
 - `title`: Display title. Defaults to the slug.
 - `date`: Sort date. Newest dates appear first.
+- `lang`: Optional content language. Defaults to the site language when omitted.
+- `translationKey`: Optional stable key shared by translated variants of the same entry.
 - `category`: Single category. Defaults to `general`.
 - `summary`: Short text shown on module list cards and before the full body.
 - `slug`: Optional slug override.
@@ -107,7 +111,7 @@ Module required fields:
 
 Module optional fields:
 
-- All modules: `category`, `summary`, `slug`, `draft`, `publishAt`, `tags`, `updated`, `author`, `image`, `imageAlt`, `pinned`, `priority`, `canonicalUrl`
+- All modules: `category`, `summary`, `slug`, `lang`, `translationKey`, `draft`, `publishAt`, `tags`, `updated`, `author`, `image`, `imageAlt`, `pinned`, `priority`, `canonicalUrl`
 - `projects`: `link`, `repository`
 - `downloads`: `file`, `link`
 - `store`: `link`, `checkoutUrl`, `paymentProvider`, `paymentProviderProductId`, `paymentProviderPriceId`

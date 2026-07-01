@@ -8,6 +8,8 @@ const baseFields = [
   "slug",
   "title",
   "date",
+  "lang",
+  "translationKey",
   "updated",
   "author",
   "category",

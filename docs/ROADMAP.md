@@ -216,8 +216,41 @@ v3 should focus on discovery, editorial workflow, asset handling, and operations
 
 ## v2.7.0 - Translation and i18n
 
-- Translation/i18n support.
+- Done: Translation/i18n support.
 
 ## v2.8.0 - Admin Accounts
 
 - Role-based admin accounts if admin grows beyond local-only use.
+
+## v2.9.0 - v3 Preparation
+
+- Review v2 contracts for breaking-change risk.
+- Tighten docs around config, content, collections, export, and i18n.
+- Mark deprecated or weak behavior before v3.
+- Add migration notes from v2.x to v3.0.0.
+
+## v3.0.0 - Stable v3 Release
+
+- Ship stable discovery features.
+- Ship stable editorial workflow.
+- Ship stable media library.
+- Ship stable content collections.
+- Ship stable export hooks.
+- Ship stable tracking-free analytics export.
+- Ship stable i18n contract.
+- Keep v1 and v2 compatibility documented.
+- Clearly mark any breaking changes.
+
+## Future ideas/features
+
+- Visual media picker for admin editing.
+- Collection landing-page templates.
+- Per-language site metadata overrides.
+- Translation completeness report.
+- Content relationship fields.
+- Redirect map generation.
+- Link checker command.
+- HTML minification option for export.
+- Image thumbnail generation.
+- Optional server log analytics importer.
+- Optional authenticated remote admin mode.

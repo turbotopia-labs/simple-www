@@ -4,6 +4,9 @@
       "title": "labs.turbotopia.no",
       "description": "project overview",
       "language": "en",
+      "languages": [
+        "en"
+      ],
       "author": "",
       "timezone": "Europe/Oslo",
       "baseUrl": "labs.turbotopia.no",
@@ -132,6 +135,8 @@
         "date": "2026-06-30",
         "category": "software",
         "summary": "En enkel, selvdrevet fakturerings- og kostnadssporingstjeneste for små bedrifter og frilansere.",
+        "lang": "",
+        "translationKey": "",
         "draft": false,
         "publishAt": "",
         "tags": [
@@ -168,6 +173,8 @@
         "date": "2026-06-30",
         "category": "open-source",
         "summary": "Kraken is a small, unmanned, shallow-water remotely operated vehicle (ROV) built around reused 1.5-2 L PET bottles and a floating radio hub.",
+        "lang": "",
+        "translationKey": "",
         "draft": false,
         "publishAt": "",
         "tags": [
@@ -205,6 +212,8 @@
         "date": "2026-06-30",
         "category": "software",
         "summary": "TRACKtopia is a flexible place to record, collect, and understand personal statistics.",
+        "lang": "",
+        "translationKey": "",
         "draft": false,
         "publishAt": "",
         "tags": [
@@ -304,5 +313,5 @@
     }
   },
   "warnings": [],
-  "version": "2.6.0"
+  "version": "2.7.0"
 }

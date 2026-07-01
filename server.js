@@ -117,6 +117,7 @@ const defaultConfig = {
     title: "simple-www",
     description: "A small Markdown-powered website.",
     language: "en",
+    languages: ["en"],
     author: "",
     timezone: "UTC",
     baseUrl: "http://127.0.0.1:6625",
@@ -147,6 +148,8 @@ const editableFields = [
   "category",
   "summary",
   "slug",
+  "lang",
+  "translationKey",
   "draft",
   "publishAt",
   "tags",
@@ -355,10 +358,12 @@ function buildSearchIndex(payload = sitePayload()) {
   const moduleItems = Object.entries(payload.content).flatMap(([moduleId, items]) =>
     items.map((item) => {
       const fields = [
-        item.title,
-        item.summary,
-        item.category,
-        item.author,
+          item.title,
+          item.summary,
+          item.category,
+          item.lang,
+          item.translationKey,
+          item.author,
         item.status,
         item.version,
         item.sku,
@@ -377,6 +382,8 @@ function buildSearchIndex(payload = sitePayload()) {
         date: item.date,
         category: item.category,
         tags: item.tags || [],
+        lang: item.lang,
+        translationKey: item.translationKey,
         url: absoluteUrl(site.baseUrl, moduleId, item),
         text: searchText(fields.join(" ")),
       };
@@ -384,7 +391,7 @@ function buildSearchIndex(payload = sitePayload()) {
   );
   const collectionItems = Object.entries(payload.collections || {}).flatMap(([collectionId, collection]) =>
     (collection.items || []).map((item) => {
-      const fields = [item.title, item.summary, item.category, item.author, ...(item.tags || []), item.body];
+      const fields = [item.title, item.summary, item.category, item.lang, item.translationKey, item.author, ...(item.tags || []), item.body];
       return {
         type: "collection",
         collection: collectionId,
@@ -395,6 +402,8 @@ function buildSearchIndex(payload = sitePayload()) {
         date: item.date,
         category: item.category,
         tags: item.tags || [],
+        lang: item.lang,
+        translationKey: item.translationKey,
         url: collectionUrl(site.baseUrl, collectionId, item),
         text: searchText(fields.join(" ")),
       };
@@ -573,6 +582,9 @@ function validateRawConfig(raw, source) {
       errors.push(`${source}: site.${field} must be a string.`);
     }
   });
+  if (raw.site?.languages !== undefined && (!Array.isArray(raw.site.languages) || raw.site.languages.some((value) => typeof value !== "string"))) {
+    errors.push(`${source}: site.languages must be an array of strings.`);
+  }
 
   if (raw.site?.adminEditing !== undefined && typeof raw.site.adminEditing !== "boolean") {
     errors.push(`${source}: site.adminEditing must be true or false.`);
@@ -700,6 +712,7 @@ function normalizeConfig(raw) {
     ...defaultConfig.site,
     ...(raw.site || {}),
   };
+  site.languages = [...new Set([site.language, ...(Array.isArray(site.languages) ? site.languages : [])].map((value) => String(value || "").trim()).filter(Boolean))];
 
   if (raw.siteTitle && !raw.site?.title) site.title = raw.siteTitle;
   if (raw.siteDescription && !raw.site?.description) site.description = raw.siteDescription;
@@ -936,6 +949,8 @@ function parseMarkdownFile(filePath) {
     date: String(meta.date || ""),
     category: String(meta.category || "general"),
     summary: String(meta.summary || ""),
+    lang: String(meta.lang || ""),
+    translationKey: String(meta.translationKey || ""),
     draft: booleanValue(meta.draft),
     publishAt: String(meta.publishAt || ""),
     tags: normalizeTags(meta.tags),
@@ -1586,9 +1601,11 @@ function analyticsForItems(items) {
   const tags = {};
   const years = {};
   const months = {};
+  const languages = {};
 
   items.forEach((item) => {
     incrementCount(categories, item.category);
+    incrementCount(languages, item.lang || loadedConfig?.config?.site?.language || "default");
     (item.tags || []).forEach((tag) => incrementCount(tags, tag));
     if (item.date) {
       incrementCount(years, item.date.slice(0, 4));
@@ -1596,7 +1613,7 @@ function analyticsForItems(items) {
     }
   });
 
-  return { categories, tags, years, months };
+  return { categories, tags, years, months, languages };
 }
 
 function buildAnalyticsExport(payload = sitePayload()) {

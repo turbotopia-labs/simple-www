@@ -1,6 +1,6 @@
-# Public Contract for v2.6.0
+# Public Contract for v2.7.0
 
-This contract is stable for `v2.6.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
+This contract is stable for `v2.7.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
 
 ## Content
 
@@ -14,6 +14,8 @@ Supported front matter fields:
 
 - `title`
 - `date`
+- `lang`
+- `translationKey`
 - `category`
 - `summary`
 - `slug`
@@ -62,6 +64,7 @@ Stable `site` fields:
 - `title`
 - `description`
 - `language`
+- `languages`
 - `author`
 - `timezone`
 - `baseUrl`

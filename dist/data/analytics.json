@@ -1,6 +1,6 @@
 {
-  "version": "2.6.0",
-  "generatedAt": "2026-07-01T10:00:57.408Z",
+  "version": "2.7.0",
+  "generatedAt": "2026-07-01T10:08:27.430Z",
   "tracking": {
     "scripts": false,
     "cookies": false,
@@ -21,7 +21,8 @@
       "categories": {},
       "tags": {},
       "years": {},
-      "months": {}
+      "months": {},
+      "languages": {}
     },
     "projects": {
       "items": 3,
@@ -49,6 +50,9 @@
       },
       "months": {
         "2026-06": 3
+      },
+      "languages": {
+        "en": 3
       }
     },
     "downloads": {
@@ -56,7 +60,8 @@
       "categories": {},
       "tags": {},
       "years": {},
-      "months": {}
+      "months": {},
+      "languages": {}
     }
   },
   "collections": {},
@@ -85,6 +90,9 @@
     },
     "months": {
       "2026-06": 3
+    },
+    "languages": {
+      "en": 3
     }
   },
   "media": {
