@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.1.0 - 2026-07-01
+
 - Expanded roadmap with v2 planning and post-1.0 milestones.
 - Added broader Markdown rendering for common Markdown syntax.
 - Changed module cards to show summary/excerpt and link to full entry pages.
@@ -10,6 +12,9 @@
 - Made all module filters more discreet and integrated with the page layout.
 - Moved module navigation into the header as bookmark-style tabs.
 - Added configurable footer text with `{VERSION}` replacement.
+- Added expanded content front matter for `updated`, `author`, `image`, `imageAlt`, `pinned`, `priority`, and `canonicalUrl`.
+- Added richer content validation and module-specific required field documentation.
+- Added content examples for every supported module and v1.0.0 migration notes.
 
 ## 1.0.0 - 2026-07-01
 

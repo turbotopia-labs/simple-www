@@ -475,6 +475,14 @@ h3 {
   font-size: 17px;
 }
 
+.entry-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  margin: 0 0 10px;
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;

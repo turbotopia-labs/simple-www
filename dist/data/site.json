@@ -7,7 +7,7 @@
       "author": "",
       "timezone": "Europe/Oslo",
       "baseUrl": "http://127.0.0.1:6625",
-      "footerText": "simple-www v.{VERSION}",
+      "footerText": "powered by simple-www v.{VERSION}",
       "layout": "list",
       "adminEditing": false
     },
@@ -80,6 +80,13 @@
           "business",
           "open source"
         ],
+        "updated": "",
+        "author": "",
+        "image": "",
+        "imageAlt": "",
+        "pinned": false,
+        "priority": 0,
+        "canonicalUrl": "",
         "status": "testing v.1.4",
         "link": "",
         "repository": "",
@@ -105,6 +112,13 @@
           "custom",
           "open source"
         ],
+        "updated": "",
+        "author": "",
+        "image": "",
+        "imageAlt": "",
+        "pinned": false,
+        "priority": 0,
+        "canonicalUrl": "",
         "status": "planning",
         "link": "",
         "repository": "",
@@ -129,6 +143,13 @@
           "life log",
           "open source"
         ],
+        "updated": "",
+        "author": "",
+        "image": "",
+        "imageAlt": "",
+        "pinned": false,
+        "priority": 0,
+        "canonicalUrl": "",
         "status": "testing v.beta-11.1.0",
         "link": "",
         "repository": "",
@@ -193,5 +214,5 @@
     }
   },
   "warnings": [],
-  "version": "1.0.0"
+  "version": "1.1.0"
 }

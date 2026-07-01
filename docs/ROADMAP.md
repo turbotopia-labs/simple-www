@@ -105,7 +105,7 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v1.1.0 - Expanded Content Contract
 
-- Add optional front matter fields for common publishing needs:
+- Done: Add optional front matter fields for common publishing needs:
   - `updated`
   - `author`
   - `image`
@@ -113,10 +113,10 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
   - `pinned`
   - `priority`
   - `canonicalUrl`
-- Add richer validation for URLs, dates, booleans, and required module fields.
-- Add per-module required/optional field documentation.
-- Add examples for every supported module.
-- Add migration notes from the v1.0.0 contract.
+- Done: Add richer validation for URLs, dates, booleans, and required module fields.
+- Done: Add per-module required/optional field documentation.
+- Done: Add examples for every supported module.
+- Done: Add migration notes from the v1.0.0 contract.
 
 ## v1.2.0 - Import and Export Tools
 

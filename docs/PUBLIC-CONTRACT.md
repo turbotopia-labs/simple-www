@@ -1,6 +1,6 @@
-# Public Contract for v1.0.0
+# Public Contract for v1.1.0
 
-This contract is stable for `v1.0.0`. Changes after `v1.0.0` should be additive unless a documented breaking release is planned.
+This contract is stable for `v1.1.0`. Changes after `v1.1.0` should be additive unless a documented breaking release is planned.
 
 ## Content
 
@@ -19,6 +19,13 @@ Supported front matter fields:
 - `slug`
 - `draft`
 - `tags`
+- `updated`
+- `author`
+- `image`
+- `imageAlt`
+- `pinned`
+- `priority`
+- `canonicalUrl`
 - `status`
 - `link`
 - `repository`

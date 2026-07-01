@@ -303,23 +303,30 @@ function itemSummary(item) {
 }
 
 function itemActions(moduleId, item) {
+  const canonical = actionLink(item.canonicalUrl, "Canonical URL");
+
   if (moduleId === "projects") {
-    return [actionLink(item.link, "Project link"), actionLink(item.repository, "Repository")].join("");
+    return [actionLink(item.link, "Project link"), actionLink(item.repository, "Repository"), canonical].join("");
   }
 
   if (moduleId === "downloads") {
-    return [actionLink(item.file, "Download file"), actionLink(item.link, "More info")].join("");
+    return [actionLink(item.file, "Download file"), actionLink(item.link, "More info"), canonical].join("");
   }
 
   if (moduleId === "store") {
-    return actionLink(item.link, "Product link");
+    return [actionLink(item.link, "Product link"), canonical].join("");
   }
 
-  return "";
+  return canonical;
 }
 
 function footerText(site, version) {
   return String(site.footerText || "simple-www v.{VERSION}").replaceAll("{VERSION}", version || "");
+}
+
+function itemImage(item) {
+  if (!item.image) return "";
+  return `<img class="entry-image" src="${escapeHtml(safeUrl(item.image))}" alt="${escapeHtml(item.imageAlt || item.title || "")}">`;
 }
 
 function editableModuleIds() {
@@ -335,6 +342,13 @@ function emptyAdminFields(moduleId = editableModuleIds()[0] || "news") {
     category: "general",
     summary: "",
     tags: "",
+    updated: "",
+    author: "",
+    image: "",
+    imageAlt: "",
+    pinned: false,
+    priority: "",
+    canonicalUrl: "",
     draft: false,
     status: "",
     link: "",
@@ -363,6 +377,13 @@ function adminForm(values = emptyAdminFields()) {
         <label>Category<input name="category" value="${escapeHtml(values.category)}"></label>
         <label>Summary<input name="summary" value="${escapeHtml(values.summary)}"></label>
         <label>Tags<input name="tags" value="${escapeHtml(values.tags)}" placeholder="one, two"></label>
+        <label>Updated<input name="updated" value="${escapeHtml(values.updated)}" placeholder="YYYY-MM-DD"></label>
+        <label>Author<input name="author" value="${escapeHtml(values.author)}"></label>
+        <label>Image<input name="image" value="${escapeHtml(values.image)}"></label>
+        <label>Image alt<input name="imageAlt" value="${escapeHtml(values.imageAlt)}"></label>
+        <label class="checkbox-label"><input name="pinned" type="checkbox"${values.pinned ? " checked" : ""}> Pinned</label>
+        <label>Priority<input name="priority" value="${escapeHtml(values.priority)}" placeholder="0"></label>
+        <label>Canonical URL<input name="canonicalUrl" value="${escapeHtml(values.canonicalUrl)}"></label>
         <label class="checkbox-label"><input name="draft" type="checkbox"${values.draft ? " checked" : ""}> Draft</label>
         <label>Status<input name="status" value="${escapeHtml(values.status)}"></label>
         <label>Link<input name="link" value="${escapeHtml(values.link)}"></label>
@@ -394,6 +415,13 @@ function formValues(form) {
       category: form.elements.category.value.trim(),
       summary: form.elements.summary.value.trim(),
       tags: form.elements.tags.value.split(",").map((tag) => tag.trim()).filter(Boolean),
+      updated: form.elements.updated.value.trim(),
+      author: form.elements.author.value.trim(),
+      image: form.elements.image.value.trim(),
+      imageAlt: form.elements.imageAlt.value.trim(),
+      pinned: form.elements.pinned.checked,
+      priority: form.elements.priority.value.trim(),
+      canonicalUrl: form.elements.canonicalUrl.value.trim(),
       draft: form.elements.draft.checked,
       status: form.elements.status.value.trim(),
       link: form.elements.link.value.trim(),
@@ -416,6 +444,13 @@ function valuesFromItem(moduleId, item) {
     category: item.category,
     summary: item.summary,
     tags: (item.tags || []).join(", "),
+    updated: item.updated,
+    author: item.author,
+    image: item.image,
+    imageAlt: item.imageAlt,
+    pinned: item.pinned,
+    priority: item.priority === 0 ? "" : item.priority,
+    canonicalUrl: item.canonicalUrl,
     draft: item.draft,
     status: item.status,
     link: item.link,
@@ -479,7 +514,7 @@ function visibleItems(moduleId, items) {
 }
 
 function itemMatchesSearch(item, query) {
-  return [item.title, item.summary, item.category, item.body, ...(item.tags || [])]
+  return [item.title, item.summary, item.category, item.author, item.body, ...(item.tags || [])]
     .join(" ")
     .toLowerCase()
     .includes(query.toLowerCase());
@@ -512,7 +547,8 @@ function renderItem(moduleId, item) {
   return `
     <article class="card">
       <h2>${escapeHtml(item.title)}</h2>
-      <div class="meta">${escapeHtml([item.date, item.category].filter(Boolean).join(" / "))}</div>
+      <div class="meta">${escapeHtml([item.date, item.updated ? `updated ${item.updated}` : "", item.author, item.category].filter(Boolean).join(" / "))}</div>
+      ${itemImage(item)}
       <p>${inlineMarkdown(itemSummary(item))}</p>
       ${detailList(details)}
       ${item.tags && item.tags.length ? `<div class="tags">${item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
@@ -544,7 +580,8 @@ function renderDetail(moduleId, slug) {
     <article class="card detail-card">
       <p class="action-link"><a href="#/${escapeHtml(moduleId)}">Back to ${escapeHtml(module.label)}</a></p>
       <h2>${escapeHtml(item.title)}</h2>
-      <div class="meta">${escapeHtml([item.date, item.category].filter(Boolean).join(" / "))}</div>
+      <div class="meta">${escapeHtml([item.date, item.updated ? `updated ${item.updated}` : "", item.author, item.category].filter(Boolean).join(" / "))}</div>
+      ${itemImage(item)}
       ${item.summary ? `<p class="summary">${inlineMarkdown(item.summary)}</p>` : ""}
       ${detailList([
         { label: "Status", value: item.status },

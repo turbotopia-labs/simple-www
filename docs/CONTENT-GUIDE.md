@@ -38,6 +38,13 @@ summary: Short summary
 slug: page-title
 draft: false
 tags: [notes, release]
+updated: 2026-07-01
+author: Author name
+image: /images/example.jpg
+imageAlt: Example image
+pinned: false
+priority: 0
+canonicalUrl: https://example.com/page
 ---
 ```
 
@@ -50,8 +57,16 @@ Supported fields:
 - `slug`
 - `draft`
 - `tags`
+- `updated`
+- `author`
+- `image`
+- `imageAlt`
+- `pinned`
+- `priority`
+- `canonicalUrl`
 
 Set `draft: true` to hide a file from the site. Use `tags` for short labels that can later support filtering.
+Use `pinned: true` and higher `priority` values to move important entries upward without changing dates.
 
 ## Markdown support
 

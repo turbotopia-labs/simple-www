@@ -85,6 +85,13 @@ const editableFields = [
   "slug",
   "draft",
   "tags",
+  "updated",
+  "author",
+  "image",
+  "imageAlt",
+  "pinned",
+  "priority",
+  "canonicalUrl",
   "status",
   "link",
   "repository",
@@ -424,10 +431,62 @@ function slugify(value, fallback = "item") {
   return slug || fallback;
 }
 
+function isDateString(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ""))) return false;
+  const date = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+function isSafeContentUrl(value) {
+  const url = String(value || "").trim();
+  if (!url) return true;
+  if (/^(https?:|mailto:|\/|#|\.\.?\/)/i.test(url)) return true;
+  return /^[a-z0-9./_-]+$/i.test(url);
+}
+
+function booleanValue(value) {
+  return value === true;
+}
+
+function integerValue(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isInteger(number) ? number : fallback;
+}
+
+function requiredFieldsForModule(moduleId) {
+  if (moduleId === "news" || moduleId === "blog") return ["title", "date"];
+  if (moduleId === "projects") return ["title", "status"];
+  if (moduleId === "downloads") return ["title", "version"];
+  if (moduleId === "store") return ["title", "sku", "price"];
+  return ["title"];
+}
+
+function validateContentFields(moduleId, item, source) {
+  const errors = [];
+  requiredFieldsForModule(moduleId).forEach((field) => {
+    if (!item[field]) errors.push(`${source}: ${field} is required for ${moduleId}.`);
+  });
+
+  ["date", "updated"].forEach((field) => {
+    if (item[field] && !isDateString(item[field])) errors.push(`${source}: ${field} must use YYYY-MM-DD.`);
+  });
+
+  ["link", "repository", "file", "image", "canonicalUrl"].forEach((field) => {
+    if (item[field] && !isSafeContentUrl(item[field])) errors.push(`${source}: ${field} must be a safe URL or relative path.`);
+  });
+
+  if (typeof item.draft !== "boolean") errors.push(`${source}: draft must be true or false.`);
+  if (typeof item.pinned !== "boolean") errors.push(`${source}: pinned must be true or false.`);
+  if (!Number.isInteger(item.priority)) errors.push(`${source}: priority must be an integer.`);
+
+  return errors;
+}
+
 function parseFrontMatterValue(value) {
   const trimmed = value.trim();
   if (trimmed === "true") return true;
   if (trimmed === "false") return false;
+  if (/^-?\d+$/.test(trimmed)) return Number(trimmed);
 
   if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
     return trimmed
@@ -489,8 +548,15 @@ function parseMarkdownFile(filePath) {
     date: String(meta.date || ""),
     category: String(meta.category || "general"),
     summary: String(meta.summary || ""),
-    draft: meta.draft === true,
+    draft: booleanValue(meta.draft),
     tags: normalizeTags(meta.tags),
+    updated: String(meta.updated || ""),
+    author: String(meta.author || ""),
+    image: String(meta.image || ""),
+    imageAlt: String(meta.imageAlt || ""),
+    pinned: booleanValue(meta.pinned),
+    priority: integerValue(meta.priority),
+    canonicalUrl: String(meta.canonicalUrl || ""),
     status: String(meta.status || ""),
     link: String(meta.link || ""),
     repository: String(meta.repository || ""),
@@ -554,8 +620,18 @@ function validateAdminContentInput(input, mode) {
   if (rawSlug && slug !== rawSlug.toLowerCase()) errors.push(`slug must be normalized as: ${slug}`);
   if (mode !== "delete") {
     if (!fields.title || typeof fields.title !== "string") errors.push("title is required.");
-    if (fields.date && !/^\d{4}-\d{2}-\d{2}$/.test(String(fields.date))) errors.push("date must use YYYY-MM-DD.");
+    requiredFieldsForModule(moduleId).forEach((field) => {
+      if (!fields[field]) errors.push(`${field} is required for ${moduleId}.`);
+    });
+    ["date", "updated"].forEach((field) => {
+      if (fields[field] && !isDateString(String(fields[field]))) errors.push(`${field} must use YYYY-MM-DD.`);
+    });
     if (fields.draft !== undefined && typeof fields.draft !== "boolean") errors.push("draft must be true or false.");
+    if (fields.pinned !== undefined && typeof fields.pinned !== "boolean") errors.push("pinned must be true or false.");
+    if (fields.priority !== undefined && fields.priority !== "" && !Number.isInteger(Number(fields.priority))) errors.push("priority must be an integer.");
+    ["link", "repository", "file", "image", "canonicalUrl"].forEach((field) => {
+      if (fields[field] && !isSafeContentUrl(fields[field])) errors.push(`${field} must be a safe URL or relative path.`);
+    });
     if (fields.tags !== undefined && !Array.isArray(fields.tags) && typeof fields.tags !== "string") {
       errors.push("tags must be an array or comma-separated string.");
     }
@@ -611,8 +687,7 @@ function validateSite() {
     if (!modules[moduleId]) errors.push(`Unknown content module: ${moduleId}`);
 
     items.forEach((item) => {
-      if (!item.title) errors.push(`${item.source}: title is required.`);
-      if (item.date && !/^\d{4}-\d{2}-\d{2}$/.test(item.date)) errors.push(`${item.source}: date must use YYYY-MM-DD.`);
+      errors.push(...validateContentFields(moduleId, item, item.source));
       if (item.slug !== slugify(item.slug)) errors.push(`${item.source}: slug is not normalized.`);
     });
   });
@@ -694,6 +769,8 @@ function sortItems(items, sortMode) {
   const sorted = [...items];
 
   sorted.sort((a, b) => {
+    if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+    if (a.priority !== b.priority) return b.priority - a.priority;
     if (sortMode === "date-asc") return String(a.date).localeCompare(String(b.date));
     if (sortMode === "title-asc") return String(a.title).localeCompare(String(b.title));
     if (sortMode === "title-desc") return String(b.title).localeCompare(String(a.title));
