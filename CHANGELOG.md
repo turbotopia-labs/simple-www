@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added optional footer contact link driven by `site.contactEmail`.
+
 ## 1.5.0 - 2026-07-01
 
 - Added optional local/file-backed comments behind `site.commentsEnabled`.

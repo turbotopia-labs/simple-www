@@ -23,6 +23,7 @@ JSON remains the default format. YAML support is intentionally small and support
   "timezone": "UTC",
   "baseUrl": "http://127.0.0.1:6625",
   "footerText": "simple-www v.{VERSION}",
+  "contactEmail": "",
   "theme": "classic",
   "layout": "cards",
   "adminEditing": false,
@@ -39,6 +40,7 @@ Defaults:
 - `timezone`: `UTC`
 - `baseUrl`: `http://127.0.0.1:6625`
 - `footerText`: `simple-www v.{VERSION}`
+- `contactEmail`: empty string
 - `theme`: `classic`
 - `layout`: `cards`
 - `adminEditing`: `false`

@@ -55,6 +55,7 @@ Stable `site` fields:
 - `timezone`
 - `baseUrl`
 - `footerText`
+- `contactEmail`
 - `theme`
 - `layout`
 - `adminEditing`

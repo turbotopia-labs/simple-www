@@ -5,6 +5,7 @@ const description = document.querySelector("#site-description");
 const themeToggle = document.querySelector("#theme-toggle");
 const themePack = document.querySelector("#theme-pack");
 const footerLabel = document.querySelector("#site-footer-label");
+const footerContact = document.querySelector("#site-footer-contact");
 const layoutButtons = document.querySelectorAll("[data-layout]");
 const siteSearch = document.querySelector("#site-search");
 
@@ -339,6 +340,12 @@ function itemActions(moduleId, item) {
 
 function footerText(site, version) {
   return String(site.footerText || "simple-www v.{VERSION}").replaceAll("{VERSION}", version || "");
+}
+
+function setFooterContact(email) {
+  const value = String(email || "").trim();
+  footerContact.hidden = !value;
+  footerContact.href = value ? `mailto:${value}` : "";
 }
 
 function themePackHref(themeName) {
@@ -998,6 +1005,7 @@ function applyPayload(payload) {
   document.documentElement.lang = site.language || "en";
   themePack.href = themePackHref(site.theme || "classic");
   footerLabel.textContent = footerText(site, payload.version || "");
+  setFooterContact(site.contactEmail);
   setLayout(localStorage.getItem("simple-www-layout") || site.layout || "cards");
 
   state.warnings.forEach((warning) => {

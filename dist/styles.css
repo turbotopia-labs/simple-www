@@ -529,8 +529,15 @@ h3 {
 }
 
 .site-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
   border-top: 1px solid var(--border);
   padding: 12px 0 24px;
+}
+
+.site-footer a {
+  white-space: nowrap;
 }
 
 @media (max-width: 640px) {
@@ -587,6 +594,10 @@ h3 {
 
   h1 {
     font-size: 28px;
+  }
+
+  .site-footer {
+    flex-wrap: wrap;
   }
 }
 
