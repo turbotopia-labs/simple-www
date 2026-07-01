@@ -6,6 +6,7 @@
 - Displayed beer ratings with a rating bar and Untappd icon link.
 - Tightened spacing between the beer rating label and rating bar.
 - Styled the beer rating bar with a discreet Untappd-yellow palette.
+- Tightened spacing between project status labels and values.
 
 ## 3.0.0 - 2026-07-01
 

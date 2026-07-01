@@ -389,6 +389,7 @@ function untappdIconLink(href) {
 function projectStatusDetail(item) {
   return {
     label: "Status",
+    className: "status-detail",
     html: `<span class="status-with-repo">${escapeHtml(item.status || "")}${repositoryIconLink(item.repository)}</span>`,
   };
 }

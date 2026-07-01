@@ -331,6 +331,11 @@ h3 {
   gap: 5px;
 }
 
+.details .status-detail {
+  grid-template-columns: 54px 1fr;
+  gap: 5px;
+}
+
 .details dt {
   color: var(--muted);
   font-size: 13px;
