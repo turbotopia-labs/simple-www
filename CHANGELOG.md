@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2.1.0 - 2026-07-01
+
+- Added generated full-text search index output.
+- Added `/api/search-index` for server mode.
+- Added `dist/data/search-index.json` for static export mode.
+- Updated browser search to use the generated index with a content fallback.
 - Added structured Roadmap v3 planning.
 - Made link colors more discreet across built-in themes.
 

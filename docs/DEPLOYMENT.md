@@ -17,6 +17,7 @@ The server provides:
 
 - `/`
 - `/api/site`
+- `/api/search-index`
 - `/health`
 - `/feeds/news.xml`
 - `/feeds/blog.xml`
@@ -51,6 +52,7 @@ The export includes:
 - `dist/app.js`
 - `dist/styles.css`
 - `dist/data/site.json`
+- `dist/data/search-index.json`
 - `dist/feed.json`
 - `dist/feeds.json`
 - `dist/feeds/news.json`

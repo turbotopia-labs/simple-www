@@ -13,6 +13,7 @@ let state = {
   activeModule: "",
   modules: {},
   content: {},
+  searchIndex: [],
   diagnostics: {},
   warnings: [],
   commentsEnabled: false,
@@ -608,9 +609,30 @@ function itemMatchesSearch(item, query) {
     .includes(query.toLowerCase());
 }
 
+function normalizeSearchQuery(value) {
+  return String(value || "")
+    .replace(/[#>*_~`|()[\]{}:;,.!?/\\-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function resultFromSearchIndex(entry) {
+  const item = (state.content[entry.module] || []).find((candidate) => candidate.slug === entry.slug);
+  return item ? { moduleId: entry.module, item } : null;
+}
+
 function searchResults(query) {
   const trimmed = String(query || "").trim();
   if (!trimmed) return [];
+  const normalized = normalizeSearchQuery(trimmed);
+
+  if (state.searchIndex.length) {
+    return state.searchIndex
+      .filter((entry) => String(entry.text || "").includes(normalized))
+      .map(resultFromSearchIndex)
+      .filter(Boolean);
+  }
 
   return editableModuleIds()
     .flatMap((moduleId) => (state.content[moduleId] || []).map((item) => ({ moduleId, item })))
@@ -1016,6 +1038,7 @@ function applyPayload(payload) {
 
   state.modules = config.modules || {};
   state.content = payload.content || {};
+  state.searchIndex = [];
   state.diagnostics = payload.diagnostics || {};
   state.warnings = payload.warnings || [];
   state.commentsEnabled = site.commentsEnabled === true;
@@ -1034,10 +1057,22 @@ function applyPayload(payload) {
   });
 }
 
+async function loadSearchIndex() {
+  try {
+    const response = await fetch(window.SIMPLE_WWW_SEARCH_INDEX_PATH || "/api/search-index");
+    if (!response.ok) return;
+    const payload = await response.json();
+    state.searchIndex = Array.isArray(payload.items) ? payload.items : [];
+  } catch {
+    state.searchIndex = [];
+  }
+}
+
 async function boot() {
   const response = await fetch(window.SIMPLE_WWW_DATA_PATH || "/api/site");
   const payload = await response.json();
   applyPayload(payload);
+  await loadSearchIndex();
 
   const firstModule = enabledModuleIds()[0];
   if (applyRoute(routeFromHash())) {

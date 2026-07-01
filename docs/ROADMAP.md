@@ -191,7 +191,7 @@ v3 should focus on discovery, editorial workflow, asset handling, and operations
 
 ## v2.1.0 - Search Index
 
-- Full-text search index generation.
+- Done: Full-text search index generation.
 
 ## v2.2.0 - Editorial Workflow
 

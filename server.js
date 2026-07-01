@@ -319,6 +319,56 @@ function absoluteUrl(baseUrl, moduleId, item) {
   return `${base}/#/${encodeURIComponent(moduleId)}/${encodeURIComponent(item.slug)}`;
 }
 
+function searchText(value) {
+  return String(value || "")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, " $1 ")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, " $1 ")
+    .replace(/[#>*_~`|()[\]{}:;,.!?/\\-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function buildSearchIndex(payload = sitePayload()) {
+  const site = payload.config.site || {};
+  const modules = payload.config.modules || {};
+
+  return {
+    version,
+    generatedAt: new Date().toISOString(),
+    items: Object.entries(payload.content).flatMap(([moduleId, items]) =>
+      items.map((item) => {
+        const fields = [
+          item.title,
+          item.summary,
+          item.category,
+          item.author,
+          item.status,
+          item.version,
+          item.sku,
+          item.price,
+          ...(item.tags || []),
+          item.body,
+        ];
+
+        return {
+          module: moduleId,
+          moduleLabel: modules[moduleId]?.label || moduleId,
+          slug: item.slug,
+          title: item.title,
+          summary: item.summary,
+          date: item.date,
+          category: item.category,
+          tags: item.tags || [],
+          url: absoluteUrl(site.baseUrl, moduleId, item),
+          text: searchText(fields.join(" ")),
+        };
+      })
+    ),
+  };
+}
+
 function feedItems(moduleId) {
   const payload = sitePayload();
   const items = moduleId
@@ -1292,6 +1342,11 @@ function createServer() {
         return;
       }
 
+      if (url.pathname === "/api/search-index") {
+        sendJson(res, 200, buildSearchIndex());
+        return;
+      }
+
       if (url.pathname === "/api/comments") {
         await handleComments(req, res, url);
         return;
@@ -1363,6 +1418,7 @@ if (require.main === module) {
 module.exports = {
   absoluteUrl,
   allContentFieldNames,
+  buildSearchIndex,
   contentDir,
   createServer,
   escapeXml,

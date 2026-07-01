@@ -10,6 +10,7 @@ const {
   publicDir,
   root,
   rssFeed,
+  buildSearchIndex,
   sitePayload,
   themesDir,
 } = require("../server");
@@ -46,7 +47,7 @@ function copyPublic() {
 function patchIndexForStaticData() {
   const indexPath = path.join(distDir, "index.html");
   const html = fs.readFileSync(indexPath, "utf8");
-  const staticDataScript = '    <script>window.SIMPLE_WWW_DATA_PATH = "data/site.json";</script>\n';
+  const staticDataScript = '    <script>window.SIMPLE_WWW_DATA_PATH = "data/site.json"; window.SIMPLE_WWW_SEARCH_INDEX_PATH = "data/search-index.json";</script>\n';
   writeFile(indexPath, html.replace("    <script src=\"app.js\"></script>", `${staticDataScript}    <script src="app.js"></script>`));
 }
 
@@ -110,6 +111,7 @@ function exportSite() {
   patchIndexForStaticData();
 
   writeFile(path.join(dataDir, "site.json"), JSON.stringify(payload, null, 2));
+  writeFile(path.join(dataDir, "search-index.json"), JSON.stringify(buildSearchIndex(payload), null, 2));
   writeFile(path.join(distDir, "feed.json"), JSON.stringify(jsonFeed(), null, 2));
   writeFile(path.join(distDir, "feeds.json"), JSON.stringify(jsonFeed(), null, 2));
   writeFile(path.join(feedsDir, "news.json"), JSON.stringify(jsonFeed("news"), null, 2));

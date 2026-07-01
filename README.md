@@ -2,7 +2,7 @@
 
 simple-www is a small static website engine with Markdown content, JSON/YAML configuration, and toggleable modules.
 
-Version: `2.0.0`
+Version: `2.1.0`
 
 ## Install
 
@@ -33,6 +33,8 @@ node scripts/export.js
 ```
 
 Static files are written to `dist/`.
+
+The export includes `dist/data/search-index.json` for full-text search.
 
 ## Validate
 

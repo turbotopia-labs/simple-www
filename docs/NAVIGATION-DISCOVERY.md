@@ -40,7 +40,7 @@ Filter views can be linked with hash URLs:
 
 ## Search
 
-The header search field searches all published content in the browser.
+The header search field searches all published content through a generated full-text index.
 
 Search checks:
 
@@ -49,6 +49,14 @@ Search checks:
 - category
 - tags
 - body text
+
+Server mode exposes the index at:
+
+- `/api/search-index`
+
+Static export writes the same index to:
+
+- `data/search-index.json`
 
 Search views can be linked with hash URLs:
 
