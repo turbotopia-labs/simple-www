@@ -164,24 +164,6 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 - Done: Document provider responsibilities and security boundaries.
 - Done: Keep payment integration disabled by default.
 
-## v1.5.0 - Comments
-
-- Add optional comment support behind an explicit config toggle.
-- Start with local/file-backed comments only.
-- Add moderation fields: approved, hidden, author, date.
-- Add admin review for comments.
-- Keep comments disabled by default.
-- Document privacy and backup expectations.
-
-## v1.6.0 - Store Integrations
-
-- Keep store entries usable without payment handling.
-- Add optional external checkout links.
-- Add optional payment-provider handoff fields.
-- Avoid storing payment data.
-- Document provider responsibilities and security boundaries.
-- Keep payment integration disabled by default.
-
 ## v1.7.0 - Multi-Site Support
 
 - Add config for multiple site roots.
