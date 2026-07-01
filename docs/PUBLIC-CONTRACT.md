@@ -32,6 +32,8 @@ Supported front matter fields:
 - `status`
 - `link`
 - `repository`
+- `untappd`
+- `rating`
 - `file`
 - `version`
 - `sku`

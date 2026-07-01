@@ -79,6 +79,8 @@ Supported fields:
 - `status`: Project status.
 - `link`: Related page or external URL.
 - `repository`: Project repository URL.
+- `untappd`: Untappd beer profile URL for `blog` entries in the `beer-rating` category.
+- `rating`: Beer rating from `1.00` through `5.00` for `blog` entries in the `beer-rating` category.
 - `file`: Download file URL.
 - `version`: Download or release version.
 - `sku`: Store product SKU.
@@ -97,7 +99,9 @@ Validation checks:
 - `publishAt` must use `YYYY-MM-DD` or an ISO date/time when present.
 - `draft` and `pinned` must be booleans.
 - `priority` must be an integer.
-- `link`, `repository`, `file`, `image`, `canonicalUrl`, and `checkoutUrl` must be safe URLs or relative paths.
+- `link`, `repository`, `untappd`, `file`, `image`, `canonicalUrl`, and `checkoutUrl` must be safe URLs or relative paths.
+- `rating` must be `1.00` through `5.00` when present.
+- Blog entries with `category: beer-rating` require `rating`.
 - Slugs must normalize to lowercase letters, numbers, and hyphens.
 
 Module required fields:
@@ -113,6 +117,7 @@ Module optional fields:
 
 - All modules: `category`, `summary`, `slug`, `lang`, `translationKey`, `draft`, `publishAt`, `tags`, `updated`, `author`, `image`, `imageAlt`, `pinned`, `priority`, `canonicalUrl`
 - `projects`: `link`, `repository`
+- `blog` with `category: beer-rating`: `untappd`, `rating`
 - `downloads`: `file`, `link`
 - `store`: `link`, `checkoutUrl`, `paymentProvider`, `paymentProviderProductId`, `paymentProviderPriceId`
 

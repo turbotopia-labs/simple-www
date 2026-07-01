@@ -360,6 +360,44 @@ h3 {
   fill: currentColor;
 }
 
+.untappd-icon-link {
+  display: inline-flex;
+  width: 17px;
+  height: 17px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--muted);
+  font: bold 11px/1 Georgia, "Times New Roman", serif;
+  text-decoration: none;
+}
+
+.untappd-icon-link:hover {
+  color: var(--link);
+  border-color: var(--link);
+}
+
+.beer-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.rating-bar {
+  display: inline-block;
+  width: 74px;
+  height: 8px;
+  border: 1px solid var(--border);
+  background: var(--button);
+}
+
+.rating-bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent-strong);
+}
+
 .action-link {
   margin: 10px 0 0;
 }

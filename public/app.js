@@ -374,10 +374,37 @@ function repositoryIconLink(href) {
   `;
 }
 
+function untappdIconLink(href) {
+  if (!href) return "";
+  return `
+    <a class="untappd-icon-link" href="${escapeHtml(safeUrl(href))}" title="Untappd beer profile" aria-label="Untappd beer profile">
+      <span aria-hidden="true">U</span>
+    </a>
+  `;
+}
+
 function projectStatusDetail(item) {
   return {
     label: "Status",
     html: `<span class="status-with-repo">${escapeHtml(item.status || "")}${repositoryIconLink(item.repository)}</span>`,
+  };
+}
+
+function beerRatingDetail(item) {
+  if (item.category !== "beer-rating" || !item.rating) return null;
+  const rating = Math.max(1, Math.min(5, Number(item.rating) || 0));
+  const percentage = (rating / 5) * 100;
+  return {
+    label: "Rating",
+    html: `
+      <span class="beer-rating">
+        ${untappdIconLink(item.untappd)}
+        <span class="rating-bar" aria-label="${escapeHtml(`${rating.toFixed(2)} out of 5`)}">
+          <span style="width: ${percentage}%"></span>
+        </span>
+        <span>${escapeHtml(rating.toFixed(2))}/5</span>
+      </span>
+    `,
   };
 }
 
@@ -511,6 +538,8 @@ function emptyAdminFields(moduleId = editableModuleIds()[0] || "news") {
     status: "",
     link: "",
     repository: "",
+    untappd: "",
+    rating: "",
     file: "",
     version: "",
     sku: "",
@@ -553,6 +582,8 @@ function adminForm(values = emptyAdminFields()) {
         <label>Status<input name="status" value="${escapeHtml(values.status)}"></label>
         <label>Link<input name="link" value="${escapeHtml(values.link)}"></label>
         <label>Repository<input name="repository" value="${escapeHtml(values.repository)}"></label>
+        <label>Untappd<input name="untappd" value="${escapeHtml(values.untappd)}"></label>
+        <label>Rating<input name="rating" value="${escapeHtml(values.rating)}" placeholder="1.00-5.00"></label>
         <label>File<input name="file" value="${escapeHtml(values.file)}"></label>
         <label>Version<input name="version" value="${escapeHtml(values.version)}"></label>
         <label>SKU<input name="sku" value="${escapeHtml(values.sku)}"></label>
@@ -599,6 +630,8 @@ function formValues(form) {
       status: form.elements.status.value.trim(),
       link: form.elements.link.value.trim(),
       repository: form.elements.repository.value.trim(),
+      untappd: form.elements.untappd.value.trim(),
+      rating: form.elements.rating.value.trim(),
       file: form.elements.file.value.trim(),
       version: form.elements.version.value.trim(),
       sku: form.elements.sku.value.trim(),
@@ -635,6 +668,8 @@ function valuesFromItem(moduleId, item) {
     status: item.status,
     link: item.link,
     repository: item.repository,
+    untappd: item.untappd,
+    rating: item.rating,
     file: item.file,
     version: item.version,
     sku: item.sku,
@@ -755,7 +790,7 @@ function visibleItems(moduleId, items) {
 }
 
 function itemMatchesSearch(item, query) {
-  return [item.title, item.summary, item.category, item.author, item.body, ...(item.tags || [])]
+  return [item.title, item.summary, item.category, item.author, item.rating, item.body, ...(item.tags || [])]
     .join(" ")
     .toLowerCase()
     .includes(query.toLowerCase());
@@ -817,6 +852,9 @@ function renderItem(moduleId, item) {
     details.push(projectStatusDetail(item));
   }
 
+  const beerRating = moduleId === "blog" ? beerRatingDetail(item) : null;
+  if (beerRating) details.push(beerRating);
+
   if (!details.length && moduleId === "downloads") {
     details.push({ label: "Version", value: item.version });
   }
@@ -867,6 +905,7 @@ function renderDetail(moduleId, slug) {
       ${item.summary ? `<p class="summary">${inlineMarkdown(item.summary)}</p>` : ""}
       ${detailList([
         ...(moduleId === "projects" ? [projectStatusDetail(item)] : [{ label: "Status", value: item.status }]),
+        ...(moduleId === "blog" ? [beerRatingDetail(item)].filter(Boolean) : []),
         { label: "Version", value: item.version },
         { label: "SKU", value: item.sku },
         { label: "Price", value: item.price },

@@ -54,6 +54,23 @@ tags: [notes, build]
 Post body.
 ```
 
+## Blog Beer Rating
+
+```md
+---
+title: Example IPA
+date: 2026-07-01
+author: Author name
+category: beer-rating
+summary: Bright IPA with citrus and pine.
+tags: [beer, ipa]
+untappd: https://untappd.com/b/example-ipa/123
+rating: 4.25
+---
+
+Tasting notes.
+```
+
 ## Downloads
 
 ```md

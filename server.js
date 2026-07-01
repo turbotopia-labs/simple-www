@@ -167,6 +167,8 @@ const editableFields = [
   "status",
   "link",
   "repository",
+  "untappd",
+  "rating",
   "file",
   "version",
   "sku",
@@ -369,6 +371,7 @@ function buildSearchIndex(payload = sitePayload()) {
           item.translationKey,
           item.author,
         item.status,
+        item.rating,
         item.version,
         item.sku,
         item.price,
@@ -853,6 +856,13 @@ function integerValue(value, fallback = 0) {
   return Number.isInteger(number) ? number : fallback;
 }
 
+function isRatingValue(value) {
+  const text = String(value || "").trim();
+  if (!/^[1-4](\.\d{1,2})?$|^5(\.0{1,2})?$/.test(text)) return false;
+  const number = Number(text);
+  return number >= 1 && number <= 5;
+}
+
 function moduleDefinition(moduleId) {
   return loadedConfig?.config?.modules?.[moduleId] || moduleManifests[moduleId] || {};
 }
@@ -892,9 +902,12 @@ function validateContentFields(moduleId, item, source) {
   });
   if (item.publishAt && !isPublishAtString(item.publishAt)) errors.push(`${source}: publishAt must use YYYY-MM-DD or an ISO date/time.`);
 
-  ["link", "repository", "file", "image", "canonicalUrl", "checkoutUrl"].forEach((field) => {
+  ["link", "repository", "untappd", "file", "image", "canonicalUrl", "checkoutUrl"].forEach((field) => {
     if (item[field] && !isSafeContentUrl(item[field])) errors.push(`${source}: ${field} must be a safe URL or relative path.`);
   });
+
+  if (item.rating && !isRatingValue(item.rating)) errors.push(`${source}: rating must be 1.00 through 5.00.`);
+  if (moduleId === "blog" && item.category === "beer-rating" && !item.rating) errors.push(`${source}: rating is required for beer-rating blog posts.`);
 
   if (typeof item.draft !== "boolean") errors.push(`${source}: draft must be true or false.`);
   if (typeof item.pinned !== "boolean") errors.push(`${source}: pinned must be true or false.`);
@@ -1000,6 +1013,8 @@ function parseMarkdownFile(filePath) {
     status: String(meta.status || ""),
     link: String(meta.link || ""),
     repository: String(meta.repository || ""),
+    untappd: String(meta.untappd || ""),
+    rating: String(meta.rating || ""),
     file: String(meta.file || ""),
     version: String(meta.version || ""),
     sku: String(meta.sku || ""),
@@ -1179,9 +1194,11 @@ function validateAdminContentInput(input, mode) {
     if (fields.draft !== undefined && typeof fields.draft !== "boolean") errors.push("draft must be true or false.");
     if (fields.pinned !== undefined && typeof fields.pinned !== "boolean") errors.push("pinned must be true or false.");
     if (fields.priority !== undefined && fields.priority !== "" && !Number.isInteger(Number(fields.priority))) errors.push("priority must be an integer.");
-    ["link", "repository", "file", "image", "canonicalUrl", "checkoutUrl"].forEach((field) => {
+    ["link", "repository", "untappd", "file", "image", "canonicalUrl", "checkoutUrl"].forEach((field) => {
       if (fields[field] && !isSafeContentUrl(fields[field])) errors.push(`${field} must be a safe URL or relative path.`);
     });
+    if (fields.rating && !isRatingValue(fields.rating)) errors.push("rating must be 1.00 through 5.00.");
+    if (moduleId === "blog" && fields.category === "beer-rating" && !fields.rating) errors.push("rating is required for beer-rating blog posts.");
     if (fields.tags !== undefined && !Array.isArray(fields.tags) && typeof fields.tags !== "string") {
       errors.push("tags must be an array or comma-separated string.");
     }

@@ -25,6 +25,8 @@ const baseFields = [
   "status",
   "link",
   "repository",
+  "untappd",
+  "rating",
   "file",
   "version",
   "sku",

@@ -24,6 +24,8 @@ const contentFields = [
   "status",
   "link",
   "repository",
+  "untappd",
+  "rating",
   "file",
   "version",
   "sku",

@@ -41,6 +41,24 @@ Blog entries support archive and category views in the frontend.
 - Category buttons are built from `category`.
 - Tags are shown on each post.
 
+Beer rating posts use `category: beer-rating` and can include:
+
+- `untappd`
+- `rating`
+
+`untappd` is shown as an icon link. `rating` is shown as a compact rating bar and must be from `1.00` through `5.00`.
+
+```md
+---
+title: Example beer
+date: 2026-07-01
+category: beer-rating
+summary: Short tasting note.
+untappd: https://untappd.com/b/example/1
+rating: 4.25
+---
+```
+
 ## Downloads
 
 Download entries can include:
