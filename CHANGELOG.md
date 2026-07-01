@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Moved project repository links to a discreet icon beside status.
+- Changed the project repository icon to a stylized GitHub mark.
 
 ## 2.8.0 - 2026-07-01
 

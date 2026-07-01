@@ -366,9 +366,9 @@ function actionLink(href, label) {
 function repositoryIconLink(href) {
   if (!href) return "";
   return `
-    <a class="repo-icon-link" href="${escapeHtml(safeUrl(href))}" title="Repository" aria-label="Repository">
+    <a class="repo-icon-link" href="${escapeHtml(safeUrl(href))}" title="GitHub repository" aria-label="GitHub repository">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M7 5a3 3 0 0 1 6 0v1h1a4 4 0 0 1 4 4v1.1a3 3 0 1 1-2 0V10a2 2 0 0 0-2-2h-1v8a3 3 0 1 1-2 0V8h-1a2 2 0 0 1-2-2V5Zm3 0a1 1 0 1 0-2 0v1h2V5Zm2 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm5-5a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"></path>
+        <path d="M12 .7a11.3 11.3 0 0 0-3.6 22c.6.1.8-.2.8-.5v-2c-3.3.7-4-1.4-4-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.9 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.2c0 .3.2.6.8.5A11.3 11.3 0 0 0 12 .7Z"></path>
       </svg>
     </a>
   `;
