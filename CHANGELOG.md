@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added structured Roadmap v3 planning.
+
 ## 2.0.0 - 2026-07-01
 
 - Shipped expanded content contract as stable.
