@@ -27,7 +27,8 @@ JSON remains the default format. YAML support is intentionally small and support
   "theme": "classic",
   "layout": "cards",
   "adminEditing": false,
-  "commentsEnabled": false
+  "commentsEnabled": false,
+  "storePaymentsEnabled": false
 }
 ```
 
@@ -45,6 +46,7 @@ Defaults:
 - `layout`: `cards`
 - `adminEditing`: `false`
 - `commentsEnabled`: `false`
+- `storePaymentsEnabled`: `false`
 
 Legacy `siteTitle` and `siteDescription` still work when `site.title` and `site.description` are not set.
 
@@ -110,6 +112,7 @@ Validation checks:
 - `site.layout` must be `list`, `cards`, or `compact`.
 - `site.adminEditing` must be true or false.
 - `site.commentsEnabled` must be true or false.
+- `site.storePaymentsEnabled` must be true or false.
 - `modules` must be an object.
 - Each module must be an object.
 - `enabled` must be true or false.

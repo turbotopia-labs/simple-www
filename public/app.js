@@ -16,6 +16,7 @@ let state = {
   diagnostics: {},
   warnings: [],
   commentsEnabled: false,
+  storePaymentsEnabled: false,
   layout: "cards",
   filterType: "all",
   filterValue: "",
@@ -332,7 +333,8 @@ function itemActions(moduleId, item) {
   }
 
   if (moduleId === "store") {
-    return [actionLink(item.link, "Product link"), canonical].join("");
+    const checkout = state.storePaymentsEnabled ? actionLink(item.checkoutUrl, "Checkout") : "";
+    return [actionLink(item.link, "Product link"), checkout, canonical].join("");
   }
 
   return canonical;
@@ -427,6 +429,10 @@ function emptyAdminFields(moduleId = editableModuleIds()[0] || "news") {
     version: "",
     sku: "",
     price: "",
+    checkoutUrl: "",
+    paymentProvider: "",
+    paymentProviderProductId: "",
+    paymentProviderPriceId: "",
     body: "",
   };
 }
@@ -462,6 +468,10 @@ function adminForm(values = emptyAdminFields()) {
         <label>Version<input name="version" value="${escapeHtml(values.version)}"></label>
         <label>SKU<input name="sku" value="${escapeHtml(values.sku)}"></label>
         <label>Price<input name="price" value="${escapeHtml(values.price)}"></label>
+        <label>Checkout URL<input name="checkoutUrl" value="${escapeHtml(values.checkoutUrl)}"></label>
+        <label>Payment provider<input name="paymentProvider" value="${escapeHtml(values.paymentProvider)}"></label>
+        <label>Provider product ID<input name="paymentProviderProductId" value="${escapeHtml(values.paymentProviderProductId)}"></label>
+        <label>Provider price ID<input name="paymentProviderPriceId" value="${escapeHtml(values.paymentProviderPriceId)}"></label>
         <label class="full-row">Body<textarea name="body" rows="10">${escapeHtml(values.body)}</textarea></label>
         <div class="form-actions">
           <button type="button" data-admin-action="new">New</button>
@@ -500,6 +510,10 @@ function formValues(form) {
       version: form.elements.version.value.trim(),
       sku: form.elements.sku.value.trim(),
       price: form.elements.price.value.trim(),
+      checkoutUrl: form.elements.checkoutUrl.value.trim(),
+      paymentProvider: form.elements.paymentProvider.value.trim(),
+      paymentProviderProductId: form.elements.paymentProviderProductId.value.trim(),
+      paymentProviderPriceId: form.elements.paymentProviderPriceId.value.trim(),
     },
     body: form.elements.body.value,
   };
@@ -529,6 +543,10 @@ function valuesFromItem(moduleId, item) {
     version: item.version,
     sku: item.sku,
     price: item.price,
+    checkoutUrl: item.checkoutUrl,
+    paymentProvider: item.paymentProvider,
+    paymentProviderProductId: item.paymentProviderProductId,
+    paymentProviderPriceId: item.paymentProviderPriceId,
     body: item.body,
   };
 }
@@ -612,6 +630,7 @@ function renderItem(moduleId, item) {
 
   if (!details.length && moduleId === "store") {
     details.push({ label: "SKU", value: item.sku }, { label: "Price", value: item.price });
+    if (state.storePaymentsEnabled && item.paymentProvider) details.push({ label: "Provider", value: item.paymentProvider });
   }
 
   return `
@@ -658,6 +677,7 @@ function renderDetail(moduleId, slug) {
         { label: "Version", value: item.version },
         { label: "SKU", value: item.sku },
         { label: "Price", value: item.price },
+        ...(state.storePaymentsEnabled ? [{ label: "Provider", value: item.paymentProvider }] : []),
         ...moduleFieldRows(moduleId, item, "detail"),
       ])}
       ${item.tags && item.tags.length ? `<div class="tags">${item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
@@ -999,6 +1019,7 @@ function applyPayload(payload) {
   state.diagnostics = payload.diagnostics || {};
   state.warnings = payload.warnings || [];
   state.commentsEnabled = site.commentsEnabled === true;
+  state.storePaymentsEnabled = site.storePaymentsEnabled === true;
   title.textContent = site.title || config.siteTitle || "simple-www";
   description.textContent = site.description || config.siteDescription || "";
   document.title = `${title.textContent} v.${payload.version || ""}`;

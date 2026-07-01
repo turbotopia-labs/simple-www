@@ -90,6 +90,7 @@ const defaultConfig = {
     layout: "cards",
     adminEditing: false,
     commentsEnabled: false,
+    storePaymentsEnabled: false,
   },
   modules: defaultModules,
 };
@@ -119,6 +120,10 @@ const editableFields = [
   "version",
   "sku",
   "price",
+  "checkoutUrl",
+  "paymentProvider",
+  "paymentProviderProductId",
+  "paymentProviderPriceId",
 ];
 
 const mimeTypes = {
@@ -454,6 +459,10 @@ function validateRawConfig(raw, source) {
     errors.push(`${source}: site.commentsEnabled must be true or false.`);
   }
 
+  if (raw.site?.storePaymentsEnabled !== undefined && typeof raw.site.storePaymentsEnabled !== "boolean") {
+    errors.push(`${source}: site.storePaymentsEnabled must be true or false.`);
+  }
+
   if (raw.site?.layout !== undefined && !validLayouts.has(raw.site.layout)) {
     errors.push(`${source}: site.layout must be one of ${Array.from(validLayouts).join(", ")}.`);
   }
@@ -642,7 +651,7 @@ function validateContentFields(moduleId, item, source) {
     if (item[field] && !isDateString(item[field])) errors.push(`${source}: ${field} must use YYYY-MM-DD.`);
   });
 
-  ["link", "repository", "file", "image", "canonicalUrl"].forEach((field) => {
+  ["link", "repository", "file", "image", "canonicalUrl", "checkoutUrl"].forEach((field) => {
     if (item[field] && !isSafeContentUrl(item[field])) errors.push(`${source}: ${field} must be a safe URL or relative path.`);
   });
 
@@ -751,6 +760,10 @@ function parseMarkdownFile(filePath) {
     version: String(meta.version || ""),
     sku: String(meta.sku || ""),
     price: String(meta.price || ""),
+    checkoutUrl: String(meta.checkoutUrl || ""),
+    paymentProvider: String(meta.paymentProvider || ""),
+    paymentProviderProductId: String(meta.paymentProviderProductId || ""),
+    paymentProviderPriceId: String(meta.paymentProviderPriceId || ""),
     ...customFields,
     body,
   };
@@ -884,7 +897,7 @@ function validateAdminContentInput(input, mode) {
     if (fields.draft !== undefined && typeof fields.draft !== "boolean") errors.push("draft must be true or false.");
     if (fields.pinned !== undefined && typeof fields.pinned !== "boolean") errors.push("pinned must be true or false.");
     if (fields.priority !== undefined && fields.priority !== "" && !Number.isInteger(Number(fields.priority))) errors.push("priority must be an integer.");
-    ["link", "repository", "file", "image", "canonicalUrl"].forEach((field) => {
+    ["link", "repository", "file", "image", "canonicalUrl", "checkoutUrl"].forEach((field) => {
       if (fields[field] && !isSafeContentUrl(fields[field])) errors.push(`${field} must be a safe URL or relative path.`);
     });
     if (fields.tags !== undefined && !Array.isArray(fields.tags) && typeof fields.tags !== "string") {

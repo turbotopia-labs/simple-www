@@ -11,7 +11,8 @@
     "theme": "classic",
     "layout": "list",
     "adminEditing": false,
-    "commentsEnabled": false
+    "commentsEnabled": false,
+    "storePaymentsEnabled": false
   },
   "modules": {
     "news": {

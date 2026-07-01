@@ -77,6 +77,10 @@ Supported fields:
 - `version`: Download or release version.
 - `sku`: Store product SKU.
 - `price`: Store product price text.
+- `checkoutUrl`: Optional external checkout URL for store entries.
+- `paymentProvider`: Optional provider name for handoff metadata.
+- `paymentProviderProductId`: Optional provider product identifier.
+- `paymentProviderPriceId`: Optional provider price identifier.
 
 ## Validation
 
@@ -86,7 +90,7 @@ Validation checks:
 - `date` and `updated` must use real `YYYY-MM-DD` dates when present.
 - `draft` and `pinned` must be booleans.
 - `priority` must be an integer.
-- `link`, `repository`, `file`, `image`, and `canonicalUrl` must be safe URLs or relative paths.
+- `link`, `repository`, `file`, `image`, `canonicalUrl`, and `checkoutUrl` must be safe URLs or relative paths.
 - Slugs must normalize to lowercase letters, numbers, and hyphens.
 
 Module required fields:
@@ -103,7 +107,7 @@ Module optional fields:
 - All modules: `category`, `summary`, `slug`, `draft`, `tags`, `updated`, `author`, `image`, `imageAlt`, `pinned`, `priority`, `canonicalUrl`
 - `projects`: `link`, `repository`
 - `downloads`: `file`, `link`
-- `store`: `link`
+- `store`: `link`, `checkoutUrl`, `paymentProvider`, `paymentProviderProductId`, `paymentProviderPriceId`
 
 ## Body
 

@@ -60,8 +60,14 @@ Store entries can include:
 - `sku`
 - `price`
 - `link`
+- `checkoutUrl`
+- `paymentProvider`
+- `paymentProviderProductId`
+- `paymentProviderPriceId`
 
-Use `link` for an external product page, checkout page, or contact page.
+Use `link` for an external product page or contact page. Use `checkoutUrl` for an external checkout page. Checkout links are only shown when `site.storePaymentsEnabled` is true.
+
+Payment provider fields are handoff metadata only. simple-www does not collect, process, store, or validate payment data.
 
 ## Admin
 
