@@ -338,7 +338,7 @@ function detailList(details) {
 
   return `
     <dl class="details">
-      ${rows.map((detail) => `<div><dt>${escapeHtml(detail.label)}</dt><dd>${detail.html || escapeHtml(detail.value)}</dd></div>`).join("")}
+      ${rows.map((detail) => `<div${detail.className ? ` class="${escapeHtml(detail.className)}"` : ""}><dt>${escapeHtml(detail.label)}</dt><dd>${detail.html || escapeHtml(detail.value)}</dd></div>`).join("")}
     </dl>
   `;
 }
@@ -399,6 +399,7 @@ function beerRatingDetail(item) {
   const percentage = (rating / 5) * 100;
   return {
     label: "Rating",
+    className: "rating-detail",
     html: `
       <span class="beer-rating">
         <span class="rating-bar" aria-label="${escapeHtml(`${rating.toFixed(2)} out of 5`)}">

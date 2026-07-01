@@ -326,6 +326,11 @@ h3 {
   padding: 4px 0;
 }
 
+.details .rating-detail {
+  grid-template-columns: 54px 1fr;
+  gap: 5px;
+}
+
 .details dt {
   color: var(--muted);
   font-size: 13px;

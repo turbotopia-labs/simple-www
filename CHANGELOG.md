@@ -4,6 +4,7 @@
 
 - Added `beer-rating` blog post support with `untappd` and `rating` front matter.
 - Displayed beer ratings with a rating bar and Untappd icon link.
+- Tightened spacing between the beer rating label and rating bar.
 
 ## 3.0.0 - 2026-07-01
 
