@@ -406,14 +406,14 @@ h3 {
   display: inline-block;
   width: 74px;
   height: 8px;
-  border: 1px solid var(--border);
-  background: var(--button);
+  border: 1px solid #5b4a14;
+  background: #f6c343;
 }
 
 .rating-bar span {
   display: block;
   height: 100%;
-  background: var(--accent-strong);
+  background: #2f7d32;
 }
 
 .action-link {
