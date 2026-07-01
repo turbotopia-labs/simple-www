@@ -220,7 +220,7 @@ v3 should focus on discovery, editorial workflow, asset handling, and operations
 
 ## v2.8.0 - Admin Accounts
 
-- Role-based admin accounts if admin grows beyond local-only use.
+- Done: Role-based admin accounts if admin grows beyond local-only use.
 
 ## v2.9.0 - v3 Preparation
 

@@ -21,6 +21,32 @@ Restart the server after changing config.
 
 Static exports cannot write content. Admin editing only works in server mode.
 
+## Optional Accounts
+
+Admin accounts are disabled by default. To require local account tokens for admin API calls:
+
+```json
+"adminAccounts": {
+  "enabled": true,
+  "users": [
+    {
+      "username": "local-admin",
+      "role": "admin",
+      "token": "change-this-long-token"
+    }
+  ]
+}
+```
+
+Roles:
+
+- `viewer`: read admin lists.
+- `editor`: create, edit, and delete content.
+- `moderator`: review comments.
+- `admin`: full access.
+
+When accounts are enabled, the admin page shows an access-token field. Tokens are stored in browser local storage.
+
 ## Supported Actions
 
 The admin module supports:

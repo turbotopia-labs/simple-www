@@ -1,6 +1,6 @@
-# Public Contract for v2.7.0
+# Public Contract for v2.8.0
 
-This contract is stable for `v2.7.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
+This contract is stable for `v2.8.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
 
 ## Content
 
@@ -133,6 +133,7 @@ Admin editing endpoint:
 - `/api/admin/comments`
 
 Admin editing remains disabled unless `site.adminEditing` is `true`.
+Admin accounts remain disabled unless `adminAccounts.enabled` is `true`.
 
 Local comments remain disabled unless `site.commentsEnabled` is `true`.
 
@@ -173,6 +174,14 @@ Export hooks:
 - `exportHooks.timeoutMs`
 - `exportHooks.commands`
 - `exportHooks.webhooks`
+
+Admin accounts:
+
+- `adminAccounts.enabled`
+- `adminAccounts.users[].username`
+- `adminAccounts.users[].role`
+
+Admin account tokens are config-only and are not included in public payloads.
 
 ## Content Import and Export
 

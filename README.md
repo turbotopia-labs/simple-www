@@ -2,7 +2,7 @@
 
 simple-www is a small static website engine with Markdown content, JSON/YAML configuration, and toggleable modules.
 
-Version: `2.7.0`
+Version: `2.8.0`
 
 ## Install
 

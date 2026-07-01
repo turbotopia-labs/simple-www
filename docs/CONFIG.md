@@ -120,6 +120,39 @@ Export hooks are disabled by default:
 
 See `docs/EXPORT-HOOKS.md`.
 
+## Admin Accounts
+
+Admin accounts are disabled by default:
+
+```json
+"adminAccounts": {
+  "enabled": false,
+  "users": []
+}
+```
+
+When enabled, admin API requests require a bearer token. Users support these roles:
+
+- `viewer`: read admin diagnostics/content lists.
+- `editor`: create, edit, and delete content.
+- `moderator`: review comments.
+- `admin`: full admin access.
+
+Example:
+
+```json
+"adminAccounts": {
+  "enabled": true,
+  "users": [
+    {
+      "username": "local-admin",
+      "role": "admin",
+      "token": "change-this-long-token"
+    }
+  ]
+}
+```
+
 ## Validation
 
 Config is validated at startup. Invalid config stops the server with a clear error message.
@@ -139,6 +172,10 @@ Validation checks:
 - `exportHooks.timeoutMs` must be an integer of at least 1000.
 - `exportHooks.commands` must be an array of command strings.
 - `exportHooks.webhooks` must be an array of objects with http/https URLs.
+- `adminAccounts.enabled` must be true or false.
+- `adminAccounts.users` must be an array.
+- Admin account roles must be `viewer`, `editor`, `moderator`, or `admin`.
+- Admin account tokens must be strings with at least 12 characters.
 - Each module must be an object.
 - `enabled` must be true or false.
 - `order` must be an integer.

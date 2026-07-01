@@ -136,6 +136,10 @@ const defaultConfig = {
     commands: [],
     webhooks: [],
   },
+  adminAccounts: {
+    enabled: false,
+    users: [],
+  },
   modules: defaultModules,
 };
 
@@ -648,6 +652,34 @@ function validateRawConfig(raw, source) {
     });
   }
 
+  if (raw.adminAccounts !== undefined && (typeof raw.adminAccounts !== "object" || Array.isArray(raw.adminAccounts))) {
+    errors.push(`${source}: adminAccounts must be an object.`);
+  }
+
+  if (raw.adminAccounts) {
+    if (raw.adminAccounts.enabled !== undefined && typeof raw.adminAccounts.enabled !== "boolean") {
+      errors.push(`${source}: adminAccounts.enabled must be true or false.`);
+    }
+    if (raw.adminAccounts.users !== undefined && !Array.isArray(raw.adminAccounts.users)) {
+      errors.push(`${source}: adminAccounts.users must be an array.`);
+    }
+    (raw.adminAccounts.users || []).forEach((user, index) => {
+      if (!user || typeof user !== "object" || Array.isArray(user)) {
+        errors.push(`${source}: adminAccounts.users[${index}] must be an object.`);
+        return;
+      }
+      if (typeof user.username !== "string" || !user.username.trim()) {
+        errors.push(`${source}: adminAccounts.users[${index}].username must be a non-empty string.`);
+      }
+      if (!["viewer", "editor", "moderator", "admin"].includes(String(user.role || ""))) {
+        errors.push(`${source}: adminAccounts.users[${index}].role must be viewer, editor, moderator, or admin.`);
+      }
+      if (typeof user.token !== "string" || user.token.length < 12) {
+        errors.push(`${source}: adminAccounts.users[${index}].token must be a string with at least 12 characters.`);
+      }
+    });
+  }
+
   Object.entries(raw.modules || {}).forEach(([moduleId, moduleConfig]) => {
     if (!moduleConfig || typeof moduleConfig !== "object" || Array.isArray(moduleConfig)) {
       errors.push(`${source}: modules.${moduleId} must be an object.`);
@@ -745,6 +777,10 @@ function normalizeConfig(raw) {
     exportHooks: {
       ...defaultConfig.exportHooks,
       ...(raw.exportHooks || {}),
+    },
+    adminAccounts: {
+      ...defaultConfig.adminAccounts,
+      ...(raw.adminAccounts || {}),
     },
     modules,
   };
@@ -1005,6 +1041,43 @@ function adminEditingEnabled() {
   return loadedConfig.config.site.adminEditing === true;
 }
 
+function adminAccountsEnabled() {
+  return loadedConfig.config.adminAccounts?.enabled === true;
+}
+
+function authToken(req) {
+  const header = String(req.headers.authorization || "");
+  const match = header.match(/^Bearer\s+(.+)$/i);
+  return match ? match[1].trim() : "";
+}
+
+function adminUserForRequest(req) {
+  if (!adminAccountsEnabled()) return { username: "local", role: "admin" };
+  const token = authToken(req);
+  return (loadedConfig.config.adminAccounts.users || []).find((user) => user.token === token) || null;
+}
+
+function roleAllows(role, requiredRole) {
+  const levels = { viewer: 1, editor: 2, moderator: 2, admin: 3 };
+  if (requiredRole === "viewer") return (levels[role] || 0) >= 1;
+  if (requiredRole === "editor") return role === "editor" || role === "admin";
+  if (requiredRole === "moderator") return role === "moderator" || role === "admin";
+  return role === "admin";
+}
+
+function requireAdminRole(req, res, requiredRole) {
+  const user = adminUserForRequest(req);
+  if (!user) {
+    sendJson(res, 401, { error: "Admin account token is required." });
+    return null;
+  }
+  if (!roleAllows(user.role, requiredRole)) {
+    sendJson(res, 403, { error: `Admin role required: ${requiredRole}.` });
+    return null;
+  }
+  return { username: user.username, role: user.role };
+}
+
 function commentsEnabled() {
   return loadedConfig.config.site.commentsEnabled === true;
 }
@@ -1212,6 +1285,7 @@ async function handleAdminComments(req, res) {
   }
 
   if (req.method === "GET") {
+    if (!requireAdminRole(req, res, "viewer")) return;
     sendJson(res, 200, { comments: allComments() });
     return;
   }
@@ -1220,6 +1294,7 @@ async function handleAdminComments(req, res) {
     sendJson(res, 405, { error: "Method not allowed." });
     return;
   }
+  if (!requireAdminRole(req, res, "moderator")) return;
 
   const input = await readRequestJson(req);
   const moduleId = String(input.module || "").trim();
@@ -1293,6 +1368,7 @@ async function handleAdminContent(req, res, url) {
   }
 
   if (req.method === "GET") {
+    if (!requireAdminRole(req, res, "viewer")) return;
     const moduleId = String(url.searchParams.get("module") || "");
     const slug = String(url.searchParams.get("slug") || "");
     if (!moduleId && !slug) {
@@ -1316,6 +1392,7 @@ async function handleAdminContent(req, res, url) {
   }
 
   try {
+    if (!requireAdminRole(req, res, "editor")) return;
     const input = await readRequestJson(req);
     const mode = req.method === "POST" ? "create" : req.method === "PUT" ? "edit" : "delete";
     const checked = validateAdminContentInput(input, mode);
@@ -1496,6 +1573,7 @@ function sitePayload() {
     collectionItemCount: Object.values(collections).reduce((total, collection) => total + collection.items.length, 0),
     mediaItemCount: listMediaFiles().length,
     adminEditing: adminEditingEnabled(),
+    adminAccounts: adminAccountsEnabled(),
     commentsEnabled: commentsEnabled(),
     commentCount: commentsEnabled() ? allComments().length : 0,
     modules: Object.fromEntries(
@@ -1516,7 +1594,17 @@ function sitePayload() {
     console.warn(`[${warning.type}] ${warning.module}/${warning.slug}: ${warning.sources.join(", ")}`);
   });
 
-  return { config, content, collections, diagnostics, warnings, version };
+  const publicConfig = {
+    ...config,
+    adminAccounts: {
+      enabled: adminAccountsEnabled(),
+      users: adminAccountsEnabled()
+        ? (config.adminAccounts.users || []).map((user) => ({ username: user.username, role: user.role }))
+        : [],
+    },
+  };
+
+  return { config: publicConfig, content, collections, diagnostics, warnings, version };
 }
 
 function adminContentPayload() {

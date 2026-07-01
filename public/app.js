@@ -30,6 +30,8 @@ let state = {
   search: "",
   adminMessage: "",
   adminContent: {},
+  adminAccountsEnabled: false,
+  adminToken: localStorage.getItem("simple-www-admin-token") || "",
   activeCollection: "",
   media: [],
 };
@@ -635,7 +637,7 @@ function editorialStatus(item) {
 
 async function loadAdminContentList() {
   try {
-    const response = await fetch("/api/admin/content");
+    const response = await fetch("/api/admin/content", { headers: adminAuthHeaders() });
     const result = await response.json();
     state.adminContent = result.content || {};
     const list = document.querySelector("#admin-content-list");
@@ -994,6 +996,28 @@ function commentsReviewCard() {
   `;
 }
 
+function adminAuthHeaders(extra = {}) {
+  return state.adminAccountsEnabled && state.adminToken
+    ? { ...extra, Authorization: `Bearer ${state.adminToken}` }
+    : extra;
+}
+
+function adminAccountCard() {
+  if (!state.adminAccountsEnabled) return "";
+  return `
+    <section class="card">
+      <h2>Admin account</h2>
+      <form id="admin-token-form" class="comment-form">
+        <label>Access token<input name="token" value="${escapeHtml(state.adminToken)}" autocomplete="off"></label>
+        <div class="form-actions">
+          <button type="submit">Use token</button>
+          <button type="button" data-admin-action="clear-token">Clear</button>
+        </div>
+      </form>
+    </section>
+  `;
+}
+
 function renderAdminComments(comments) {
   if (!comments.length) return '<p class="empty">No comments yet.</p>';
   return `
@@ -1020,7 +1044,7 @@ async function loadAdminComments() {
   const panel = document.querySelector("#admin-comments");
   if (!panel) return;
   try {
-    const response = await fetch("/api/admin/comments");
+    const response = await fetch("/api/admin/comments", { headers: adminAuthHeaders() });
     const result = await response.json();
     panel.innerHTML = renderAdminComments(result.comments || []);
   } catch (error) {
@@ -1049,12 +1073,16 @@ function renderAdmin() {
         { label: "Comments", value: String(diagnostics.commentCount || 0) },
         { label: "Warnings", value: String(state.warnings.length) },
         { label: "Editing", value: editing ? "enabled" : "disabled" },
+        { label: "Accounts", value: state.adminAccountsEnabled ? "enabled" : "disabled" },
         { label: "Commenting", value: state.commentsEnabled ? "enabled" : "disabled" },
       ])}
     </section>
+    ${adminAccountCard()}
     ${
-      editing
+      editing && (!state.adminAccountsEnabled || state.adminToken)
         ? `${adminForm(state.adminDraft || emptyAdminFields())}<div id="admin-content-list">${adminContentList()}</div><div id="media-library">${renderMediaLibrary()}</div>`
+        : editing
+        ? `<section class="card"><h2>Account required</h2><p class="empty">Enter an admin access token to use local editing.</p></section>`
         : `<section class="card"><h2>Editing disabled</h2><p class="empty">Set site.adminEditing to true in config to enable local create, edit, and delete.</p></section>`
     }
     ${editing ? commentsReviewCard() : ""}
@@ -1073,9 +1101,9 @@ function renderAdmin() {
       `)
       .join("")}
   `;
-  if (editing) loadAdminContentList();
+  if (editing && (!state.adminAccountsEnabled || state.adminToken)) loadAdminContentList();
   if (editing) loadMediaLibrary();
-  if (editing && state.commentsEnabled) loadAdminComments();
+  if (editing && state.commentsEnabled && (!state.adminAccountsEnabled || state.adminToken)) loadAdminComments();
 }
 
 function renderModule(moduleId) {
@@ -1178,6 +1206,14 @@ app.addEventListener("click", (event) => {
     return;
   }
 
+  if (adminAction && adminAction.dataset.adminAction === "clear-token") {
+    state.adminToken = "";
+    localStorage.removeItem("simple-www-admin-token");
+    state.adminMessage = "";
+    renderAdmin();
+    return;
+  }
+
   if (adminAction && adminAction.dataset.adminAction === "delete") {
     const form = document.querySelector("#admin-form");
     if (!form) return;
@@ -1194,6 +1230,16 @@ app.addEventListener("click", (event) => {
 });
 
 app.addEventListener("submit", (event) => {
+  const tokenForm = event.target.closest("#admin-token-form");
+  if (tokenForm) {
+    event.preventDefault();
+    state.adminToken = tokenForm.elements.token.value.trim();
+    localStorage.setItem("simple-www-admin-token", state.adminToken);
+    state.adminMessage = "";
+    renderAdmin();
+    return;
+  }
+
   const commentForm = event.target.closest("#comment-form");
   if (commentForm) {
     event.preventDefault();
@@ -1245,7 +1291,7 @@ async function adminCommentAction(button) {
 
   const response = await fetch("/api/admin/comments", {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: adminAuthHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify(payload),
   });
   if (response.ok) loadAdminComments();
@@ -1255,7 +1301,7 @@ async function adminSubmit(method, payload) {
   try {
     const response = await fetch("/api/admin/content", {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: adminAuthHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify(payload),
     });
     const result = await response.json();
@@ -1339,6 +1385,7 @@ function applyPayload(payload) {
   state.activeCollection = "";
   state.commentsEnabled = site.commentsEnabled === true;
   state.storePaymentsEnabled = site.storePaymentsEnabled === true;
+  state.adminAccountsEnabled = config.adminAccounts?.enabled === true;
   configureLanguages(site);
   title.textContent = site.title || config.siteTitle || "simple-www";
   description.textContent = site.description || config.siteDescription || "";

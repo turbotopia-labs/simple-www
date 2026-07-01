@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 2.8.0 - 2026-07-01
+
+- Added optional local admin accounts behind `adminAccounts.enabled`.
+- Added role checks for admin content and comment APIs.
+- Added browser-side admin token entry for protected admin workflows.
+- Kept admin accounts disabled by default.
+- Documented admin account roles and token expectations.
+
 ## 2.7.0 - 2026-07-01
 
 - Added config-driven language list with `site.languages`.

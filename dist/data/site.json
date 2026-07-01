@@ -25,6 +25,10 @@
       "commands": [],
       "webhooks": []
     },
+    "adminAccounts": {
+      "enabled": false,
+      "users": []
+    },
     "modules": {
       "news": {
         "label": "News",
@@ -258,6 +262,7 @@
     "collectionItemCount": 0,
     "mediaItemCount": 0,
     "adminEditing": false,
+    "adminAccounts": false,
     "commentsEnabled": false,
     "commentCount": 0,
     "modules": {
@@ -313,5 +318,5 @@
     }
   },
   "warnings": [],
-  "version": "2.7.0"
+  "version": "2.8.0"
 }
