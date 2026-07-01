@@ -1,8 +1,8 @@
 {
   "version": "https://jsonfeed.org/version/1.1",
   "title": "labs.turbotopia.no - Blog",
-  "home_page_url": "http://127.0.0.1:6625",
-  "feed_url": "http://127.0.0.1:6625/feeds/blog.json",
+  "home_page_url": "labs.turbotopia.no",
+  "feed_url": "labs.turbotopia.no/feeds/blog.json",
   "description": "project overview",
   "authors": [],
   "items": []

@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Added structured Roadmap v3 planning.
+- Made link colors more discreet across built-in themes.
 
 ## 2.0.0 - 2026-07-01
 
