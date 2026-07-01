@@ -5,8 +5,8 @@
     "language": "en",
     "author": "",
     "timezone": "Europe/Oslo",
-    "baseUrl": "labs.turbotopia.no",
-    "layout": "cards",
+    "baseUrl": "http://127.0.0.1:6625",
+    "layout": "list",
     "adminEditing": false
   },
   "modules": {
