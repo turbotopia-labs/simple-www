@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 2.0.0 - 2026-07-01
+
+- Shipped expanded content contract as stable.
+- Shipped content import/export tools as stable.
+- Shipped theme pack support as stable.
+- Shipped custom module support as stable.
+- Shipped optional local comments as stable.
+- Shipped optional store integration handoff as stable.
+- Shipped multi-site support as stable.
+- Kept v1 single-site behavior compatible by default.
+- Documented v1 compatibility and breaking-change notes.
 - Added optional footer contact link driven by `site.contactEmail`.
 
 ## 1.7.0 - 2026-07-01

@@ -175,15 +175,15 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v2.0.0 - Stable v2 Release
 
-- Ship expanded content contract.
-- Ship import/export tools.
-- Ship theme pack support.
-- Ship custom module support.
-- Ship optional comments.
-- Ship optional store integration handoff.
-- Ship multi-site support.
-- Keep v1 compatibility documented.
-- Mark any breaking changes clearly.
+- Done: Ship expanded content contract.
+- Done: Ship import/export tools.
+- Done: Ship theme pack support.
+- Done: Ship custom module support.
+- Done: Ship optional comments.
+- Done: Ship optional store integration handoff.
+- Done: Ship multi-site support.
+- Done: Keep v1 compatibility documented.
+- Done: Mark any breaking changes clearly.
 
 ## Later Ideas
 

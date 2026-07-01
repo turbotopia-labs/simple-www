@@ -1,6 +1,6 @@
-# Public Contract for v1.7.0
+# Public Contract for v2.0.0
 
-This contract is stable for `v1.7.0`. Changes after `v1.7.0` should be additive unless a documented breaking release is planned.
+This contract is stable for `v2.0.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
 
 ## Content
 
