@@ -447,6 +447,7 @@ function renderModuleTools(moduleId, items) {
   const tags = [...new Set(items.flatMap((item) => item.tags || []).filter(Boolean))];
   const years = [...new Set(items.map((item) => item.date.slice(0, 4)).filter(Boolean))];
   const months = [...new Set(items.map((item) => item.date.slice(0, 7)).filter((value) => value.length === 7))];
+  const archives = [...years, ...months];
 
   if (!categories.length && !tags.length && !years.length) return "";
 
@@ -457,9 +458,9 @@ function renderModuleTools(moduleId, items) {
 
   return `
     <section class="module-tools">
-      <div class="tool-row">${button("All", "all")}${categories.map((category) => button(category, "category", category)).join("")}</div>
-      <div class="tool-row">${tags.map((tag) => button(`#${tag}`, "tag", tag)).join("")}</div>
-      <div class="tool-row">${years.map((year) => button(year, "archive", year)).join("")}${months.map((month) => button(month, "archive", month)).join("")}</div>
+      <div class="tool-row"><span class="filter-label">Filter</span>${button("All", "all")}${categories.map((category) => button(category, "category", category)).join("")}</div>
+      ${tags.length ? `<div class="tool-row"><span class="filter-label">Tags</span>${tags.map((tag) => button(tag, "tag", tag)).join("")}</div>` : ""}
+      ${archives.length ? `<div class="tool-row"><span class="filter-label">Archive</span>${archives.map((archive) => button(archive, "archive", archive)).join("")}</div>` : ""}
     </section>
   `;
 }

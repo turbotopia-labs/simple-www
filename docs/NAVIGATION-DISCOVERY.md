@@ -27,7 +27,7 @@ Archive filters use:
 - Year: `YYYY`
 - Month: `YYYY-MM`
 
-Filters are client-side and do not change content files.
+Filters are client-side and do not change content files. Filter controls are shown as subdued inline rows above content.
 
 Filter views can be linked with hash URLs:
 

@@ -237,19 +237,19 @@ h3 {
 
 .module-tools {
   grid-column: 1 / -1;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--panel);
-  box-shadow: 2px 2px 0 var(--shadow);
-  margin-bottom: 2px;
-  padding: 10px;
+  border-top: 1px dotted var(--border);
+  border-bottom: 1px dotted var(--border);
+  background: transparent;
+  margin: 0 0 6px;
+  padding: 6px 0;
 }
 
 .tool-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 6px;
+  align-items: center;
+  gap: 4px 6px;
+  margin-bottom: 3px;
 }
 
 .tool-row:last-child {
@@ -257,18 +257,31 @@ h3 {
 }
 
 .tool-row button {
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--button);
-  color: var(--text);
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--muted);
   cursor: pointer;
-  font: inherit;
-  padding: 4px 8px;
+  font: 13px/1.2 Georgia, "Times New Roman", serif;
+  padding: 2px 5px;
+}
+
+.tool-row button:hover {
+  color: var(--text);
+  background: var(--button);
 }
 
 .tool-row button[aria-pressed="true"] {
-  background: var(--accent-strong);
-  box-shadow: inset 1px 1px 0 var(--border-strong);
+  background: var(--accent);
+  color: var(--text);
+  box-shadow: none;
+}
+
+.filter-label {
+  flex: 0 0 50px;
+  color: var(--muted);
+  font-size: 12px;
+  font-style: italic;
 }
 
 .details {

@@ -6,6 +6,8 @@
 - Added broader Markdown rendering for common Markdown syntax.
 - Changed module cards to show summary/excerpt and link to full entry pages.
 - Moved search out of module tools into a discreet universal header search.
+- Made tag filtering less visually prominent in module tools.
+- Made all module filters more discreet and integrated with the page layout.
 
 ## 1.0.0 - 2026-07-01
 
