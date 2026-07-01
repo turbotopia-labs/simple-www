@@ -14,6 +14,7 @@ let state = {
   content: {},
   diagnostics: {},
   warnings: [],
+  commentsEnabled: false,
   layout: "cards",
   filterType: "all",
   filterValue: "",
@@ -350,6 +351,47 @@ function itemImage(item) {
   return `<img class="entry-image" src="${escapeHtml(safeUrl(item.image))}" alt="${escapeHtml(item.imageAlt || item.title || "")}">`;
 }
 
+function renderCommentsShell(moduleId, slug) {
+  if (!state.commentsEnabled) return "";
+  return `
+    <section class="card comments-card" data-comments-for="${escapeHtml(moduleId)}:${escapeHtml(slug)}">
+      <h2>Comments</h2>
+      <div id="comments-list"><p class="empty">Loading comments...</p></div>
+      <form id="comment-form" class="comment-form" data-module="${escapeHtml(moduleId)}" data-slug="${escapeHtml(slug)}">
+        <label>Author<input name="author" maxlength="80" required></label>
+        <label>Comment<textarea name="body" rows="4" maxlength="2000" required></textarea></label>
+        <div class="form-actions"><button type="submit">Submit for review</button></div>
+      </form>
+      <p id="comment-message" class="admin-message"></p>
+    </section>
+  `;
+}
+
+function renderComments(comments) {
+  if (!comments.length) return '<p class="empty">No approved comments yet.</p>';
+  return comments
+    .map((comment) => `
+      <article class="comment">
+        <div class="meta">${escapeHtml([comment.author, comment.date ? comment.date.slice(0, 10) : ""].filter(Boolean).join(" / "))}</div>
+        <p>${escapeHtml(comment.body)}</p>
+      </article>
+    `)
+    .join("");
+}
+
+async function loadComments(moduleId, slug) {
+  if (!state.commentsEnabled) return;
+  const list = document.querySelector("#comments-list");
+  if (!list) return;
+  try {
+    const response = await fetch(`/api/comments?module=${encodeURIComponent(moduleId)}&slug=${encodeURIComponent(slug)}`);
+    const result = await response.json();
+    list.innerHTML = renderComments(result.comments || []);
+  } catch (error) {
+    list.innerHTML = `<p class="empty">${escapeHtml(error.message)}</p>`;
+  }
+}
+
 function editableModuleIds() {
   return enabledModuleIds().filter((moduleId) => moduleId !== "admin");
 }
@@ -615,7 +657,9 @@ function renderDetail(moduleId, slug) {
       <div class="content">${markdownToHtml(item.body)}</div>
       ${itemActions(moduleId, item)}
     </article>
+    ${renderCommentsShell(moduleId, item.slug)}
   `;
+  loadComments(moduleId, item.slug);
 }
 
 function renderSearch() {
@@ -637,6 +681,50 @@ function renderSearch() {
   `;
 }
 
+function commentsReviewCard() {
+  if (!state.commentsEnabled) return "";
+  return `
+    <section class="card">
+      <h2>Comment review</h2>
+      <div id="admin-comments"><p class="empty">Loading comments...</p></div>
+    </section>
+  `;
+}
+
+function renderAdminComments(comments) {
+  if (!comments.length) return '<p class="empty">No comments yet.</p>';
+  return `
+    <ul class="admin-list comment-review-list">
+      ${comments
+        .map((comment) => `
+          <li>
+            <strong>${escapeHtml(comment.author)}</strong>
+            <span class="meta">${escapeHtml([comment.moduleId, comment.slug, comment.date ? comment.date.slice(0, 10) : ""].filter(Boolean).join(" / "))}</span>
+            <p>${escapeHtml(comment.body)}</p>
+            <div class="form-actions">
+              <button type="button" data-comment-action="approve" data-module="${escapeHtml(comment.moduleId)}" data-slug="${escapeHtml(comment.slug)}" data-id="${escapeHtml(comment.id)}"${comment.approved ? " disabled" : ""}>Approve</button>
+              <button type="button" data-comment-action="unapprove" data-module="${escapeHtml(comment.moduleId)}" data-slug="${escapeHtml(comment.slug)}" data-id="${escapeHtml(comment.id)}"${!comment.approved ? " disabled" : ""}>Unapprove</button>
+              <button type="button" data-comment-action="${comment.hidden ? "show" : "hide"}" data-module="${escapeHtml(comment.moduleId)}" data-slug="${escapeHtml(comment.slug)}" data-id="${escapeHtml(comment.id)}">${comment.hidden ? "Show" : "Hide"}</button>
+            </div>
+          </li>
+        `)
+        .join("")}
+    </ul>
+  `;
+}
+
+async function loadAdminComments() {
+  const panel = document.querySelector("#admin-comments");
+  if (!panel) return;
+  try {
+    const response = await fetch("/api/admin/comments");
+    const result = await response.json();
+    panel.innerHTML = renderAdminComments(result.comments || []);
+  } catch (error) {
+    panel.innerHTML = `<p class="empty">${escapeHtml(error.message)}</p>`;
+  }
+}
+
 function renderAdmin() {
   app.dataset.layout = "list";
   const diagnostics = state.diagnostics || {};
@@ -652,8 +740,10 @@ function renderAdmin() {
         { label: "Modules", value: String(diagnostics.moduleCount || 0) },
         { label: "Enabled", value: String(diagnostics.enabledModuleCount || 0) },
         { label: "Content", value: String(diagnostics.contentItemCount || 0) },
+        { label: "Comments", value: String(diagnostics.commentCount || 0) },
         { label: "Warnings", value: String(state.warnings.length) },
         { label: "Editing", value: editing ? "enabled" : "disabled" },
+        { label: "Commenting", value: state.commentsEnabled ? "enabled" : "disabled" },
       ])}
     </section>
     ${
@@ -661,6 +751,7 @@ function renderAdmin() {
         ? `${adminForm(state.adminDraft || emptyAdminFields())}${adminContentList()}`
         : `<section class="card"><h2>Editing disabled</h2><p class="empty">Set site.adminEditing to true in config to enable local create, edit, and delete.</p></section>`
     }
+    ${editing ? commentsReviewCard() : ""}
     ${Object.keys(modules)
       .map((moduleId) => `
         <section class="card">
@@ -676,6 +767,7 @@ function renderAdmin() {
       `)
       .join("")}
   `;
+  if (editing && state.commentsEnabled) loadAdminComments();
 }
 
 function renderModule(moduleId) {
@@ -739,6 +831,12 @@ nav.addEventListener("click", (event) => {
 });
 
 app.addEventListener("click", (event) => {
+  const commentAction = event.target.closest("[data-comment-action]");
+  if (commentAction) {
+    adminCommentAction(commentAction);
+    return;
+  }
+
   const adminLoad = event.target.closest("[data-admin-load]");
   if (adminLoad) {
     const [moduleId, slug] = adminLoad.dataset.adminLoad.split(":");
@@ -775,12 +873,62 @@ app.addEventListener("click", (event) => {
 });
 
 app.addEventListener("submit", (event) => {
+  const commentForm = event.target.closest("#comment-form");
+  if (commentForm) {
+    event.preventDefault();
+    submitComment(commentForm);
+    return;
+  }
+
   const form = event.target.closest("#admin-form");
   if (!form) return;
   event.preventDefault();
   const submitter = event.submitter?.dataset.adminAction;
   adminSubmit(submitter === "edit" ? "PUT" : "POST", formValues(form));
 });
+
+async function submitComment(form) {
+  const message = document.querySelector("#comment-message");
+  try {
+    const response = await fetch(`/api/comments?module=${encodeURIComponent(form.dataset.module)}&slug=${encodeURIComponent(form.dataset.slug)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        author: form.elements.author.value,
+        body: form.elements.body.value,
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      message.textContent = result.errors ? result.errors.join(" ") : result.error || "Comment failed.";
+      return;
+    }
+    form.reset();
+    message.textContent = "Submitted for review.";
+  } catch (error) {
+    message.textContent = error.message;
+  }
+}
+
+async function adminCommentAction(button) {
+  const action = button.dataset.commentAction;
+  const payload = {
+    module: button.dataset.module,
+    slug: button.dataset.slug,
+    id: button.dataset.id,
+  };
+  if (action === "approve") payload.approved = true;
+  if (action === "unapprove") payload.approved = false;
+  if (action === "hide") payload.hidden = true;
+  if (action === "show") payload.hidden = false;
+
+  const response = await fetch("/api/admin/comments", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (response.ok) loadAdminComments();
+}
 
 async function adminSubmit(method, payload) {
   try {
@@ -843,6 +991,7 @@ function applyPayload(payload) {
   state.content = payload.content || {};
   state.diagnostics = payload.diagnostics || {};
   state.warnings = payload.warnings || [];
+  state.commentsEnabled = site.commentsEnabled === true;
   title.textContent = site.title || config.siteTitle || "simple-www";
   description.textContent = site.description || config.siteDescription || "";
   document.title = `${title.textContent} v.${payload.version || ""}`;

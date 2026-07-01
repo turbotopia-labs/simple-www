@@ -9,7 +9,8 @@
     "footerText": "powered by simple-www v.{VERSION}",
     "theme": "classic",
     "layout": "list",
-    "adminEditing": false
+    "adminEditing": false,
+    "commentsEnabled": false
   },
   "modules": {
     "news": {

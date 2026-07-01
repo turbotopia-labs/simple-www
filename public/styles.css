@@ -339,7 +339,19 @@ h3 {
   gap: 10px;
 }
 
+.comment-form {
+  display: grid;
+  gap: 10px;
+}
+
 .admin-form label {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.comment-form label {
   display: grid;
   gap: 4px;
   color: var(--muted);
@@ -348,7 +360,9 @@ h3 {
 
 .admin-form input,
 .admin-form select,
-.admin-form textarea {
+.admin-form textarea,
+.comment-form input,
+.comment-form textarea {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -401,6 +415,17 @@ h3 {
 
 .admin-list li {
   margin-bottom: 5px;
+}
+
+.comment,
+.comment-review-list li {
+  border-top: 1px dotted var(--border);
+  padding-top: 8px;
+}
+
+.comment p,
+.comment-review-list p {
+  margin-bottom: 8px;
 }
 
 .admin-message {

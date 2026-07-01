@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 1.5.0 - 2026-07-01
+
+- Added optional local/file-backed comments behind `site.commentsEnabled`.
+- Added comment moderation fields: `approved`, `hidden`, `author`, and `date`.
+- Added public comment submit/list API.
+- Added admin comment review actions for approve, unapprove, hide, and show.
+- Kept comments disabled by default.
+- Documented comment privacy and backup expectations.
+
 ## 1.4.0 - 2026-07-01
 
 - Added `modules/` folder support for custom module manifests.

@@ -10,7 +10,8 @@
       "footerText": "powered by simple-www v.{VERSION}",
       "theme": "classic",
       "layout": "list",
-      "adminEditing": false
+      "adminEditing": false,
+      "commentsEnabled": false
     },
     "modules": {
       "news": {
@@ -218,6 +219,8 @@
     "enabledModuleCount": 3,
     "contentItemCount": 3,
     "adminEditing": false,
+    "commentsEnabled": false,
+    "commentCount": 0,
     "modules": {
       "news": {
         "enabled": true,
@@ -271,5 +274,5 @@
     }
   },
   "warnings": [],
-  "version": "1.4.0"
+  "version": "1.5.0"
 }

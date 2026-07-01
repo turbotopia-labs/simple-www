@@ -30,6 +30,7 @@ The admin module supports:
 - Delete Markdown entries.
 - Edit supported front matter fields.
 - Validate content before saving.
+- Review local comments when `site.commentsEnabled` is true.
 
 Supported fields match `docs/CONTENT-CONTRACT.md`.
 
@@ -66,4 +67,5 @@ Recommended practice:
 - Back up `content/`.
 - Back up `data/`.
 - Keep `content/.backups/` when using admin editing.
+- Keep `data/comments/` when using local comments.
 - Review old backups before deleting them manually.

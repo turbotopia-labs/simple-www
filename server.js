@@ -6,6 +6,7 @@ const root = __dirname;
 const publicDir = path.join(root, "public");
 const contentDir = path.join(root, "content");
 const dataDir = path.join(root, "data");
+const commentsDir = path.join(dataDir, "comments");
 const modulesDir = path.join(root, "modules");
 const themesDir = path.join(root, "themes");
 const port = Number(process.env.PORT || 6625);
@@ -87,6 +88,7 @@ const defaultConfig = {
     theme: "classic",
     layout: "cards",
     adminEditing: false,
+    commentsEnabled: false,
   },
   modules: defaultModules,
 };
@@ -447,6 +449,10 @@ function validateRawConfig(raw, source) {
     errors.push(`${source}: site.adminEditing must be true or false.`);
   }
 
+  if (raw.site?.commentsEnabled !== undefined && typeof raw.site.commentsEnabled !== "boolean") {
+    errors.push(`${source}: site.commentsEnabled must be true or false.`);
+  }
+
   if (raw.site?.layout !== undefined && !validLayouts.has(raw.site.layout)) {
     errors.push(`${source}: site.layout must be one of ${Array.from(validLayouts).join(", ")}.`);
   }
@@ -777,6 +783,10 @@ function adminEditingEnabled() {
   return loadedConfig.config.site.adminEditing === true;
 }
 
+function commentsEnabled() {
+  return loadedConfig.config.site.commentsEnabled === true;
+}
+
 function contentPathFor(moduleId, slug) {
   const modulePath = path.join(contentDir, moduleId);
   const filePath = path.join(modulePath, `${slug}.md`);
@@ -785,6 +795,69 @@ function contentPathFor(moduleId, slug) {
   }
 
   return filePath;
+}
+
+function commentsPathFor(moduleId, slug) {
+  const filePath = path.resolve(commentsDir, moduleId, `${slug}.json`);
+  if (!filePath.startsWith(path.resolve(commentsDir))) {
+    throw new Error("Invalid comments path.");
+  }
+
+  return filePath;
+}
+
+function validCommentTarget(moduleId, slug) {
+  return /^[a-z0-9_-]+$/.test(moduleId) && slugify(slug) === slug && Boolean(loadedConfig.config.modules[moduleId]);
+}
+
+function readComments(moduleId, slug) {
+  const filePath = commentsPathFor(moduleId, slug);
+  if (!fs.existsSync(filePath)) return [];
+  const comments = JSON.parse(fs.readFileSync(filePath, "utf8"));
+  return Array.isArray(comments) ? comments : [];
+}
+
+function writeComments(moduleId, slug, comments) {
+  const filePath = commentsPathFor(moduleId, slug);
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, JSON.stringify(comments, null, 2));
+}
+
+function publicComments(moduleId, slug) {
+  return readComments(moduleId, slug).filter((comment) => comment.approved === true && comment.hidden !== true);
+}
+
+function allComments() {
+  if (!fs.existsSync(commentsDir)) return [];
+
+  return fs
+    .readdirSync(commentsDir)
+    .flatMap((moduleId) => {
+      const modulePath = path.join(commentsDir, moduleId);
+      if (!fs.statSync(modulePath).isDirectory()) return [];
+
+      return fs
+        .readdirSync(modulePath)
+        .filter((fileName) => fileName.endsWith(".json"))
+        .flatMap((fileName) => {
+          const slug = path.basename(fileName, ".json");
+          return readComments(moduleId, slug).map((comment) => ({ moduleId, slug, ...comment }));
+        });
+    })
+    .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+}
+
+function validateCommentInput(input) {
+  const author = String(input.author || "").trim();
+  const body = String(input.body || "").trim();
+  const errors = [];
+
+  if (!author) errors.push("author is required.");
+  if (author.length > 80) errors.push("author must be 80 characters or fewer.");
+  if (!body) errors.push("body is required.");
+  if (body.length > 2000) errors.push("body must be 2000 characters or fewer.");
+
+  return { author, body, errors };
 }
 
 function validateAdminContentInput(input, mode) {
@@ -858,6 +931,94 @@ function backupContentFile(filePath, moduleId, slug) {
   const backupPath = path.join(contentDir, ".backups", moduleId, `${slug}.${stamp}.md`);
   fs.mkdirSync(path.dirname(backupPath), { recursive: true });
   fs.copyFileSync(filePath, backupPath);
+}
+
+async function handleComments(req, res, url) {
+  if (!commentsEnabled()) {
+    sendJson(res, 404, { error: "Comments are disabled." });
+    return;
+  }
+
+  const moduleId = String(url.searchParams.get("module") || "").trim();
+  const slug = String(url.searchParams.get("slug") || "").trim();
+  if (!validCommentTarget(moduleId, slug)) {
+    sendJson(res, 400, { error: "Invalid module or slug." });
+    return;
+  }
+
+  if (req.method === "GET") {
+    sendJson(res, 200, { comments: publicComments(moduleId, slug) });
+    return;
+  }
+
+  if (req.method !== "POST") {
+    sendJson(res, 405, { error: "Method not allowed." });
+    return;
+  }
+
+  const input = await readRequestJson(req);
+  const checked = validateCommentInput(input);
+  if (checked.errors.length) {
+    sendJson(res, 400, { errors: checked.errors });
+    return;
+  }
+
+  const comments = readComments(moduleId, slug);
+  const comment = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    author: checked.author,
+    body: checked.body,
+    date: new Date().toISOString(),
+    approved: false,
+    hidden: false,
+  };
+  comments.push(comment);
+  writeComments(moduleId, slug, comments);
+  sendJson(res, 200, { ok: true, pending: true });
+}
+
+async function handleAdminComments(req, res) {
+  if (!adminEditingEnabled()) {
+    sendJson(res, 403, { error: "Admin editing is disabled. Set site.adminEditing to true in config." });
+    return;
+  }
+
+  if (!commentsEnabled()) {
+    sendJson(res, 403, { error: "Comments are disabled. Set site.commentsEnabled to true in config." });
+    return;
+  }
+
+  if (req.method === "GET") {
+    sendJson(res, 200, { comments: allComments() });
+    return;
+  }
+
+  if (req.method !== "PUT") {
+    sendJson(res, 405, { error: "Method not allowed." });
+    return;
+  }
+
+  const input = await readRequestJson(req);
+  const moduleId = String(input.module || "").trim();
+  const slug = String(input.slug || "").trim();
+  const id = String(input.id || "").trim();
+
+  if (!validCommentTarget(moduleId, slug) || !id) {
+    sendJson(res, 400, { error: "Invalid module, slug, or comment id." });
+    return;
+  }
+
+  const comments = readComments(moduleId, slug);
+  const comment = comments.find((entry) => entry.id === id);
+  if (!comment) {
+    sendJson(res, 404, { error: "Comment not found." });
+    return;
+  }
+
+  if (input.approved !== undefined) comment.approved = input.approved === true;
+  if (input.hidden !== undefined) comment.hidden = input.hidden === true;
+  writeComments(moduleId, slug, comments);
+  sendJson(res, 200, { ok: true, comments: allComments() });
 }
 
 function validateSite() {
@@ -1013,6 +1174,8 @@ function sitePayload() {
     enabledModuleCount: Object.values(modules).filter((module) => module.enabled).length,
     contentItemCount: Object.values(content).reduce((total, items) => total + items.length, 0),
     adminEditing: adminEditingEnabled(),
+    commentsEnabled: commentsEnabled(),
+    commentCount: commentsEnabled() ? allComments().length : 0,
     modules: Object.fromEntries(
       Object.keys(modules).map((moduleId) => [
         moduleId,
@@ -1078,8 +1241,18 @@ function createServer() {
         return;
       }
 
+      if (url.pathname === "/api/comments") {
+        await handleComments(req, res, url);
+        return;
+      }
+
       if (url.pathname === "/api/admin/content") {
         await handleAdminContent(req, res, url);
+        return;
+      }
+
+      if (url.pathname === "/api/admin/comments") {
+        await handleAdminComments(req, res);
         return;
       }
 

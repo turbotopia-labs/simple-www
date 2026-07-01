@@ -1,6 +1,6 @@
-# Public Contract for v1.4.0
+# Public Contract for v1.5.0
 
-This contract is stable for `v1.4.0`. Changes after `v1.4.0` should be additive unless a documented breaking release is planned.
+This contract is stable for `v1.5.0`. Changes after `v1.5.0` should be additive unless a documented breaking release is planned.
 
 ## Content
 
@@ -58,6 +58,7 @@ Stable `site` fields:
 - `theme`
 - `layout`
 - `adminEditing`
+- `commentsEnabled`
 
 Stable module fields:
 
@@ -93,6 +94,7 @@ Stable server-mode endpoints:
 
 - `/`
 - `/api/site`
+- `/api/comments`
 - `/health`
 - `/feed.json`
 - `/feeds.json`
@@ -106,8 +108,15 @@ Stable server-mode endpoints:
 Admin editing endpoint:
 
 - `/api/admin/content`
+- `/api/admin/comments`
 
 Admin editing remains disabled unless `site.adminEditing` is `true`.
+
+Local comments remain disabled unless `site.commentsEnabled` is `true`.
+
+Comment storage:
+
+- `data/comments/<module>/<slug>.json`
 
 ## Static Export
 

@@ -148,6 +148,15 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v1.5.0 - Comments
 
+- Done: Add optional comment support behind an explicit config toggle.
+- Done: Start with local/file-backed comments only.
+- Done: Add moderation fields: `approved`, `hidden`, `author`, and `date`.
+- Done: Add admin review for comments.
+- Done: Keep comments disabled by default.
+- Done: Document privacy and backup expectations.
+
+## v1.5.0 - Comments
+
 - Add optional comment support behind an explicit config toggle.
 - Start with local/file-backed comments only.
 - Add moderation fields: approved, hidden, author, date.

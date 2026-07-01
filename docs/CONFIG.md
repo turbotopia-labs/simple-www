@@ -25,7 +25,8 @@ JSON remains the default format. YAML support is intentionally small and support
   "footerText": "simple-www v.{VERSION}",
   "theme": "classic",
   "layout": "cards",
-  "adminEditing": false
+  "adminEditing": false,
+  "commentsEnabled": false
 }
 ```
 
@@ -41,6 +42,7 @@ Defaults:
 - `theme`: `classic`
 - `layout`: `cards`
 - `adminEditing`: `false`
+- `commentsEnabled`: `false`
 
 Legacy `siteTitle` and `siteDescription` still work when `site.title` and `site.description` are not set.
 
@@ -105,6 +107,7 @@ Validation checks:
 - `site.theme` must match a CSS file in `themes/`.
 - `site.layout` must be `list`, `cards`, or `compact`.
 - `site.adminEditing` must be true or false.
+- `site.commentsEnabled` must be true or false.
 - `modules` must be an object.
 - Each module must be an object.
 - `enabled` must be true or false.
