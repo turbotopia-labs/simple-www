@@ -21,6 +21,7 @@ The server provides:
 - `/api/search-index`
 - `/api/media`
 - `/api/collections`
+- `/api/analytics`
 - `/api/preview`
 - `/health`
 - `/feeds/news.xml`
@@ -60,6 +61,7 @@ The export includes:
 - `dist/data/search-index.json`
 - `dist/data/media.json`
 - `dist/data/collections.json`
+- `dist/data/analytics.json`
 - `dist/feed.json`
 - `dist/feeds.json`
 - `dist/feeds/news.json`

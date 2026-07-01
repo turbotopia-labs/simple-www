@@ -212,7 +212,7 @@ v3 should focus on discovery, editorial workflow, asset handling, and operations
 
 ## v2.6.0 - Analytics Export
 
-- Simple analytics export without tracking scripts.
+- Done: Simple analytics export without tracking scripts.
 
 ## v2.7.0 - Translation and i18n
 

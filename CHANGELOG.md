@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 2.6.0 - 2026-07-01
+
+- Added tracking-free analytics export.
+- Added `/api/analytics` for server mode.
+- Added `dist/data/analytics.json` for static export mode.
+- Included content, collection, tag, archive, and media summary counts.
+
 ## 2.5.0 - 2026-07-01
 
 - Added opt-in export hooks after successful static export.

@@ -13,6 +13,7 @@ const {
   publicDir,
   root,
   rssFeed,
+  buildAnalyticsExport,
   buildSearchIndex,
   collectionsPayload,
   collectionUrl,
@@ -228,6 +229,7 @@ async function exportSite() {
   writeFile(path.join(dataDir, "search-index.json"), JSON.stringify(buildSearchIndex(payload), null, 2));
   writeFile(path.join(dataDir, "media.json"), JSON.stringify(mediaPayload(), null, 2));
   writeFile(path.join(dataDir, "collections.json"), JSON.stringify({ version: payload.version, collections: collectionsPayload() }, null, 2));
+  writeFile(path.join(dataDir, "analytics.json"), JSON.stringify(buildAnalyticsExport(payload), null, 2));
   writeFile(path.join(distDir, "feed.json"), JSON.stringify(jsonFeed(), null, 2));
   writeFile(path.join(distDir, "feeds.json"), JSON.stringify(jsonFeed(), null, 2));
   writeFile(path.join(feedsDir, "news.json"), JSON.stringify(jsonFeed("news"), null, 2));

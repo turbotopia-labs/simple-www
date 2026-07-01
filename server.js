@@ -1575,6 +1575,85 @@ function mediaPayload() {
   };
 }
 
+function incrementCount(counts, key) {
+  const cleanKey = String(key || "").trim();
+  if (!cleanKey) return;
+  counts[cleanKey] = (counts[cleanKey] || 0) + 1;
+}
+
+function analyticsForItems(items) {
+  const categories = {};
+  const tags = {};
+  const years = {};
+  const months = {};
+
+  items.forEach((item) => {
+    incrementCount(categories, item.category);
+    (item.tags || []).forEach((tag) => incrementCount(tags, tag));
+    if (item.date) {
+      incrementCount(years, item.date.slice(0, 4));
+      if (item.date.length >= 7) incrementCount(months, item.date.slice(0, 7));
+    }
+  });
+
+  return { categories, tags, years, months };
+}
+
+function buildAnalyticsExport(payload = sitePayload()) {
+  const moduleItems = Object.entries(payload.content || {}).flatMap(([moduleId, items]) => items.map((item) => ({ ...item, moduleId })));
+  const collectionItems = Object.entries(payload.collections || {}).flatMap(([collectionId, collection]) =>
+    (collection.items || []).map((item) => ({ ...item, collectionId }))
+  );
+  const media = mediaPayload().items;
+  const mediaTypes = {};
+
+  media.forEach((item) => {
+    incrementCount(mediaTypes, item.type);
+  });
+
+  return {
+    version,
+    generatedAt: new Date().toISOString(),
+    tracking: {
+      scripts: false,
+      cookies: false,
+      requests: false,
+      source: "static export metadata",
+    },
+    totals: {
+      modules: Object.keys(payload.content || {}).length,
+      moduleItems: moduleItems.length,
+      collections: Object.keys(payload.collections || {}).length,
+      collectionItems: collectionItems.length,
+      mediaItems: media.length,
+      mediaBytes: media.reduce((total, item) => total + (Number(item.size) || 0), 0),
+    },
+    modules: Object.fromEntries(
+      Object.entries(payload.content || {}).map(([moduleId, items]) => [
+        moduleId,
+        {
+          items: items.length,
+          ...analyticsForItems(items),
+        },
+      ])
+    ),
+    collections: Object.fromEntries(
+      Object.entries(payload.collections || {}).map(([collectionId, collection]) => [
+        collectionId,
+        {
+          items: (collection.items || []).length,
+          ...analyticsForItems(collection.items || []),
+        },
+      ])
+    ),
+    sitewide: analyticsForItems([...moduleItems, ...collectionItems]),
+    media: {
+      types: mediaTypes,
+      largest: [...media].sort((a, b) => b.size - a.size).slice(0, 20),
+    },
+  };
+}
+
 let loadedConfig;
 
 try {
@@ -1618,6 +1697,11 @@ function createServer() {
 
       if (url.pathname === "/api/collections") {
         sendJson(res, 200, { version, collections: collectionsPayload() });
+        return;
+      }
+
+      if (url.pathname === "/api/analytics") {
+        sendJson(res, 200, buildAnalyticsExport());
         return;
       }
 
@@ -1704,6 +1788,7 @@ if (require.main === module) {
 module.exports = {
   absoluteUrl,
   allContentFieldNames,
+  buildAnalyticsExport,
   buildSearchIndex,
   collectionUrl,
   collectionsPayload,

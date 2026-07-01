@@ -1,0 +1,94 @@
+{
+  "version": "2.6.0",
+  "generatedAt": "2026-07-01T10:00:57.408Z",
+  "tracking": {
+    "scripts": false,
+    "cookies": false,
+    "requests": false,
+    "source": "static export metadata"
+  },
+  "totals": {
+    "modules": 3,
+    "moduleItems": 3,
+    "collections": 0,
+    "collectionItems": 0,
+    "mediaItems": 0,
+    "mediaBytes": 0
+  },
+  "modules": {
+    "news": {
+      "items": 0,
+      "categories": {},
+      "tags": {},
+      "years": {},
+      "months": {}
+    },
+    "projects": {
+      "items": 3,
+      "categories": {
+        "software": 2,
+        "open-source": 1
+      },
+      "tags": {
+        "software": 2,
+        "finance": 1,
+        "accounting": 1,
+        "business": 1,
+        "open source": 3,
+        "hardware": 1,
+        "rov": 1,
+        "raspberry": 1,
+        "pi": 1,
+        "custom": 1,
+        "tracker": 1,
+        "statistics": 1,
+        "life log": 1
+      },
+      "years": {
+        "2026": 3
+      },
+      "months": {
+        "2026-06": 3
+      }
+    },
+    "downloads": {
+      "items": 0,
+      "categories": {},
+      "tags": {},
+      "years": {},
+      "months": {}
+    }
+  },
+  "collections": {},
+  "sitewide": {
+    "categories": {
+      "software": 2,
+      "open-source": 1
+    },
+    "tags": {
+      "software": 2,
+      "finance": 1,
+      "accounting": 1,
+      "business": 1,
+      "open source": 3,
+      "hardware": 1,
+      "rov": 1,
+      "raspberry": 1,
+      "pi": 1,
+      "custom": 1,
+      "tracker": 1,
+      "statistics": 1,
+      "life log": 1
+    },
+    "years": {
+      "2026": 3
+    },
+    "months": {
+      "2026-06": 3
+    }
+  },
+  "media": {
+    "types": {},
+    "largest": []
+  }
+}
