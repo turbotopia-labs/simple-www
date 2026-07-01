@@ -73,3 +73,10 @@ The main `site.json` payload also includes `collections`, so exported pages can 
 Collections are not controlled by `config.modules`.
 
 Use collections for content groups that should not behave like built-in modules, such as simple pages, reference notes, reusable content sets, or side material.
+
+## v3 Preparation Notes
+
+- Keep collection folder names lowercase and hyphenated; they are part of the public route.
+- Add `lang` and `translationKey` to translated collection entries.
+- Use module content for news/blog/project/download/store behavior, and collections for standalone content groups.
+- Do not depend on collection labels being manually configurable before v3.

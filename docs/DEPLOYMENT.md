@@ -108,3 +108,10 @@ In multi-site mode, `data/sites.json` can set a per-site `baseUrl` that override
 Frontend assets use relative paths, so exported files can be served from a folder or static host. In server mode, the same files are served from the site root.
 
 See `docs/MULTI-SITE.md` for multi-site Docker examples and migration notes.
+
+## v3 Preparation Notes
+
+- Treat `dist/` as generated output and rebuild it after config, content, media, theme, or frontend changes.
+- Keep source content in `content/`, config in `data/`, local assets in `media/`, and themes in `themes/`.
+- Review `exportHooks` before production export, especially when `failOnError` is true.
+- Set `site.baseUrl` before publishing feeds, sitemap, robots.txt, or static exports.

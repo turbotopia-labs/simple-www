@@ -2,8 +2,14 @@
 
 ## Unreleased
 
+## 2.9.0 - 2026-07-01
+
 - Moved project repository links to a discreet icon beside status.
 - Changed the project repository icon to a stylized GitHub mark.
+- Reviewed v2 contracts for breaking-change risk before v3.
+- Tightened docs around config, content, collections, export, and i18n.
+- Marked deprecated and weak behavior before v3.
+- Added migration notes from v2.x to v3.0.0.
 
 ## 2.8.0 - 2026-07-01
 

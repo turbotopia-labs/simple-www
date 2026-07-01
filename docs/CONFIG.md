@@ -56,6 +56,13 @@ Legacy `siteTitle` and `siteDescription` still work when `site.title` and `site.
 
 `footerText` supports `{VERSION}`, which is replaced with the value from the `VERSION` file.
 
+## v3 Preparation Notes
+
+- Prefer `site.title` and `site.description` for new config. Root-level `siteTitle` and `siteDescription` are compatibility aliases.
+- Keep `exportHooks.enabled`, `site.adminEditing`, `site.commentsEnabled`, and `adminAccounts.enabled` off unless the site explicitly needs them.
+- Keep admin account tokens and webhook secrets out of tracked config files.
+- Add `site.languages` before publishing translated content.
+
 ## Modules
 
 ```json

@@ -143,6 +143,14 @@ Add missing `date` values to news/blog entries, `status` to projects, `version` 
 
 The new fields are optional and additive. `pinned` defaults to `false`, `priority` defaults to `0`, and empty URL/image fields are ignored.
 
+## v3 Preparation Notes
+
+- Use explicit `slug` values for content that is linked from outside the site.
+- Use `lang` on translated entries and a shared `translationKey` across translated variants.
+- Keep `date` and `updated` as `YYYY-MM-DD`. Use an ISO date/time for `publishAt` when the publish time matters.
+- Avoid relying on empty optional fields; omit fields that are not used.
+- Treat malformed URLs, booleans, and dates as validation errors before publishing.
+
 ## Empty Modules
 
 Modules can define their own empty state in `data/config.json`:

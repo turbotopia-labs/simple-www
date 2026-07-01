@@ -1,6 +1,6 @@
-# Public Contract for v2.8.0
+# Public Contract for v2.9.0
 
-This contract is stable for `v2.8.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and breaking-change notes.
+This contract is stable for `v2.9.0`. See `docs/V1-COMPATIBILITY.md` for v1 compatibility and `docs/V2-TO-V3-MIGRATION.md` for v3 preparation notes.
 
 ## Content
 
@@ -199,3 +199,7 @@ Import duplicate handling:
 ## Compatibility Rule
 
 After `v1.0.0`, changes should be additive where possible. Breaking changes must update this file, `CHANGELOG.md`, and related docs.
+
+## v3 Preparation Notes
+
+`v2.9.0` does not intentionally break v2 behavior. The main v3 risk areas are weak legacy config aliases, language-neutral translated content, generated `dist/` edits, broad export hooks, and local-only admin account assumptions. See `docs/V2-TO-V3-MIGRATION.md`.

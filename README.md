@@ -2,7 +2,7 @@
 
 simple-www is a small static website engine with Markdown content, JSON/YAML configuration, and toggleable modules.
 
-Version: `2.8.0`
+Version: `2.9.0`
 
 ## Install
 
@@ -100,6 +100,7 @@ Site settings and module toggles live in `data/config.json`. `data/config.yaml` 
 - `docs/EXPORT-HOOKS.md`
 - `docs/ANALYTICS.md`
 - `docs/I18N.md`
+- `docs/V2-TO-V3-MIGRATION.md`
 - `docs/ADMIN-WORKFLOW.md`
 - `docs/COMMENTS.md`
 - `docs/MEDIA-LIBRARY.md`

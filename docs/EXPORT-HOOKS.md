@@ -82,3 +82,10 @@ Set `failOnError: true` to make a hook failure fail the export command.
 - Hooks are not run by server mode.
 - Keep command hooks local and explicit.
 - Do not put secrets directly in tracked config files.
+
+## v3 Preparation Notes
+
+- Prefer small, explicit hooks over broad shell scripts.
+- Use `failOnError: true` only when a failed hook should block deployment.
+- Keep webhook credentials outside tracked config where possible.
+- Treat hook payload fields as stable v2 metadata unless `docs/PUBLIC-CONTRACT.md` marks a breaking change.

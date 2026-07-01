@@ -224,10 +224,10 @@ v3 should focus on discovery, editorial workflow, asset handling, and operations
 
 ## v2.9.0 - v3 Preparation
 
-- Review v2 contracts for breaking-change risk.
-- Tighten docs around config, content, collections, export, and i18n.
-- Mark deprecated or weak behavior before v3.
-- Add migration notes from v2.x to v3.0.0.
+- Done: Review v2 contracts for breaking-change risk.
+- Done: Tighten docs around config, content, collections, export, and i18n.
+- Done: Mark deprecated or weak behavior before v3.
+- Done: Add migration notes from v2.x to v3.0.0.
 
 ## v3.0.0 - Stable v3 Release
 
