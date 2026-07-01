@@ -30,6 +30,13 @@ Docker uses server mode:
 docker compose up --build
 ```
 
+Set `SITE_ID` to run a configured multi-site root:
+
+```powershell
+$env:SITE_ID = "example"
+node server.js
+```
+
 ## Static Export
 
 Build `dist/`:
@@ -57,6 +64,8 @@ Upload the contents of `dist/` to any static host.
 
 Static export mode is read-only. Admin editing is not available from exported files.
 
+In multi-site mode, export writes to the active site's configured `exportDir`.
+
 ## Validation
 
 Run validation before deployment:
@@ -79,6 +88,10 @@ Set `site.baseUrl` in config before export:
 
 Feeds, sitemap, and robots.txt use `site.baseUrl`.
 
+In multi-site mode, `data/sites.json` can set a per-site `baseUrl` that overrides the site's config.
+
 ## Relative URLs
 
 Frontend assets use relative paths, so exported files can be served from a folder or static host. In server mode, the same files are served from the site root.
+
+See `docs/MULTI-SITE.md` for multi-site Docker examples and migration notes.

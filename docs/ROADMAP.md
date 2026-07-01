@@ -166,12 +166,12 @@ simple-www should stay small, file-based, and easy to run. The roadmap favors st
 
 ## v1.7.0 - Multi-Site Support
 
-- Add config for multiple site roots.
-- Support per-site `content/`, `data/`, and export output.
-- Add per-site base URL handling.
-- Add Docker docs for multi-site deployments.
-- Keep single-site mode as the default.
-- Document migration from single-site to multi-site.
+- Done: Add config for multiple site roots.
+- Done: Support per-site `content/`, `data/`, and export output.
+- Done: Add per-site base URL handling.
+- Done: Add Docker docs for multi-site deployments.
+- Done: Keep single-site mode as the default.
+- Done: Document migration from single-site to multi-site.
 
 ## v2.0.0 - Stable v2 Release
 

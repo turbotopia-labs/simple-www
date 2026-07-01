@@ -4,6 +4,7 @@ const path = require("path");
 const {
   absoluteUrl,
   escapeXml,
+  exportDir,
   jsonFeed,
   loadedConfig,
   publicDir,
@@ -13,7 +14,7 @@ const {
   themesDir,
 } = require("../server");
 
-const distDir = path.join(root, "dist");
+const distDir = exportDir;
 const dataDir = path.join(distDir, "data");
 const feedsDir = path.join(distDir, "feeds");
 const rssDir = path.join(distDir, "rss");

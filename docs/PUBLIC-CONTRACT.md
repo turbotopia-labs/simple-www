@@ -1,6 +1,6 @@
-# Public Contract for v1.6.0
+# Public Contract for v1.7.0
 
-This contract is stable for `v1.6.0`. Changes after `v1.6.0` should be additive unless a documented breaking release is planned.
+This contract is stable for `v1.7.0`. Changes after `v1.7.0` should be additive unless a documented breaking release is planned.
 
 ## Content
 
@@ -45,10 +45,16 @@ See `docs/CONTENT-CONTRACT.md` for field details.
 Config is read from:
 
 1. `CONFIG_FILE`
-2. `data/config.json`
-3. `data/config.yaml`
-4. `data/config.yml`
+2. active site `data/config.json`
+3. active site `data/config.yaml`
+4. active site `data/config.yml`
 5. built-in defaults
+
+Multi-site root config:
+
+- `data/sites.json`
+- `SITE_ID`
+- `SIMPLE_WWW_SITE`
 
 Stable `site` fields:
 
@@ -142,6 +148,8 @@ Stable export output:
 - `dist/sitemap.xml`
 - `dist/robots.txt`
 - `dist/404.html`
+
+In multi-site mode, `dist/` means the active site's configured `exportDir`.
 
 ## Content Import and Export
 

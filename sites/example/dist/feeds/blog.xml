@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>simple-www - Blog</title>
+    <link>https://example.com</link>
+    <description>A small Markdown-powered website.</description>
+    <language>en</language>
+    
+  </channel>
+</rss>

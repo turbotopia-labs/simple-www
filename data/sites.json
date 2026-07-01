@@ -1,0 +1,14 @@
+{
+  "sites": {
+    "main": {
+      "root": ".",
+      "exportDir": "dist",
+      "baseUrl": "http://127.0.0.1:6625"
+    },
+    "example": {
+      "root": "sites/example",
+      "exportDir": "sites/example/dist",
+      "baseUrl": "https://example.com"
+    }
+  }
+}

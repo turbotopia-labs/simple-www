@@ -5,10 +5,12 @@ simple-www reads config at startup.
 Default lookup order:
 
 1. `CONFIG_FILE` environment variable, if set.
-2. `data/config.json`
-3. `data/config.yaml`
-4. `data/config.yml`
+2. active site `data/config.json`
+3. active site `data/config.yaml`
+4. active site `data/config.yml`
 5. Built-in defaults.
+
+The active site is the project root in single-site mode. When `SITE_ID` is set, active site paths come from `data/sites.json`.
 
 JSON remains the default format. YAML support is intentionally small and supports nested objects, strings, booleans, integers, `null`, and inline arrays.
 

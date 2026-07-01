@@ -4,6 +4,14 @@
 
 - Added optional footer contact link driven by `site.contactEmail`.
 
+## 1.7.0 - 2026-07-01
+
+- Added opt-in multi-site support through `SITE_ID` and `data/sites.json`.
+- Added per-site `content/`, `data/`, comments, and export output paths.
+- Added per-site base URL override handling.
+- Kept existing single-site mode as the default when `SITE_ID` is unset.
+- Documented Docker deployment and migration from single-site to multi-site.
+
 ## 1.6.0 - 2026-07-01
 
 - Added optional store checkout links through `checkoutUrl`.

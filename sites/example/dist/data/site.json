@@ -1,0 +1,188 @@
+{
+  "config": {
+    "site": {
+      "title": "simple-www",
+      "description": "A small Markdown-powered website.",
+      "language": "en",
+      "author": "",
+      "timezone": "UTC",
+      "baseUrl": "https://example.com",
+      "footerText": "simple-www v.{VERSION}",
+      "contactEmail": "",
+      "theme": "classic",
+      "layout": "cards",
+      "adminEditing": false,
+      "commentsEnabled": false,
+      "storePaymentsEnabled": false
+    },
+    "modules": {
+      "news": {
+        "label": "News",
+        "enabled": true,
+        "emptyState": "No news has been published yet.",
+        "order": 10,
+        "sort": "date-desc",
+        "limit": null
+      },
+      "projects": {
+        "label": "Projects",
+        "enabled": true,
+        "emptyState": "No projects have been added yet.",
+        "order": 20,
+        "sort": "date-desc",
+        "limit": null
+      },
+      "blog": {
+        "label": "Blog",
+        "enabled": true,
+        "emptyState": "No blog posts have been published yet.",
+        "order": 30,
+        "sort": "date-desc",
+        "limit": null
+      },
+      "downloads": {
+        "label": "Downloads",
+        "enabled": true,
+        "emptyState": "No downloads are available yet.",
+        "order": 40,
+        "sort": "date-desc",
+        "limit": null
+      },
+      "store": {
+        "label": "Store",
+        "enabled": false,
+        "emptyState": "No store items are listed yet.",
+        "order": 50,
+        "sort": "title-asc",
+        "limit": null
+      },
+      "admin": {
+        "label": "Admin",
+        "enabled": false,
+        "emptyState": "No admin tools are enabled.",
+        "order": 60,
+        "sort": "title-asc",
+        "limit": null
+      },
+      "links": {
+        "id": "links",
+        "label": "Links",
+        "enabled": false,
+        "emptyState": "No links have been added yet.",
+        "order": 70,
+        "sort": "title-asc",
+        "limit": null,
+        "fields": [
+          {
+            "name": "url",
+            "label": "URL",
+            "type": "url",
+            "required": true,
+            "list": true,
+            "detail": true
+          },
+          {
+            "name": "source",
+            "label": "Source",
+            "type": "string",
+            "list": true,
+            "detail": true
+          },
+          {
+            "name": "rating",
+            "label": "Rating",
+            "type": "integer",
+            "detail": true
+          }
+        ],
+        "views": {
+          "list": [
+            "url",
+            "source"
+          ],
+          "detail": [
+            "url",
+            "source",
+            "rating"
+          ]
+        },
+        "validation": {
+          "required": [
+            "title",
+            "url"
+          ]
+        }
+      }
+    }
+  },
+  "content": {
+    "news": [],
+    "projects": [],
+    "blog": [],
+    "downloads": []
+  },
+  "diagnostics": {
+    "siteId": "example",
+    "siteRoot": "C:\\Users\\thoma\\Documents\\alfred.vaultsworth\\tubotopia-labs_git\\simple-www\\sites\\example",
+    "configSource": "defaults",
+    "moduleCount": 7,
+    "enabledModuleCount": 4,
+    "contentItemCount": 0,
+    "adminEditing": false,
+    "commentsEnabled": false,
+    "commentCount": 0,
+    "modules": {
+      "news": {
+        "enabled": true,
+        "itemCount": 0,
+        "order": 10,
+        "sort": "date-desc",
+        "limit": null
+      },
+      "projects": {
+        "enabled": true,
+        "itemCount": 0,
+        "order": 20,
+        "sort": "date-desc",
+        "limit": null
+      },
+      "blog": {
+        "enabled": true,
+        "itemCount": 0,
+        "order": 30,
+        "sort": "date-desc",
+        "limit": null
+      },
+      "downloads": {
+        "enabled": true,
+        "itemCount": 0,
+        "order": 40,
+        "sort": "date-desc",
+        "limit": null
+      },
+      "store": {
+        "enabled": false,
+        "itemCount": 0,
+        "order": 50,
+        "sort": "title-asc",
+        "limit": null
+      },
+      "admin": {
+        "enabled": false,
+        "itemCount": 0,
+        "order": 60,
+        "sort": "title-asc",
+        "limit": null
+      },
+      "links": {
+        "enabled": false,
+        "itemCount": 0,
+        "order": 70,
+        "sort": "title-asc",
+        "limit": null
+      }
+    }
+  },
+  "warnings": [],
+  "version": "1.7.0"
+}

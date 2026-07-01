@@ -3,12 +3,15 @@ const http = require("http");
 const path = require("path");
 
 const root = __dirname;
+const siteSelection = resolveSiteSelection();
+const siteRoot = siteSelection.root;
 const publicDir = path.join(root, "public");
-const contentDir = path.join(root, "content");
-const dataDir = path.join(root, "data");
+const contentDir = path.join(siteRoot, "content");
+const dataDir = path.join(siteRoot, "data");
 const commentsDir = path.join(dataDir, "comments");
 const modulesDir = path.join(root, "modules");
 const themesDir = path.join(root, "themes");
+const exportDir = siteSelection.exportDir;
 const port = Number(process.env.PORT || 6625);
 const version = fs.readFileSync(path.join(root, "VERSION"), "utf8").trim();
 const requiredThemeVariables = [
@@ -24,6 +27,37 @@ const requiredThemeVariables = [
   "shadow",
   "button",
 ];
+
+function resolveInsideRoot(value, fallback) {
+  const resolved = path.resolve(root, value || fallback);
+  if (resolved !== root && !resolved.startsWith(`${root}${path.sep}`)) {
+    throw new Error(`Site path must stay inside project root: ${resolved}`);
+  }
+  return resolved;
+}
+
+function resolveSiteSelection() {
+  const siteId = String(process.env.SITE_ID || process.env.SIMPLE_WWW_SITE || "").trim();
+  if (!siteId) {
+    return { id: "", root, exportDir: path.join(root, "dist"), baseUrl: "" };
+  }
+
+  if (!/^[a-z0-9_-]+$/i.test(siteId)) {
+    throw new Error("SITE_ID must use letters, numbers, hyphens, or underscores.");
+  }
+
+  const sitesConfigPath = process.env.SITES_CONFIG ? path.resolve(root, process.env.SITES_CONFIG) : path.join(root, "data", "sites.json");
+  const sitesConfig = fs.existsSync(sitesConfigPath) ? JSON.parse(fs.readFileSync(sitesConfigPath, "utf8")) : {};
+  const siteConfig = sitesConfig.sites?.[siteId] || {};
+  const selectedRoot = resolveInsideRoot(siteConfig.root, path.join("sites", siteId));
+
+  return {
+    id: siteId,
+    root: selectedRoot,
+    exportDir: resolveInsideRoot(siteConfig.exportDir, path.relative(root, path.join(selectedRoot, "dist"))),
+    baseUrl: String(siteConfig.baseUrl || ""),
+  };
+}
 
 const defaultModules = {
   news: {
@@ -538,6 +572,7 @@ function normalizeConfig(raw) {
 
   if (raw.siteTitle && !raw.site?.title) site.title = raw.siteTitle;
   if (raw.siteDescription && !raw.site?.description) site.description = raw.siteDescription;
+  if (siteSelection.baseUrl) site.baseUrl = siteSelection.baseUrl;
 
   const moduleIds = new Set([...Object.keys(defaultModules), ...Object.keys(moduleManifests), ...Object.keys(raw.modules || {})]);
   const modules = {};
@@ -1183,6 +1218,8 @@ function sitePayload() {
   });
 
   const diagnostics = {
+    siteId: siteSelection.id || "single",
+    siteRoot,
     configSource: loadedConfig.source,
     moduleCount: Object.keys(modules).length,
     enabledModuleCount: Object.values(modules).filter((module) => module.enabled).length,
@@ -1329,6 +1366,7 @@ module.exports = {
   contentDir,
   createServer,
   escapeXml,
+  exportDir,
   jsonFeed,
   loadedConfig,
   parseMarkdownFile,
@@ -1339,6 +1377,8 @@ module.exports = {
   sitePayload,
   slugify,
   startServer,
+  siteRoot,
+  siteSelection,
   themesDir,
   validateContentFields,
   validateSite,
