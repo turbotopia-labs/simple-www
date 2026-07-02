@@ -336,6 +336,11 @@ h3 {
   gap: 5px;
 }
 
+.details .progress-detail {
+  grid-template-columns: 72px 1fr;
+  gap: 5px;
+}
+
 .details dt {
   color: var(--muted);
   font-size: 13px;
@@ -419,6 +424,31 @@ h3 {
   display: block;
   height: 100%;
   background: #d8ad34;
+}
+
+.roadmap-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.progress-bar {
+  display: inline-block;
+  width: 92px;
+  height: 8px;
+  border: 1px solid var(--border);
+  background: var(--button);
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent-strong);
+}
+
+.progress-versions {
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .action-link {

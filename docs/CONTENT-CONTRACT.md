@@ -81,6 +81,10 @@ Supported fields:
 - `repository`: Project repository URL.
 - `untappd`: Untappd beer profile URL for `blog` entries in the `beer-rating` category.
 - `rating`: Beer rating from `1.00` through `5.00` for `blog` entries in the `beer-rating` category.
+- `progress`: Roadmap progress for `blog` entries. Include from, to, and current versions, for example `0.1.0, 1.0.0, 0.3.0`.
+- `progressFrom`: Roadmap start version for `blog` entries.
+- `progressTo`: Roadmap target version for `blog` entries.
+- `progressCurrent`: Roadmap current version for `blog` entries.
 - `file`: Download file URL.
 - `version`: Download or release version.
 - `sku`: Store product SKU.
@@ -102,6 +106,8 @@ Validation checks:
 - `link`, `repository`, `untappd`, `file`, `image`, `canonicalUrl`, and `checkoutUrl` must be safe URLs or relative paths.
 - `rating` must be `1.00` through `5.00` when present.
 - Blog entries with `category: beer-rating` require `rating`.
+- `progress` must include three `MAJOR.MINOR.PATCH` version numbers when present.
+- `progressFrom`, `progressTo`, and `progressCurrent` must use `MAJOR.MINOR.PATCH` and must be used together.
 - Slugs must normalize to lowercase letters, numbers, and hyphens.
 
 Module required fields:
@@ -118,6 +124,7 @@ Module optional fields:
 - All modules: `category`, `summary`, `slug`, `lang`, `translationKey`, `draft`, `publishAt`, `tags`, `updated`, `author`, `image`, `imageAlt`, `pinned`, `priority`, `canonicalUrl`
 - `projects`: `link`, `repository`
 - `blog` with `category: beer-rating`: `untappd`, `rating`
+- `blog` roadmap progress: `progress`, or `progressFrom`, `progressTo`, and `progressCurrent`
 - `downloads`: `file`, `link`
 - `store`: `link`, `checkoutUrl`, `paymentProvider`, `paymentProviderProductId`, `paymentProviderPriceId`
 

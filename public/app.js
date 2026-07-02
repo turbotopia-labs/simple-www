@@ -413,6 +413,43 @@ function beerRatingDetail(item) {
   };
 }
 
+function progressParts(item) {
+  let from = item.progressFrom;
+  let to = item.progressTo;
+  let current = item.progressCurrent;
+  if (!(from && to && current) && item.progress) {
+    const versions = String(item.progress).match(/\d+\.\d+\.\d+/g) || [];
+    [from, to, current] = versions;
+  }
+  return from && to && current ? { from, to, current } : null;
+}
+
+function versionProgressScore(version) {
+  const [major, minor, patch] = String(version || "").split(".").map(Number);
+  return major * 10 + minor + patch / 100;
+}
+
+function roadmapProgressDetail(item) {
+  const progress = progressParts(item);
+  if (!progress) return null;
+  const fromScore = versionProgressScore(progress.from);
+  const toScore = versionProgressScore(progress.to);
+  const currentScore = versionProgressScore(progress.current);
+  const percentage = toScore === fromScore ? 100 : Math.max(0, Math.min(100, ((currentScore - fromScore) / (toScore - fromScore)) * 100));
+  return {
+    label: "Progress",
+    className: "progress-detail",
+    html: `
+      <span class="roadmap-progress">
+        <span class="progress-bar" aria-label="${escapeHtml(`${Math.round(percentage)} percent`)}">
+          <span style="width: ${percentage}%"></span>
+        </span>
+        <span class="progress-versions">${escapeHtml(`${progress.current} / ${progress.to}`)}</span>
+      </span>
+    `,
+  };
+}
+
 function stripMarkdown(markdown) {
   return String(markdown || "")
     .replace(/```[\s\S]*?```/g, " ")
@@ -545,6 +582,10 @@ function emptyAdminFields(moduleId = editableModuleIds()[0] || "news") {
     repository: "",
     untappd: "",
     rating: "",
+    progress: "",
+    progressFrom: "",
+    progressTo: "",
+    progressCurrent: "",
     file: "",
     version: "",
     sku: "",
@@ -589,6 +630,10 @@ function adminForm(values = emptyAdminFields()) {
         <label>Repository<input name="repository" value="${escapeHtml(values.repository)}"></label>
         <label>Untappd<input name="untappd" value="${escapeHtml(values.untappd)}"></label>
         <label>Rating<input name="rating" value="${escapeHtml(values.rating)}" placeholder="1.00-5.00"></label>
+        <label>Progress<input name="progress" value="${escapeHtml(values.progress)}" placeholder="0.1.0, 1.0.0, 0.3.0"></label>
+        <label>Progress from<input name="progressFrom" value="${escapeHtml(values.progressFrom)}" placeholder="0.1.0"></label>
+        <label>Progress to<input name="progressTo" value="${escapeHtml(values.progressTo)}" placeholder="1.0.0"></label>
+        <label>Progress current<input name="progressCurrent" value="${escapeHtml(values.progressCurrent)}" placeholder="0.3.0"></label>
         <label>File<input name="file" value="${escapeHtml(values.file)}"></label>
         <label>Version<input name="version" value="${escapeHtml(values.version)}"></label>
         <label>SKU<input name="sku" value="${escapeHtml(values.sku)}"></label>
@@ -637,6 +682,10 @@ function formValues(form) {
       repository: form.elements.repository.value.trim(),
       untappd: form.elements.untappd.value.trim(),
       rating: form.elements.rating.value.trim(),
+      progress: form.elements.progress.value.trim(),
+      progressFrom: form.elements.progressFrom.value.trim(),
+      progressTo: form.elements.progressTo.value.trim(),
+      progressCurrent: form.elements.progressCurrent.value.trim(),
       file: form.elements.file.value.trim(),
       version: form.elements.version.value.trim(),
       sku: form.elements.sku.value.trim(),
@@ -675,6 +724,10 @@ function valuesFromItem(moduleId, item) {
     repository: item.repository,
     untappd: item.untappd,
     rating: item.rating,
+    progress: item.progress,
+    progressFrom: item.progressFrom,
+    progressTo: item.progressTo,
+    progressCurrent: item.progressCurrent,
     file: item.file,
     version: item.version,
     sku: item.sku,
@@ -795,7 +848,7 @@ function visibleItems(moduleId, items) {
 }
 
 function itemMatchesSearch(item, query) {
-  return [item.title, item.summary, item.category, item.author, item.rating, item.body, ...(item.tags || [])]
+  return [item.title, item.summary, item.category, item.author, item.rating, item.progress, item.progressCurrent, item.body, ...(item.tags || [])]
     .join(" ")
     .toLowerCase()
     .includes(query.toLowerCase());
@@ -859,6 +912,8 @@ function renderItem(moduleId, item) {
 
   const beerRating = moduleId === "blog" ? beerRatingDetail(item) : null;
   if (beerRating) details.push(beerRating);
+  const roadmapProgress = moduleId === "blog" ? roadmapProgressDetail(item) : null;
+  if (roadmapProgress) details.push(roadmapProgress);
 
   if (!details.length && moduleId === "downloads") {
     details.push({ label: "Version", value: item.version });
@@ -911,6 +966,7 @@ function renderDetail(moduleId, slug) {
       ${detailList([
         ...(moduleId === "projects" ? [projectStatusDetail(item)] : [{ label: "Status", value: item.status }]),
         ...(moduleId === "blog" ? [beerRatingDetail(item)].filter(Boolean) : []),
+        ...(moduleId === "blog" ? [roadmapProgressDetail(item)].filter(Boolean) : []),
         { label: "Version", value: item.version },
         { label: "SKU", value: item.sku },
         { label: "Price", value: item.price },

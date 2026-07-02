@@ -7,6 +7,7 @@
 - Tightened spacing between the beer rating label and rating bar.
 - Styled the beer rating bar with a discreet Untappd-yellow palette.
 - Tightened spacing between project status labels and values.
+- Added roadmap progress front matter for blog posts with version-based progress bars.
 
 ## 3.0.0 - 2026-07-01
 

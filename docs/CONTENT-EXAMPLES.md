@@ -71,6 +71,22 @@ rating: 4.25
 Tasting notes.
 ```
 
+## Blog Roadmap Progress
+
+```md
+---
+title: Roadmap status
+date: 2026-07-02
+author: Author name
+category: roadmap
+summary: Progress from early alpha to stable release.
+tags: [roadmap]
+progress: 0.1.0, 1.0.0, 0.3.0
+---
+
+Roadmap notes.
+```
+
 ## Downloads
 
 ```md

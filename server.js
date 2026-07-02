@@ -169,6 +169,10 @@ const editableFields = [
   "repository",
   "untappd",
   "rating",
+  "progress",
+  "progressFrom",
+  "progressTo",
+  "progressCurrent",
   "file",
   "version",
   "sku",
@@ -372,6 +376,10 @@ function buildSearchIndex(payload = sitePayload()) {
           item.author,
         item.status,
         item.rating,
+        item.progress,
+        item.progressFrom,
+        item.progressTo,
+        item.progressCurrent,
         item.version,
         item.sku,
         item.price,
@@ -863,6 +871,14 @@ function isRatingValue(value) {
   return number >= 1 && number <= 5;
 }
 
+function isVersionNumber(value) {
+  return /^\d+\.\d+\.\d+$/.test(String(value || "").trim());
+}
+
+function progressVersionParts(value) {
+  return String(value || "").match(/\d+\.\d+\.\d+/g) || [];
+}
+
 function moduleDefinition(moduleId) {
   return loadedConfig?.config?.modules?.[moduleId] || moduleManifests[moduleId] || {};
 }
@@ -908,6 +924,15 @@ function validateContentFields(moduleId, item, source) {
 
   if (item.rating && !isRatingValue(item.rating)) errors.push(`${source}: rating must be 1.00 through 5.00.`);
   if (moduleId === "blog" && item.category === "beer-rating" && !item.rating) errors.push(`${source}: rating is required for beer-rating blog posts.`);
+
+  if (item.progress && progressVersionParts(item.progress).length < 3) {
+    errors.push(`${source}: progress must include from, to, and current version numbers.`);
+  }
+  const progressFields = [item.progressFrom, item.progressTo, item.progressCurrent].filter(Boolean);
+  if (progressFields.length && progressFields.length !== 3) errors.push(`${source}: progressFrom, progressTo, and progressCurrent must be used together.`);
+  ["progressFrom", "progressTo", "progressCurrent"].forEach((field) => {
+    if (item[field] && !isVersionNumber(item[field])) errors.push(`${source}: ${field} must use MAJOR.MINOR.PATCH.`);
+  });
 
   if (typeof item.draft !== "boolean") errors.push(`${source}: draft must be true or false.`);
   if (typeof item.pinned !== "boolean") errors.push(`${source}: pinned must be true or false.`);
@@ -1015,6 +1040,10 @@ function parseMarkdownFile(filePath) {
     repository: String(meta.repository || ""),
     untappd: String(meta.untappd || ""),
     rating: String(meta.rating || ""),
+    progress: String(meta.progress || ""),
+    progressFrom: String(meta.progressFrom || ""),
+    progressTo: String(meta.progressTo || ""),
+    progressCurrent: String(meta.progressCurrent || ""),
     file: String(meta.file || ""),
     version: String(meta.version || ""),
     sku: String(meta.sku || ""),
@@ -1199,6 +1228,14 @@ function validateAdminContentInput(input, mode) {
     });
     if (fields.rating && !isRatingValue(fields.rating)) errors.push("rating must be 1.00 through 5.00.");
     if (moduleId === "blog" && fields.category === "beer-rating" && !fields.rating) errors.push("rating is required for beer-rating blog posts.");
+    if (fields.progress && progressVersionParts(fields.progress).length < 3) {
+      errors.push("progress must include from, to, and current version numbers.");
+    }
+    const progressFields = [fields.progressFrom, fields.progressTo, fields.progressCurrent].filter(Boolean);
+    if (progressFields.length && progressFields.length !== 3) errors.push("progressFrom, progressTo, and progressCurrent must be used together.");
+    ["progressFrom", "progressTo", "progressCurrent"].forEach((field) => {
+      if (fields[field] && !isVersionNumber(fields[field])) errors.push(`${field} must use MAJOR.MINOR.PATCH.`);
+    });
     if (fields.tags !== undefined && !Array.isArray(fields.tags) && typeof fields.tags !== "string") {
       errors.push("tags must be an array or comma-separated string.");
     }

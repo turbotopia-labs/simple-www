@@ -34,6 +34,10 @@ Supported front matter fields:
 - `repository`
 - `untappd`
 - `rating`
+- `progress`
+- `progressFrom`
+- `progressTo`
+- `progressCurrent`
 - `file`
 - `version`
 - `sku`

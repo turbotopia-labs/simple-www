@@ -59,6 +59,29 @@ rating: 4.25
 ---
 ```
 
+Roadmap blog posts can include progress from one version to another:
+
+```md
+---
+title: Roadmap progress
+date: 2026-07-02
+category: roadmap
+progress: 0.1.0, 1.0.0, 0.3.0
+---
+```
+
+The explicit form is also supported:
+
+```md
+---
+progressFrom: 0.1.0
+progressTo: 1.0.0
+progressCurrent: 0.3.0
+---
+```
+
+Progress is rendered as a compact bar relative to the start and target versions.
+
 ## Downloads
 
 Download entries can include:
