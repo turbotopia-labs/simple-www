@@ -234,6 +234,9 @@ function collectionIds() {
 
 function routeFromHash() {
   const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
+  if (parts[0] === "donate") {
+    return { donate: true };
+  }
   if (parts[0] === "search") {
     return { moduleId: "", filterType: "all", filterValue: "", itemSlug: "", search: parts.slice(1).join("/") };
   }
@@ -277,6 +280,11 @@ function setSearchHash(query) {
 }
 
 function applyRoute(route) {
+  if (route.donate) {
+    openDonateOverlay();
+    return true;
+  }
+
   if (route.search) {
     state.filterType = "all";
     state.filterValue = "";
@@ -1505,6 +1513,7 @@ siteLanguage.addEventListener("change", () => {
 
 footerDonate.addEventListener("click", (event) => {
   event.preventDefault();
+  history.replaceState(null, "", "#donate");
   openDonateOverlay();
 });
 
@@ -1519,7 +1528,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("hashchange", () => {
-  applyRoute(routeFromHash());
+  if (!applyRoute(routeFromHash())) renderDefaultRoute();
 });
 
 function configureLanguages(site) {
