@@ -27,6 +27,8 @@ JSON remains the default format. YAML support is intentionally small and support
   "baseUrl": "http://127.0.0.1:6625",
   "footerText": "simple-www v.{VERSION}",
   "contactEmail": "",
+  "donateBitcoinAddress": "",
+  "donateEthereumAddress": "",
   "theme": "classic",
   "layout": "cards",
   "adminEditing": false,
@@ -46,6 +48,8 @@ Defaults:
 - `baseUrl`: `http://127.0.0.1:6625`
 - `footerText`: `simple-www v.{VERSION}`
 - `contactEmail`: empty string
+- `donateBitcoinAddress`: empty string
+- `donateEthereumAddress`: empty string
 - `theme`: `classic`
 - `layout`: `cards`
 - `adminEditing`: `false`
@@ -55,6 +59,8 @@ Defaults:
 Legacy `siteTitle` and `siteDescription` still work when `site.title` and `site.description` are not set.
 
 `footerText` supports `{VERSION}`, which is replaced with the value from the `VERSION` file.
+
+The footer `Donate` link opens a local overlay. Set `donateBitcoinAddress` or `donateEthereumAddress` to show crypto donation addresses. If both are empty, the overlay shows `Adresses not set`.
 
 ## v3 Preparation Notes
 

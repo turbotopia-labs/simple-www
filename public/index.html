@@ -41,8 +41,21 @@
 
     <footer class="site-footer">
       <span id="site-footer-label">simple-www</span>
-      <a id="site-footer-contact" href="" hidden>Contact</a>
+      <span class="footer-links">
+        <a id="site-footer-donate" href="#donate">Donate</a>
+        <a id="site-footer-contact" href="" hidden>Contact</a>
+      </span>
     </footer>
+
+    <div id="donate-overlay" class="overlay" hidden>
+      <div class="overlay-panel" role="dialog" aria-modal="true" aria-labelledby="donate-title">
+        <div class="overlay-header">
+          <h2 id="donate-title">Donate</h2>
+          <button id="donate-close" class="icon-button" type="button" title="Close donate window">&times;</button>
+        </div>
+        <div id="donate-details" class="donate-details"></div>
+      </div>
+    </div>
 
     <script src="app.js"></script>
   </body>

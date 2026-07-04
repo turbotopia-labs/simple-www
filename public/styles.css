@@ -658,8 +658,77 @@ h3 {
   padding: 12px 0 24px;
 }
 
+.footer-links {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+}
+
 .site-footer a {
   white-space: nowrap;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(20, 20, 18, 0.42);
+}
+
+.overlay[hidden] {
+  display: none;
+}
+
+.overlay-panel {
+  width: min(420px, 100%);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--panel);
+  box-shadow: 4px 4px 0 var(--shadow);
+  padding: 14px;
+}
+
+.overlay-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px dotted var(--border);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+}
+
+.overlay-header h2 {
+  margin-bottom: 0;
+}
+
+.donate-details dl {
+  margin: 0;
+}
+
+.donate-details div {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 8px;
+  border-top: 1px dotted var(--border);
+  padding: 6px 0;
+}
+
+.donate-details div:first-child {
+  border-top: 0;
+}
+
+.donate-details dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.donate-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 640px) {

@@ -123,6 +123,8 @@ const defaultConfig = {
     baseUrl: "http://127.0.0.1:6625",
     footerText: "simple-www v.{VERSION}",
     contactEmail: "",
+    donateBitcoinAddress: "",
+    donateEthereumAddress: "",
     theme: "classic",
     layout: "cards",
     adminEditing: false,
@@ -592,7 +594,20 @@ function validateRawConfig(raw, source) {
     errors.push(`${source}: site must be an object.`);
   }
 
-  ["title", "description", "language", "author", "timezone", "baseUrl", "footerText", "contactEmail", "theme", "layout"].forEach((field) => {
+  [
+    "title",
+    "description",
+    "language",
+    "author",
+    "timezone",
+    "baseUrl",
+    "footerText",
+    "contactEmail",
+    "donateBitcoinAddress",
+    "donateEthereumAddress",
+    "theme",
+    "layout",
+  ].forEach((field) => {
     if (raw.site && raw.site[field] !== undefined && typeof raw.site[field] !== "string") {
       errors.push(`${source}: site.${field} must be a string.`);
     }

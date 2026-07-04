@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added a footer Donate link with a config-driven crypto donation overlay.
 - Added `beer-rating` blog post support with `untappd` and `rating` front matter.
 - Displayed beer ratings with a rating bar and Untappd icon link.
 - Tightened spacing between the beer rating label and rating bar.

@@ -5,7 +5,11 @@ const description = document.querySelector("#site-description");
 const themeToggle = document.querySelector("#theme-toggle");
 const themePack = document.querySelector("#theme-pack");
 const footerLabel = document.querySelector("#site-footer-label");
+const footerDonate = document.querySelector("#site-footer-donate");
 const footerContact = document.querySelector("#site-footer-contact");
+const donateOverlay = document.querySelector("#donate-overlay");
+const donateDetails = document.querySelector("#donate-details");
+const donateClose = document.querySelector("#donate-close");
 const layoutButtons = document.querySelectorAll("[data-layout]");
 const siteSearch = document.querySelector("#site-search");
 const siteLanguage = document.querySelector("#site-language");
@@ -34,6 +38,8 @@ let state = {
   adminToken: localStorage.getItem("simple-www-admin-token") || "",
   activeCollection: "",
   media: [],
+  donateBitcoinAddress: "",
+  donateEthereumAddress: "",
 };
 let searchTimer;
 
@@ -492,6 +498,32 @@ function setFooterContact(email) {
   const value = String(email || "").trim();
   footerContact.hidden = !value;
   footerContact.href = value ? `mailto:${value}` : "";
+}
+
+function donationRows() {
+  const rows = [
+    { label: "Bitcoin", value: state.donateBitcoinAddress },
+    { label: "Ethereum", value: state.donateEthereumAddress },
+  ].filter((row) => row.value);
+
+  if (!rows.length) return '<p class="empty">Adresses not set</p>';
+
+  return `
+    <dl>
+      ${rows.map((row) => `<div><dt>${escapeHtml(row.label)}</dt><dd><code>${escapeHtml(row.value)}</code></dd></div>`).join("")}
+    </dl>
+  `;
+}
+
+function openDonateOverlay() {
+  donateDetails.innerHTML = donationRows();
+  donateOverlay.hidden = false;
+  donateClose.focus();
+}
+
+function closeDonateOverlay() {
+  donateOverlay.hidden = true;
+  footerDonate.focus();
 }
 
 function itemInLanguage(item) {
@@ -1471,6 +1503,21 @@ siteLanguage.addEventListener("change", () => {
   if (!applyRoute(routeFromHash())) renderDefaultRoute();
 });
 
+footerDonate.addEventListener("click", (event) => {
+  event.preventDefault();
+  openDonateOverlay();
+});
+
+donateClose.addEventListener("click", closeDonateOverlay);
+
+donateOverlay.addEventListener("click", (event) => {
+  if (event.target === donateOverlay) closeDonateOverlay();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !donateOverlay.hidden) closeDonateOverlay();
+});
+
 window.addEventListener("hashchange", () => {
   applyRoute(routeFromHash());
 });
@@ -1504,6 +1551,8 @@ function applyPayload(payload) {
   state.commentsEnabled = site.commentsEnabled === true;
   state.storePaymentsEnabled = site.storePaymentsEnabled === true;
   state.adminAccountsEnabled = config.adminAccounts?.enabled === true;
+  state.donateBitcoinAddress = String(site.donateBitcoinAddress || "").trim();
+  state.donateEthereumAddress = String(site.donateEthereumAddress || "").trim();
   configureLanguages(site);
   title.textContent = site.title || config.siteTitle || "simple-www";
   description.textContent = site.description || config.siteDescription || "";

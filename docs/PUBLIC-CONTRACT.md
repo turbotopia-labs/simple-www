@@ -76,6 +76,8 @@ Stable `site` fields:
 - `baseUrl`
 - `footerText`
 - `contactEmail`
+- `donateBitcoinAddress`
+- `donateEthereumAddress`
 - `theme`
 - `layout`
 - `adminEditing`
