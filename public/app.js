@@ -1523,7 +1523,6 @@ siteLanguage.addEventListener("change", () => {
 
 footerDonate.addEventListener("click", (event) => {
   event.preventDefault();
-  history.replaceState(null, "", "#donate");
   openDonateOverlay();
 });
 
