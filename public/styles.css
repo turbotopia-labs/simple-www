@@ -731,6 +731,27 @@ h3 {
   overflow-wrap: anywhere;
 }
 
+.donate-warning {
+  border-top: 1px dotted var(--border);
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.donate-warning h3 {
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.donate-warning ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.donate-warning li {
+  margin-bottom: 3px;
+}
+
 @media (max-width: 640px) {
   .site-header {
     align-items: flex-start;

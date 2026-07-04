@@ -60,7 +60,7 @@ Legacy `siteTitle` and `siteDescription` still work when `site.title` and `site.
 
 `footerText` supports `{VERSION}`, which is replaced with the value from the `VERSION` file.
 
-The footer `Donate` link opens a local overlay. Set `donateBitcoinAddress` or `donateEthereumAddress` to show crypto donation addresses. If both are empty, the overlay shows `Adresses not set`.
+The footer `Donate` link opens a local overlay. Set `donateBitcoinAddress` or `donateEthereumAddress` to show crypto donation addresses. If both are empty, the overlay shows `Adresses not set`. When addresses are set, the overlay also shows basic crypto transaction warnings.
 
 ## v3 Preparation Notes
 

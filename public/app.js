@@ -520,6 +520,16 @@ function donationRows() {
     <dl>
       ${rows.map((row) => `<div><dt>${escapeHtml(row.label)}</dt><dd><code>${escapeHtml(row.value)}</code></dd></div>`).join("")}
     </dl>
+    <div class="donate-warning">
+      <h3>Before sending</h3>
+      <ul>
+        <li>Send only the matching currency to each address.</li>
+        <li>Check the full address before confirming the transaction.</li>
+        <li>Crypto transactions are normally irreversible.</li>
+        <li>Start with a small test transfer if the amount matters.</li>
+        <li>Network fees are paid by the sender.</li>
+      </ul>
+    </div>
   `;
 }
 

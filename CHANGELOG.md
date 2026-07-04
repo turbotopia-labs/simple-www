@@ -4,6 +4,7 @@
 
 - Added a footer Donate link with a config-driven crypto donation overlay.
 - Made the Donate link work as both a click action and `#donate` route.
+- Added crypto transaction tips and warnings to the donation overlay when addresses are set.
 - Added `beer-rating` blog post support with `untappd` and `rating` front matter.
 - Displayed beer ratings with a rating bar and Untappd icon link.
 - Tightened spacing between the beer rating label and rating bar.
