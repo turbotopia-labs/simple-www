@@ -11,3 +11,5 @@ overview.md
 docker-compose.y*
 sites/
 sites/*
+downloads/
+downloads/*
