@@ -2,6 +2,7 @@
 
 simple-www uses a small pre-2010 style: plain typography, bordered panels, simple buttons, and light shadows.
 The default UI keeps that compact serif identity with classic tab navigation, cleaner panels, and chip-style filters.
+Spacing is intentionally dense so module lists, metadata, forms, and detail panels stay easy to scan.
 
 ## Theme Packs
 

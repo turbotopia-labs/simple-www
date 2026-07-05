@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Modernized site panels, controls, and filter chips while preserving the classic tab navigation.
+- Tightened shared UI spacing across the header, cards, forms, filters, content blocks, and overlays.
 - Removed the visible tab-bar scrollbar artifact on desktop and hid mobile scrollbars without removing horizontal navigation.
 - Added a footer Donate link with a config-driven crypto donation overlay.
 - Made the Donate link work as both a click action and `#donate` route.
