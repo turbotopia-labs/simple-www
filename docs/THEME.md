@@ -1,7 +1,7 @@
 # Theme and Layout
 
 simple-www uses a small pre-2010 style: plain typography, bordered panels, simple buttons, and light shadows.
-The default UI keeps that compact serif identity while using rounded tab buttons and chip-style filters for clearer navigation.
+The default UI keeps that compact serif identity with classic tab navigation, cleaner panels, and chip-style filters.
 
 ## Theme Packs
 
