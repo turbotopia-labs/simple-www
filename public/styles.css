@@ -65,7 +65,7 @@ main:focus-visible {
   align-items: flex-end;
   justify-content: space-between;
   gap: 14px;
-  padding: 18px 0 8px;
+  padding: 18px 0 0;
   border-bottom: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
 }
 
@@ -78,7 +78,7 @@ main:focus-visible {
   align-items: center;
   gap: 6px;
   flex: 0 0 auto;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
 }
 
 .header-search,
