@@ -75,6 +75,7 @@ Stable `site` fields:
 - `timezone`
 - `baseUrl`
 - `footerText`
+- `repository_footer`
 - `contactEmail`
 - `donateBitcoinAddress`
 - `donateEthereumAddress`

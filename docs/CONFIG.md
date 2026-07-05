@@ -26,6 +26,7 @@ JSON remains the default format. YAML support is intentionally small and support
   "timezone": "UTC",
   "baseUrl": "http://127.0.0.1:6625",
   "footerText": "simple-www v.{VERSION}",
+  "repository_footer": "",
   "contactEmail": "",
   "donateBitcoinAddress": "",
   "donateEthereumAddress": "",
@@ -47,6 +48,7 @@ Defaults:
 - `timezone`: `UTC`
 - `baseUrl`: `http://127.0.0.1:6625`
 - `footerText`: `simple-www v.{VERSION}`
+- `repository_footer`: empty string
 - `contactEmail`: empty string
 - `donateBitcoinAddress`: empty string
 - `donateEthereumAddress`: empty string
@@ -59,6 +61,8 @@ Defaults:
 Legacy `siteTitle` and `siteDescription` still work when `site.title` and `site.description` are not set.
 
 `footerText` supports `{VERSION}`, which is replaced with the value from the `VERSION` file.
+
+`repository_footer` adds a GitHub icon link to the right of the footer text. Leave it empty to hide the icon. Repository and Untappd links open in a new tab/window according to system defaults.
 
 The footer `Donate` link opens a local overlay. Set `donateBitcoinAddress` or `donateEthereumAddress` to show crypto donation addresses. If both are empty, the overlay shows `Adresses not set`. When addresses are set, the overlay also shows basic crypto transaction warnings.
 
@@ -175,6 +179,7 @@ Validation checks:
 - `site` must be an object.
 - Site metadata values must be strings.
 - `site.languages` must be an array of strings.
+- `site.repository_footer` must be a safe URL or relative path.
 - `site.theme` must match a CSS file in `themes/`.
 - `site.layout` must be `list`, `cards`, or `compact`.
 - `site.adminEditing` must be true or false.

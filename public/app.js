@@ -5,6 +5,7 @@ const description = document.querySelector("#site-description");
 const themeToggle = document.querySelector("#theme-toggle");
 const themePack = document.querySelector("#theme-pack");
 const footerLabel = document.querySelector("#site-footer-label");
+const footerRepository = document.querySelector("#site-footer-repository");
 const footerDonate = document.querySelector("#site-footer-donate");
 const footerContact = document.querySelector("#site-footer-contact");
 const donateOverlay = document.querySelector("#donate-overlay");
@@ -377,10 +378,14 @@ function actionLink(href, label) {
   return `<p class="action-link"><a href="${escapeHtml(safeUrl(href))}">${escapeHtml(label)}</a></p>`;
 }
 
+function newTabAttrs() {
+  return ` target="_blank" rel="noreferrer"`;
+}
+
 function repositoryIconLink(href) {
   if (!href) return "";
   return `
-    <a class="repo-icon-link" href="${escapeHtml(safeUrl(href))}" title="GitHub repository" aria-label="GitHub repository">
+    <a class="repo-icon-link" href="${escapeHtml(safeUrl(href))}"${newTabAttrs()} title="GitHub repository" aria-label="GitHub repository">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <path d="M12 .7a11.3 11.3 0 0 0-3.6 22c.6.1.8-.2.8-.5v-2c-3.3.7-4-1.4-4-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.9 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.2c0 .3.2.6.8.5A11.3 11.3 0 0 0 12 .7Z"></path>
       </svg>
@@ -391,7 +396,7 @@ function repositoryIconLink(href) {
 function untappdIconLink(href) {
   if (!href) return "";
   return `
-    <a class="untappd-icon-link" href="${escapeHtml(safeUrl(href))}" title="Untappd beer profile" aria-label="Untappd beer profile">
+    <a class="untappd-icon-link" href="${escapeHtml(safeUrl(href))}"${newTabAttrs()} title="Untappd beer profile" aria-label="Untappd beer profile">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <rect x="2" y="2" width="20" height="20" rx="4"></rect>
         <path d="M8.1 7.2h3.2l-1.4 9.6H6.7L8.1 7.2Zm4.6 0h3.2l1.4 9.6h-3.2L12.7 7.2Zm-3.2 2.1 5 5m.1-5.1-5.2 5.1"></path>
@@ -506,6 +511,14 @@ function setFooterContact(email) {
   const value = String(email || "").trim();
   footerContact.hidden = !value;
   footerContact.href = value ? `mailto:${value}` : "";
+}
+
+function setFooterRepository(url) {
+  const value = String(url || "").trim();
+  footerRepository.hidden = !value;
+  footerRepository.href = value ? safeUrl(value) : "";
+  footerRepository.target = value ? "_blank" : "";
+  footerRepository.rel = value ? "noreferrer" : "";
 }
 
 function donationRows() {
@@ -1577,6 +1590,7 @@ function applyPayload(payload) {
   document.title = `${title.textContent} v.${payload.version || ""}`;
   themePack.href = themePackHref(site.theme || "classic");
   footerLabel.textContent = footerText(site, payload.version || "");
+  setFooterRepository(site.repository_footer);
   setFooterContact(site.contactEmail);
   setLayout(localStorage.getItem("simple-www-layout") || site.layout || "cards");
 

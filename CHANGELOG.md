@@ -7,6 +7,7 @@
 - Removed the gap between classic navigation tabs and the header rule.
 - Removed the visible tab-bar scrollbar artifact on desktop and hid mobile scrollbars without removing horizontal navigation.
 - Added a footer Donate link with a config-driven crypto donation overlay.
+- Added a config-driven footer repository icon link and made repository and Untappd links open in a new tab/window.
 - Made the Donate link work as both a click action and `#donate` route.
 - Kept the Donate click from changing the browser URL.
 - Added crypto transaction tips and warnings to the donation overlay when addresses are set.

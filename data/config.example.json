@@ -7,6 +7,7 @@
     "timezone": "Europe/Oslo",
     "baseUrl": "www.example.com",
     "footerText": "powered by simple-www v.{VERSION}",
+    "repository_footer": "https://github.com/example/simple-www",
     "contactEmail": "contact@example.com",
     "theme": "ledger",
     "layout": "list",

@@ -104,6 +104,7 @@ Validation checks:
 - `draft` and `pinned` must be booleans.
 - `priority` must be an integer.
 - `link`, `repository`, `untappd`, `file`, `image`, `canonicalUrl`, and `checkoutUrl` must be safe URLs or relative paths.
+- Repository and Untappd links open in a new tab/window according to system defaults.
 - `rating` must be `1.00` through `5.00` when present.
 - Blog entries with `category: beer-rating` require `rating`.
 - `progress` must include three `MAJOR.MINOR.PATCH` version numbers when present.

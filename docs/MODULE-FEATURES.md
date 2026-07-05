@@ -32,6 +32,8 @@ repository: https://example.com/repository
 ---
 ```
 
+Project repository links are shown as icon links and open in a new tab/window according to system defaults.
+
 ## Blog
 
 Blog entries support archive and category views in the frontend.
@@ -46,7 +48,7 @@ Beer rating posts use `category: beer-rating` and can include:
 - `untappd`
 - `rating`
 
-`untappd` is shown as an icon link. `rating` is shown as a compact rating bar and must be from `1.00` through `5.00`.
+`untappd` is shown as an icon link and opens in a new tab/window according to system defaults. `rating` is shown as a compact rating bar and must be from `1.00` through `5.00`.
 
 ```md
 ---

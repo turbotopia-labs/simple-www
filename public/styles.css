@@ -666,6 +666,12 @@ h3 {
   padding: 10px 0 20px;
 }
 
+.footer-brand {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
 .footer-links {
   display: inline-flex;
   gap: 10px;

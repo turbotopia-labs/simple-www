@@ -122,6 +122,7 @@ const defaultConfig = {
     timezone: "UTC",
     baseUrl: "http://127.0.0.1:6625",
     footerText: "simple-www v.{VERSION}",
+    repository_footer: "",
     contactEmail: "",
     donateBitcoinAddress: "",
     donateEthereumAddress: "",
@@ -602,6 +603,7 @@ function validateRawConfig(raw, source) {
     "timezone",
     "baseUrl",
     "footerText",
+    "repository_footer",
     "contactEmail",
     "donateBitcoinAddress",
     "donateEthereumAddress",
@@ -614,6 +616,9 @@ function validateRawConfig(raw, source) {
   });
   if (raw.site?.languages !== undefined && (!Array.isArray(raw.site.languages) || raw.site.languages.some((value) => typeof value !== "string"))) {
     errors.push(`${source}: site.languages must be an array of strings.`);
+  }
+  if (raw.site?.repository_footer && !isSafeContentUrl(raw.site.repository_footer)) {
+    errors.push(`${source}: site.repository_footer must be a safe URL or relative path.`);
   }
 
   if (raw.site?.adminEditing !== undefined && typeof raw.site.adminEditing !== "boolean") {
