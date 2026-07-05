@@ -1,0 +1,51 @@
+/*
+  Basic simple-www theme template.
+
+  Copy this file to themes/<theme-id>.css, replace the placeholder colors, and
+  set "site.theme" to "<theme-id>" in data/config.json.
+
+  Keep basic themes focused on variables. Avoid changing IDs, data attributes,
+  aria state selectors, or layout structure used by public/app.js.
+*/
+
+:root {
+  color-scheme: light;
+
+  /* Page and surface colors */
+  --bg: #f3f5f1;
+  --panel: #ffffff;
+  --button: #eef1eb;
+
+  /* Text colors */
+  --text: #1d211c;
+  --muted: #5b6258;
+  --link: #47646f;
+
+  /* Lines, states, and emphasis */
+  --border: #aab3a4;
+  --border-strong: #6e7a67;
+  --accent: #dde8d3;
+  --accent-strong: #c2d4b5;
+  --shadow: #d2d8cf;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Page and surface colors */
+  --bg: #1c211b;
+  --panel: #262c24;
+  --button: #22281f;
+
+  /* Text colors */
+  --text: #eef2ea;
+  --muted: #c1c9ba;
+  --link: #a8c5cf;
+
+  /* Lines, states, and emphasis */
+  --border: #505b4b;
+  --border-strong: #7c8b74;
+  --accent: #33402d;
+  --accent-strong: #46583d;
+  --shadow: #121610;
+}

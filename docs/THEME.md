@@ -18,6 +18,9 @@ Built-in packs:
 - `blueprint`: cooler technical palette.
 - `ledger`: warmer document palette.
 
+Use `themes/theme-template.css` as the starting point for new basic themes.
+See `docs/THEME-TEMPLATE.md` for the detailed creation rules and checklist.
+
 Select a pack in config:
 
 ```json
