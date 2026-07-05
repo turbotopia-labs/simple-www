@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Changed the default site font to a modern terminal-style monospace stack.
 - Modernized site panels, controls, and filter chips while preserving the classic tab navigation.
 - Tightened shared UI spacing across the header, cards, forms, filters, content blocks, and overlays.
 - Removed the gap between classic navigation tabs and the header rule.
