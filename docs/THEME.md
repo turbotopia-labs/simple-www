@@ -1,22 +1,24 @@
 # Theme and Layout
 
-simple-www uses a small pre-2010 style: plain typography, bordered panels, simple buttons, and light shadows.
-The default UI keeps that compact serif identity with classic tab navigation, cleaner panels, and chip-style filters.
-Spacing is intentionally dense so module lists, metadata, forms, and detail panels stay easy to scan.
+simple-www uses a compact terminal-inspired style: monospace typography, bordered panels, simple
+buttons, and light shadows. The default UI pairs that identity with classic tab navigation, cleaner
+panels, and chip-style filters. Spacing is intentionally dense so module lists, metadata, forms, and
+detail panels stay easy to scan.
 
 ## Theme Packs
 
 Theme packs live in `themes/` as plain CSS files. The default pack is:
 
 ```text
-themes/classic.css
+themes/terminal.css
 ```
 
 Built-in packs:
 
-- `classic`: current pre-2010 default.
-- `blueprint`: cooler technical palette.
-- `ledger`: warmer document palette.
+- `terminal`: default. Monokai-inspired light mode, Dracula dark mode.
+- `classic`: legacy pre-2010 default.
+- `blueprint`: legacy cooler technical palette.
+- `ledger`: legacy warmer document palette.
 
 Use `themes/theme-template.css` as the starting point for new basic themes.
 See `docs/THEME-TEMPLATE.md` for the detailed creation rules and checklist.
@@ -25,7 +27,7 @@ Select a pack in config:
 
 ```json
 "site": {
-  "theme": "classic"
+  "theme": "terminal"
 }
 ```
 

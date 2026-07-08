@@ -95,7 +95,7 @@ main:focus-visible {
 .header-language select {
   width: 124px;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 3px;
   background: color-mix(in srgb, var(--button) 90%, var(--panel));
   color: var(--text);
   font: 13px/1.2 var(--font-ui);
@@ -121,6 +121,22 @@ h1 {
   line-height: 1.05;
 }
 
+#site-title::before {
+  content: "> ";
+  color: var(--muted);
+}
+
+.loading-cursor {
+  display: inline-block;
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
 h2 {
   font-size: 20px;
   line-height: 1.15;
@@ -143,10 +159,13 @@ h3 {
 }
 
 .icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 34px;
   height: 30px;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 3px;
   background: color-mix(in srgb, var(--button) 90%, var(--panel));
   color: var(--text);
   cursor: pointer;
@@ -154,16 +173,37 @@ h3 {
   box-shadow: 1px 1px 0 color-mix(in srgb, var(--shadow) 70%, transparent);
 }
 
+.icon-button svg,
+.segmented-control button svg,
+.header-search-icon svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.header-search-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+}
+
 .segmented-control {
   display: flex;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 3px;
   overflow: hidden;
   background: var(--panel);
   box-shadow: 1px 1px 0 color-mix(in srgb, var(--shadow) 70%, transparent);
 }
 
 .segmented-control button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   min-height: 28px;
   border: 0;
   border-right: 1px solid var(--border);
@@ -195,7 +235,7 @@ h3 {
 .module-nav button {
   border: 1px solid var(--border);
   border-bottom: 0;
-  border-radius: 4px 4px 0 0;
+  border-radius: 3px 3px 0 0;
   background: transparent;
   color: var(--muted);
   cursor: pointer;
@@ -241,7 +281,7 @@ h3 {
 .card {
   min-width: 0;
   border: 1px solid color-mix(in srgb, var(--border) 86%, transparent);
-  border-radius: 7px;
+  border-radius: 4px;
   background: var(--panel);
   box-shadow: 2px 2px 0 color-mix(in srgb, var(--shadow) 78%, transparent);
   padding: 12px;
@@ -268,12 +308,13 @@ h3 {
 .meta {
   margin-bottom: 6px;
   font-size: 13px;
+  font-variant-numeric: tabular-nums;
 }
 
 .module-tools {
   grid-column: 1 / -1;
   border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
-  border-radius: 6px;
+  border-radius: 3px;
   background: color-mix(in srgb, var(--panel) 52%, transparent);
   box-shadow: 1px 1px 0 color-mix(in srgb, var(--shadow) 62%, transparent);
   margin: 0 0 2px;
@@ -358,6 +399,7 @@ h3 {
 .details dd {
   margin: 0;
   overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
 }
 
 .status-with-repo {
@@ -381,7 +423,11 @@ h3 {
 .repo-icon-link svg {
   width: 17px;
   height: 17px;
-  fill: currentColor;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .untappd-icon-link {
@@ -458,6 +504,7 @@ h3 {
 .progress-versions {
   color: var(--muted);
   font-size: 13px;
+  font-variant-numeric: tabular-nums;
 }
 
 .action-link {
@@ -496,7 +543,7 @@ h3 {
 .comment-form textarea {
   width: 100%;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 3px;
   background: color-mix(in srgb, var(--button) 88%, var(--panel));
   color: var(--text);
   font: 15px/1.35 var(--font-ui);
@@ -531,7 +578,7 @@ h3 {
 .form-actions button,
 .admin-list button {
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 3px;
   background: color-mix(in srgb, var(--button) 90%, var(--panel));
   color: var(--text);
   cursor: pointer;
@@ -576,7 +623,7 @@ h3 {
 
 .content code {
   border: 1px solid var(--border);
-  border-radius: 3px;
+  border-radius: 2px;
   background: var(--button);
   padding: 1px 4px;
   font-family: var(--font-ui);
@@ -586,7 +633,7 @@ h3 {
 .content pre {
   overflow-x: auto;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: 3px;
   background: var(--button);
   padding: 8px;
 }
@@ -648,7 +695,7 @@ h3 {
 
 .tags span {
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: 3px;
   background: var(--accent);
   padding: 1px 6px;
   color: var(--text);
@@ -700,7 +747,7 @@ h3 {
 .overlay-panel {
   width: min(420px, 100%);
   border: 1px solid var(--border-strong);
-  border-radius: 7px;
+  border-radius: 4px;
   background: var(--panel);
   box-shadow: 3px 3px 0 var(--shadow);
   padding: 12px;
@@ -744,6 +791,7 @@ h3 {
 .donate-details dd {
   margin: 0;
   overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
 }
 
 .donate-warning {

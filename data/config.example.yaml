@@ -7,6 +7,7 @@ site:
   timezone: Europe/Oslo
   baseUrl: http://127.0.0.1:6625
   repository_footer: ""
+  theme: terminal
   layout: cards
   adminEditing: false
 exportHooks:

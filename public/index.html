@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>simple-www</title>
     <link rel="stylesheet" href="styles.css">
-    <link id="theme-pack" rel="stylesheet" href="themes/classic.css">
+    <link id="theme-pack" rel="stylesheet" href="themes/terminal.css">
   </head>
   <body>
     <header class="site-header">
@@ -21,12 +21,24 @@
         </label>
         <label class="header-search">
           <span>Search</span>
+          <span class="header-search-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          </span>
           <input id="site-search" type="search" placeholder="Search">
         </label>
         <div class="segmented-control" aria-label="Layout">
-          <button type="button" data-layout="list" title="List layout">List</button>
-          <button type="button" data-layout="cards" title="Card layout">Cards</button>
-          <button type="button" data-layout="compact" title="Compact layout">Compact</button>
+          <button type="button" data-layout="list" title="List layout">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 12h.01"></path><path d="M3 18h.01"></path><path d="M3 6h.01"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M8 6h13"></path></svg>
+            List
+          </button>
+          <button type="button" data-layout="cards" title="Card layout">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
+            Cards
+          </button>
+          <button type="button" data-layout="compact" title="Compact layout">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M3 9h18"></path><path d="M3 15h18"></path><path d="M9 3v18"></path><path d="M15 3v18"></path></svg>
+            Compact
+          </button>
         </div>
         <button id="theme-toggle" class="icon-button" type="button" title="Toggle light or dark mode">&#9790;</button>
       </div>
@@ -35,7 +47,7 @@
     <main id="app" class="layout" tabindex="-1" aria-live="polite">
       <section class="card">
         <h2>Loading</h2>
-        <p>Reading site content...</p>
+        <p>Reading site content...<span class="loading-cursor" aria-hidden="true">_</span></p>
       </section>
     </main>
 
@@ -44,7 +56,7 @@
         <span id="site-footer-label">simple-www</span>
         <a id="site-footer-repository" class="repo-icon-link" href="" title="GitHub repository" aria-label="GitHub repository" hidden>
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M12 .7a11.3 11.3 0 0 0-3.6 22c.6.1.8-.2.8-.5v-2c-3.3.7-4-1.4-4-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.9 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.2c0 .3.2.6.8.5A11.3 11.3 0 0 0 12 .7Z"></path>
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
           </svg>
         </a>
       </span>
@@ -58,7 +70,9 @@
       <div class="overlay-panel" role="dialog" aria-modal="true" aria-labelledby="donate-title">
         <div class="overlay-header">
           <h2 id="donate-title">Donate</h2>
-          <button id="donate-close" class="icon-button" type="button" title="Close donate window">&times;</button>
+          <button id="donate-close" class="icon-button" type="button" title="Close donate window">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </button>
         </div>
         <div id="donate-details" class="donate-details"></div>
       </div>
