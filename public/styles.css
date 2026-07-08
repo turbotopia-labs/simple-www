@@ -511,6 +511,22 @@ h3 {
   margin: 8px 0 0;
 }
 
+.action-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.action-link svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .admin-form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -727,7 +743,20 @@ h3 {
 }
 
 .site-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   white-space: nowrap;
+}
+
+.footer-links svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .overlay {

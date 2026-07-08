@@ -42,6 +42,12 @@ let state = {
   donateBitcoinAddress: "",
   donateEthereumAddress: "",
 };
+
+const ICONS = {
+  chevronLeft: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg>',
+  chevronRight: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg>',
+  externalLink: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>',
+};
 let searchTimer;
 
 function escapeHtml(value) {
@@ -375,7 +381,7 @@ function moduleFieldRows(moduleId, item, viewName) {
 
 function actionLink(href, label) {
   if (!href) return "";
-  return `<p class="action-link"><a href="${escapeHtml(safeUrl(href))}">${escapeHtml(label)}</a></p>`;
+  return `<p class="action-link"><a href="${escapeHtml(safeUrl(href))}">${escapeHtml(label)} ${ICONS.externalLink}</a></p>`;
 }
 
 function newTabAttrs() {
@@ -961,7 +967,7 @@ function renderCollectionItem(collectionId, item) {
       ${itemImage(item)}
       <p>${inlineMarkdown(itemSummary(item))}</p>
       ${item.tags && item.tags.length ? `<div class="tags">${item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
-      <p class="action-link"><a href="#/collections/${escapeHtml(collectionId)}/${escapeHtml(item.slug)}">Read more</a></p>
+      <p class="action-link"><a href="#/collections/${escapeHtml(collectionId)}/${escapeHtml(item.slug)}">Read more ${ICONS.chevronRight}</a></p>
     </article>
   `;
 }
@@ -995,7 +1001,7 @@ function renderItem(moduleId, item) {
       <p>${inlineMarkdown(itemSummary(item))}</p>
       ${detailList(details)}
       ${item.tags && item.tags.length ? `<div class="tags">${item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
-      <p class="action-link"><a href="#/${escapeHtml(moduleId)}/${escapeHtml(item.slug)}">Read more</a></p>
+      <p class="action-link"><a href="#/${escapeHtml(moduleId)}/${escapeHtml(item.slug)}">Read more ${ICONS.chevronRight}</a></p>
     </article>
   `;
 }
@@ -1013,7 +1019,7 @@ function renderDetail(moduleId, slug) {
       <section class="card">
         <h2>${escapeHtml(module.label)}</h2>
         <p class="empty">Content not found.</p>
-        <p class="action-link"><a href="#/${escapeHtml(moduleId)}">Back to ${escapeHtml(module.label)}</a></p>
+        <p class="action-link"><a href="#/${escapeHtml(moduleId)}">${ICONS.chevronLeft} Back to ${escapeHtml(module.label)}</a></p>
       </section>
     `;
     return;
@@ -1021,7 +1027,7 @@ function renderDetail(moduleId, slug) {
 
   app.innerHTML = `
     <article class="card detail-card">
-      <p class="action-link"><a href="#/${escapeHtml(moduleId)}">Back to ${escapeHtml(module.label)}</a></p>
+      <p class="action-link"><a href="#/${escapeHtml(moduleId)}">${ICONS.chevronLeft} Back to ${escapeHtml(module.label)}</a></p>
       <h2>${escapeHtml(item.title)}</h2>
       <div class="meta">${escapeHtml([item.date, item.updated ? `updated ${item.updated}` : "", item.author, item.category].filter(Boolean).join(" / "))}</div>
       ${itemImage(item)}
@@ -1065,7 +1071,7 @@ async function renderPreview(moduleId, slug) {
 
     app.innerHTML = `
       <article class="card detail-card">
-        <p class="action-link"><a href="#/${escapeHtml(moduleId)}">Back to ${escapeHtml(module.label)}</a></p>
+        <p class="action-link"><a href="#/${escapeHtml(moduleId)}">${ICONS.chevronLeft} Back to ${escapeHtml(module.label)}</a></p>
         <div class="meta">Preview / ${escapeHtml(result.status)}${item.publishAt ? ` / publish at ${escapeHtml(item.publishAt)}` : ""}</div>
         <h2>${escapeHtml(item.title)}</h2>
         <div class="meta">${escapeHtml([item.date, item.updated ? `updated ${item.updated}` : "", item.author, item.category].filter(Boolean).join(" / "))}</div>
@@ -1127,7 +1133,7 @@ function renderCollectionDetail(collectionId, slug) {
       <section class="card">
         <h2>Collection</h2>
         <p class="empty">Collection content not found.</p>
-        <p class="action-link"><a href="#/collections/${escapeHtml(collectionId)}">Back to collection</a></p>
+        <p class="action-link"><a href="#/collections/${escapeHtml(collectionId)}">${ICONS.chevronLeft} Back to collection</a></p>
       </section>
     `;
     return;
@@ -1135,7 +1141,7 @@ function renderCollectionDetail(collectionId, slug) {
 
   app.innerHTML = `
     <article class="card detail-card">
-      <p class="action-link"><a href="#/collections/${escapeHtml(collectionId)}">Back to ${escapeHtml(collection.label)}</a></p>
+      <p class="action-link"><a href="#/collections/${escapeHtml(collectionId)}">${ICONS.chevronLeft} Back to ${escapeHtml(collection.label)}</a></p>
       <h2>${escapeHtml(item.title)}</h2>
       <div class="meta">${escapeHtml([item.date, item.updated ? `updated ${item.updated}` : "", item.author, item.category].filter(Boolean).join(" / "))}</div>
       ${itemImage(item)}
